@@ -42,7 +42,7 @@ const ProductSizesLoading = () => {
     <div className="flex flex-wrap gap-[11px] mb-7">
       {new Array(sizes).fill(0).map((_, index) => {
         return (
-          <div className="w-[70px] h-[30px] rounded-[5px] loading-light dark:loading-dark" key={index}>
+          <div className="w-[70px] h-[30px] rounded-md loading-light dark:loading-dark" key={index}>
           </div>
         )
       })}

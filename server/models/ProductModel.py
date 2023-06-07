@@ -195,5 +195,9 @@ def frequently_bought_together_handler(product_id, limit):
   
   products.sort(key=lambda x: (x[1], x[0].rating), reverse=True)
   res = [product.card_details() for product, _ in products[:min(len(products), limit)]]
+
+  if len(res) == 0:
+    return res
+  
   res.insert(0, bought_with_products[0].product.card_details())
   return res

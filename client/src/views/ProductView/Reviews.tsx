@@ -3,13 +3,14 @@ import RatingStars from "../../components/RatingStars";
 import { convertDate } from "../../utils/convertDate";
 import Rating from "../../components/Rating";
 import { usePagination } from "../../hooks/usePagination";
-import { useState } from "react";
+import { useState, useEffect, useContext } from "react";
 import { TReviewOptions } from "../../@types/TReviewOptions";
 import { orderReviews } from "../../utils/orderReviews";
 import { TProduct } from "../../@types/TProduct";
 import OrderByOptions from "../../components/OrderByOptions";
 import ReviewsLoading from "../../loading/ReviewsLoading";
 import axios from "axios";
+import { UserContext } from "../../providers/UserProvider";
 
 interface Props {
   product: TProduct;
@@ -19,6 +20,11 @@ const reviewsLimit = 4;
 
 const Reviews: React.FC<Props> = ({ product }) => {
   const getReviews = usePagination<TReview, TReviewOptions>(orderReviews, reviewsLimit, `/reviews/${product.id}`, "", "");
+  const userContext = useContext(UserContext);
+
+  useEffect(() => {
+    getReviews.resetState();
+  }, [product])
 
   return (
     <div className="light-component dark:gray-component p-5 pt-3 2xl:w-[65%] max-2xl:w-[60%] max-xl:w-full relative">
@@ -27,11 +33,11 @@ const Reviews: React.FC<Props> = ({ product }) => {
         <p className="text-side-text-light dark:text-side-text-gray mb-[3px]">{`Reviews (${product.num_reviews})`}</p>
         <Rating rating={product.rating} />
       </div>
-      <select className={`px-4 !rounded-[5px] light-component dark:gray-component w-[190px] cursor-pointer h-[40px] !shadow-none`}
+      <select className={`px-4 !rounded-md light-component dark:gray-component w-[190px] cursor-pointer h-[40px] !shadow-none`}
       onChange={(e) => getReviews.handleSort(e.currentTarget.selectedIndex)} value={getReviews.sort.label}>
         <OrderByOptions options={orderReviews} />
       </select>
-      {getReviews.errorMessage.length === 0 ?
+      {userContext?.email !== "" ?
       <div className={`mt-4 ${getReviews.reachedLimit ? 'h-[425px]' : 'h-[445px]'} overflow-y-scroll pr-5`}>
         <div className="flex flex-col gap-4">
           {getReviews.next.map((review, index) => {
@@ -55,7 +61,7 @@ const Reviews: React.FC<Props> = ({ product }) => {
         </button>}
       </div> :
       <div className="absolute w-full h-full top-1/2 left-1/2 translate-x-[-50%] translate-y-[-50%] flex items-center justify-center
-      backdrop-filter backdrop-blur-sm bg-[#bbbbbb09] dark:bg-[#1c1c1ca6]">
+      backdrop-filter backdrop-blur-md bg-[#bbbbbb09] dark:bg-[#1c1c1ca6]">
         <p className="text-[19px] text-center font-semibold bg-opacity-70 p-2 rounded-[8px]">
           You must be logged in to see reviews of this product.
         </p>

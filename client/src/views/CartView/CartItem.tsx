@@ -66,13 +66,13 @@ const CartItem: React.FC<Props> = ({ cartItem, setCart }) => {
         </p>
         <div className="mt-2 flex justify-between items-center">
           <div className="flex gap-3 items-center">
-            <div className="light-component dark:gray-component !rounded-[5px] px-2 h-[30px] flex items-center justify-center">
+            <div className="light-component dark:gray-component !rounded-md px-2 h-[30px] flex items-center justify-center">
               <p className="text-main-text-black dark:text-main-text-white">
                 {cartItem.curSize.size}
               </p>
             </div>
             {cartItem.curSize.stock > 0 &&
-            <select className="light-component dark:gray-component !rounded-[5px] px-2 h-[30px] cursor-pointer text-main-white" 
+            <select className="light-component dark:gray-component !rounded-md px-2 h-[30px] cursor-pointer text-main-white" 
             disabled={changingQuantity} onChange={updateQuantity} defaultValue={cartItem.quantity}>
               {new Array(quantityLimit).fill(0).map((_, index) => {
                 return (

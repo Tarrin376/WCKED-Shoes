@@ -10,7 +10,7 @@ def authenticate_user(func):
     try:
       auth_token = request.cookies.get("auth_token")
       if auth_token is None:
-        resp = Response("Not logged in", status=401, mimetype="application/json")
+        resp = Response("You must log in to perform this action", status=401, mimetype="application/json")
         resp.set_cookie("auth_token", "", expires=0)
         return resp
       

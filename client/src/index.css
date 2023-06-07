@@ -4,10 +4,10 @@
 
 @layer components {
   .btn-primary {
-    @apply bg-bg-primary-btn text-main-text-white rounded-md btn hover:bg-bg-primary-btn-hover;
+    @apply bg-bg-primary-btn text-main-text-white btn hover:bg-bg-primary-btn-hover;
   }
   .btn {
-    @apply rounded-[5px] transition ease-linear duration-150 text-[15px];
+    @apply rounded-[8px] transition ease-linear duration-150 text-[15px];
   }
   .gray-component {
     @apply bg-main-gray rounded-[10px] border border-[#474747] shadow-gray-component-shadow text-main-text-white focus:!outline-none;
@@ -16,7 +16,7 @@
     @apply bg-nav-light rounded-[10px] border border-light-border text-main-text-black shadow-light-component-shadow;
   }
   .best-seller {
-    @apply bg-[#1cad21] text-main-text-white px-3 rounded-[5px] text-sm h-[22px] w-fit;
+    @apply bg-[#1cad21] text-main-text-white px-3 rounded-md text-sm h-[22px] w-fit;
   }
   .loading-dark {
     @apply animate-pulse bg-loading-gray rounded-[8px];
@@ -25,17 +25,17 @@
     @apply animate-pulse bg-loading-light rounded-[8px];
   }
   .text-box {
-    @apply border border-search-border text-main-text-white !rounded-[5px] py-2 px-3 bg-main-gray 
+    @apply border border-search-border text-main-text-white !rounded-md py-2 px-3 bg-main-gray 
     placeholder:text-search-placeholder-dark focus:outline-none focus:outline-offset-0 focus:outline-[3px]
     focus:outline-[#424242] transition ease-linear duration-100;
   }
   .text-box-light {
-    @apply border border-[#ccd0d5] text-main-text-black !rounded-[5px] py-2 px-3 bg-nav-light 
+    @apply border border-[#ccd0d5] text-main-text-black !rounded-md py-2 px-3 bg-nav-light 
     placeholder:text-search-placeholder-light focus:outline-none focus:outline-offset-0 focus:outline-[3px]
     focus:outline-[#eaecee] transition ease-linear duration-100;
   }
   .pass-strength {
-    @apply h-[10px] bg-light-border dark:bg-loading-gray w-[25%] rounded-[5px] transition ease-linear duration-100;
+    @apply h-[10px] bg-light-border dark:bg-loading-gray w-[25%] rounded-md transition ease-linear duration-100;
   }
   .disabled-btn {
     @apply !bg-loading-gray opacity-60 hover:bg-loading-gray pointer-events-none focus:outline-none;
@@ -54,7 +54,7 @@
   }
   .secondary-btn {
     @apply btn bg-main-text-black dark:bg-search-border text-main-text-white 
-    hover:bg-main-text-black-hover dark:hover:bg-[#5a5a5a];
+    hover:bg-main-text-black-hover dark:hover:bg-[#5a5a5a] rounded-md;
   }
   .mobile-nav-item {
     @apply flex items-center gap-6 p-3 cursor-pointer hover:bg-[#f7f7f7] dark:hover:bg-[#383838] rounded-[8px] transition ease-out;

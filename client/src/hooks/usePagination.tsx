@@ -46,10 +46,14 @@ export const usePagination = <T1, T2>(order: readonly TOrderByOption<T2>[], limi
     setFilter(filter);
   }
 
-  useEffect(() => {
+  const resetState = () => {
     setReachedLimit(false);
     setNext([]);
     setPage(1);
+  }
+
+  useEffect(() => {
+    resetState()
   }, [sort, filter, searchQuery]);
 
   useEffect(() => {
@@ -76,7 +80,7 @@ export const usePagination = <T1, T2>(order: readonly TOrderByOption<T2>[], limi
     })()
   }, [queryURL, setLoading])
 
-  return {
+  const data = {
     next,
     totalFound,
     reachedLimit,
@@ -89,5 +93,8 @@ export const usePagination = <T1, T2>(order: readonly TOrderByOption<T2>[], limi
     handleSort,
     handleSearch,
     handleFilter,
+    resetState
   }
+
+  return data;
 }

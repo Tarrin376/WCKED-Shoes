@@ -52,11 +52,11 @@ const MobileNavbar: React.FC<Props> = (props) => {
             The Shoes
           </button>
         </Link>
-        <div className={`flex flex-col justify-between p-2 rounded-[5px] ${navSidebar ? "outline-dashed outline-[1px] outline-bg-primary-btn" : ""}
+        <div className={`flex flex-col justify-between p-2 rounded-md ${navSidebar ? "outline-dashed outline-[1px] outline-bg-primary-btn" : ""}
         gap-2 w-[48px] h-[48px] cursor-pointer`} onClick={toggleNavSidebar}>
-          <div className="w-full h-1/3 bg-main-text-black dark:bg-main-text-white rounded-[5px]"></div>
-          <div className="w-full h-1/3 bg-main-text-black dark:bg-main-text-white rounded-[5px]"></div>
-          <div className="w-full h-1/3 bg-main-text-black dark:bg-main-text-white rounded-[5px]"></div>
+          <div className="w-full h-1/3 bg-main-text-black dark:bg-main-text-white rounded-md"></div>
+          <div className="w-full h-1/3 bg-main-text-black dark:bg-main-text-white rounded-md"></div>
+          <div className="w-full h-1/3 bg-main-text-black dark:bg-main-text-white rounded-md"></div>
         </div>
       </nav>
       <NavSidebar props={props} navSidebar={navSidebar} toggleNavSidebar={toggleNavSidebar} />
@@ -94,7 +94,7 @@ const NavSidebar: React.FC<NavSidebarProps> = ({ props, navSidebar, toggleNavSid
             }} className="mt-16">
               <div className="flex items-center text-box-light dark:text-box gap-3">
                 <img src={SearchIcon} className="w-[23px] h-[23px]" alt="" />
-                <input type="text" value={props.searchQuery} placeholder="Search by order ID or product" 
+                <input type="text" value={props.searchQuery} placeholder="Search for order or product" 
                 className="w-[370px] bg-transparent text-[15px] placeholder:text-search-placeholder focus:outline-none" 
                 onChange={props.updateSearchQuery} />
               </div>
@@ -108,11 +108,13 @@ const NavSidebar: React.FC<NavSidebarProps> = ({ props, navSidebar, toggleNavSid
               closeSidebar={closeSidebar} 
               toggleTheme={props.toggleTheme} /> : 
             <div className="flex flex-col justify-end h-full">
-              <button className="btn text-main-text-white border border-search-border bg-transparent h-[45px] w-full rounded-[8px]
-              hover:bg-[#2B2B2B] mb-4 text-[15px]" onClick={() => closeSidebar(props.openLoginPopUp)}>
+              <button className="btn border border-search-border  h-[45px] w-full mb-4 btn text-main-text-black 
+              dark:text-main-text-white dark:border-search-border bg-transparent 
+              dark:hover:bg-[#2B2B2B] hover:bg-main-text-black hover:text-main-text-white text-[15px]" 
+              onClick={() => closeSidebar(props.openLoginPopUp)}>
                 Log in
               </button>
-              <button className="btn-primary w-full h-[45px] text-[15px]" onClick={() => closeSidebar(props.openSignUpPopUp)}>
+              <button className="btn-primary w-full h-[45px]" onClick={() => closeSidebar(props.openSignUpPopUp)}>
                 Sign up
               </button>
               <div className="mt-4 flex items-center justify-between">
@@ -153,7 +155,9 @@ const LoggedIn: React.FC<LoggedInProps> = (props) => {
           {themeContext?.darkMode ?
             <img src={DarkOrdersIcon} className="w-[28px] h-[28px] ml-5" alt="" /> 
             : <img src={LightOrdersIcon} className="w-[28px] h-[28px] ml-5" alt="" />}
-          <p className="text-main-text-black dark:text-main-text-white">Your orders</p>
+          <p className="text-main-text-black dark:text-main-text-white">
+            Your orders
+          </p>
         </li>
       </ul>
       <div>

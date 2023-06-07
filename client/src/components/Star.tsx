@@ -14,7 +14,7 @@ const Star = () => {
           <div className="w-1/2 bg-nav-light dark:bg-main-gray rounded-tl-full"></div>
         </div>
       </div>
-      <div className="flex w-[122px] h-[42px] rounded-[5px] bg-light-border dark:bg-[#202020] p-1">
+      <div className="flex w-[122px] h-[42px] rounded-md bg-light-border dark:bg-[#202020] p-1">
         <div className="p-2 w-[50%] bg-main-text-white dark:bg-loading-gray rounded-[3px] relative cursor-pointer">
           <img src={UKFlag} className="absolute w-[38px] h-[31px] top-1/2 left-1/2 translate-x-[-50%] translate-y-[-50%]" alt="UK" />
         </div>

@@ -13,22 +13,22 @@ import MyOrders from "./views/MyOrdersView/MyOrders";
 const App: React.FC<{}> = () => {
   return (
     <ThemeProvider>
-        <div className="bg-bg-light dark:bg-bg-dark h-[100vh] fixed w-full overflow-y-scroll">
-        <UserProvider>
-            <BrowserRouter>
-            <Routes>
-                <Route path="/" element={<Layout />}>
-                <Route index element={<Home />} />
-                <Route path="products/:id" element={<Product />} />
-                <Route path="cart" element={<Cart />} />
-                <Route path="checkout" element={<Checkout />} />
-                <Route path="orders/" element={<MyOrders />} />
-                <Route path="orders/:id" element={<OrderPlaced />} />
-                <Route path="*" element={<Error />} />
-                </Route>            
-            </Routes>
-            </BrowserRouter>
-        </UserProvider>
+        <div className="bg-bg-light dark:bg-bg-dark">
+          <UserProvider>
+              <BrowserRouter>
+              <Routes>
+                  <Route path="/" element={<Layout />}>
+                  <Route index element={<Home />} />
+                  <Route path="products/:id" element={<Product />} />
+                  <Route path="cart" element={<Cart />} />
+                  <Route path="checkout" element={<Checkout />} />
+                  <Route path="orders/" element={<MyOrders />} />
+                  <Route path="orders/:id" element={<OrderPlaced />} />
+                  <Route path="*" element={<Error />} />
+                  </Route>            
+              </Routes>
+              </BrowserRouter>
+          </UserProvider>
         </div>
     </ThemeProvider>
   )

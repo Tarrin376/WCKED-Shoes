@@ -7,11 +7,16 @@ import { orderOrders } from "../../utils/orderOrders";
 import NoResultsFound from "../../components/NoResultsFound";
 import { useWindowSize } from "../../hooks/useWindowSize";
 import { orderFilters } from "../../utils/orderFilters";
+import RecommendedProducts from "../../components/RecommendedProducts";
+import { useScrollPosition } from "../../hooks/useScrollPosition";
+import { getPageSize } from "../../utils/getPageSize";
 
 const MyOrders = () => {
   const searchRef = useRef<HTMLInputElement>(null);
   const getOrders = usePagination<TOrderData, TOrderOptions>(orderOrders, 3, "/orders", "", "active", searchRef);
   const windowSize = useWindowSize();
+  const scrollPosition = useScrollPosition();
+  const pageSize = getPageSize(windowSize);
 
   return (
     <>
@@ -36,9 +41,9 @@ const MyOrders = () => {
               </li>
             )
           })}
-        </ul> : 
-        <select className={`px-4 !rounded-[5px] light-component dark:gray-component cursor-pointer h-[50px] w-[250px] max-sm:!w-full md:w-fit 
-        ${getOrders.loading ? "disabled-btn-light dark:disabled-btn" : ""}`}>
+        </ul> :
+        <select className={`px-4 !rounded-md light-component dark:gray-component cursor-pointer h-[50px] w-[250px] max-sm:!w-full md:w-fit 
+        ${getOrders.loading ? "disabled-btn-light dark:disabled-btn" : ""}`} onChange={(e) => getOrders.handleFilter(e.target.value)}>
           {Object.keys(orderFilters).map((filter: string, index: number) => {
             return (
               <option key={index} value={orderFilters[filter]}>
@@ -55,10 +60,16 @@ const MyOrders = () => {
           </button>
         </div>
       </div>
-      <div className="flex gap-[40px] mt-[40px] max-2xl:flex-col pb-1">
-        <div className="flex gap-[40px] flex-col w-[72%] max-2xl:w-full">
+      <div className="flex gap-[40px] mt-[40px] max-2xl:flex-col pb-1 relative">
+        <div className="flex gap-[40px] flex-col flex-grow max-2xl:w-full">
           {getOrders.next.map((order: TOrderData) => {
-            return <Order orderData={order} key={order.order_details.id} />
+            return (
+              <Order 
+                orderData={order} 
+                key={order.order_details.id} 
+                styles={scrollPosition.top >= 345 ? "w-[calc(100%-320px-40px)]" : ""} 
+              />
+            )
           })}
           {!getOrders.reachedLimit && !getOrders.loading && 
           <button className="m-auto block secondary-btn h-[40px] w-[180px]" 
@@ -73,9 +84,15 @@ const MyOrders = () => {
             message="If you are searching for an order, check that you entered the order ID correctly."
           />
         </div>
-        <div className="light-component dark:gray-component overflow-hidden w-[28%] p-5 pt-3">
-          <h4 className="text-[19px] mb-3 font-semibold">Buy it again</h4>
-        </div>
+        <RecommendedProducts 
+          title={"Buy it again"} 
+          URL={`/products/${1}/recommend-customer-bought?limit=${20}`} 
+          column={windowSize >= 1518 ? {
+            fixedPosition: 345,
+            endFixedPosition: 523,
+            rightOffset: ((windowSize - pageSize) / 2) + 11,
+          } : undefined}
+        />
       </div>
     </>
   )

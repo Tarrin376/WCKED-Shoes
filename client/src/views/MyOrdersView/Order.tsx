@@ -13,12 +13,23 @@ import OutsideClickHandler from "react-outside-click-handler";
 import { useWindowSize } from "../../hooks/useWindowSize";
 import CancelOrder from "./CancelOrder";
 import DeliveryInstructionsIcon from "../../assets/delivery-instructions.png";
+import { TOrderStatus } from "../../@types/TOrderStatus";
 
 interface Props {
-  orderData: TOrderData
+  orderData: TOrderData,
+  styles?: string
 }
 
-const Order: React.FC<Props> = ({ orderData }) => {
+const orderStatusColours: {
+  [key in TOrderStatus]: string
+} = {
+  "Order Created": "text-main-text-black dark:text-main-text-white",
+  "Processing": "text-main-text-black dark:text-main-text-white",
+  "Shipped": "text-main-text-black dark:text-main-text-white",
+  "Delivered": "text-green-light dark:text-green-dark",
+}
+
+const Order: React.FC<Props> = ({ orderData, styles }) => {
   const themeContext = useContext(ThemeContext);
   const [orderDetailsPopUp, setOrderDetailsPopUp] = useState(false);
   const [orderHistoryPopUp, setOrderHistoryPopUp] = useState(false);
@@ -38,7 +49,7 @@ const Order: React.FC<Props> = ({ orderData }) => {
 
   return (
     <OutsideClickHandler onOutsideClick={() => togglePopUps(false, false, false)}>
-      <div className="light-component dark:gray-component overflow-hidden">
+      <div className={`light-component dark:gray-component overflow-hidden ${styles}`}>
         <div className="bg-[#f5f5f7] dark:bg-[#3f3f3f] p-4 pt-3 flex justify-between items-center">
           <div className="flex gap-10">
             <div>
@@ -60,13 +71,13 @@ const Order: React.FC<Props> = ({ orderData }) => {
         <div className={`p-4 pt-3 flex flex-col`}>
           <div className="mb-4">
             <div className="flex items-center justify-between">
-              <h4 className="text-[19px] font-semibold">
+              <h4 className="text-[19px] font-semibold text-side-text-light dark:text-side-text-gray">
                 Status:
                 {orderData.order_details.cancelled ? 
                 <span className="text-side-text-red">
                   {` Cancelled`}
                 </span> :
-                <span className={orderData.order_details.order_status === "Delivered" ? "text-green-light dark:text-green-dark" : ""}>
+                <span className={orderStatusColours[orderData.order_details.order_status]}>
                   {` ${orderData.order_details.order_status}`}
                 </span>}
               </h4>
@@ -81,7 +92,7 @@ const Order: React.FC<Props> = ({ orderData }) => {
             <DiscountText 
               name={orderData.order_details.discount.name} 
               percentOff={orderData.order_details.discount.percent_off} 
-              cancelled={orderData.order_details.order_status === "Cancelled"}
+              cancelled={orderData.order_details.cancelled}
             />}
             {!orderData.order_details.cancelled && 
             <div className="flex items-center gap-[7px] mt-[6px]">
@@ -101,8 +112,8 @@ const Order: React.FC<Props> = ({ orderData }) => {
                 {deliveryInstructions ? "Hide Delivery Instructions" : "Show Delivery instructions"}
               </p>
             </div>}
-            {deliveryInstructions && 
-            <p className="text-side-text-light dark:text-side-text-gray">
+            {deliveryInstructions &&
+            <p className="text-side-text-light dark:text-side-text-gray ml-[23px]">
               {orderData.order_details.delivery_instructions}
             </p>}
           </div>
@@ -115,6 +126,7 @@ const Order: React.FC<Props> = ({ orderData }) => {
                   noBorder={index === orderData.items.length - 1}
                   key={index} 
                   styles={"!py-3 max-lg:!py-0"}
+                  buyAgain={true}
                 />
               )
             })}
@@ -130,7 +142,8 @@ const Order: React.FC<Props> = ({ orderData }) => {
               text-main-text-black bg-[#e9ebed] hover:bg-light-border" onClick={() => togglePopUps(!orderDetailsPopUp, false, false)}>
                 {orderDetailsPopUp ? "Hide order details" : "Show order details"}
               </button>
-              {orderData.order_details.order_status !== "Cancelled" && <button className="btn px-4 flex-grow h-[37px] dark:text-main-text-white dark:bg-search-border dark:hover:bg-[#5a5a5a]
+              {!orderData.order_details.cancelled && 
+              <button className="btn px-4 flex-grow h-[37px] dark:text-main-text-white dark:bg-search-border dark:hover:bg-[#5a5a5a]
               text-main-text-black bg-[#e9ebed] hover:bg-light-border" onClick={() => togglePopUps(false, !orderHistoryPopUp, false)}>
                 {orderHistoryPopUp ? "Hide order activity" : "View order activity"}
               </button>}

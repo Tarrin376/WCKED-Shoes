@@ -30,12 +30,12 @@ const CartItemLoading = () => {
             <div className="mt-[8px] h-[15px] loading-light dark:loading-dark max-w-[154px]"></div>
             <div className="mt-[14px] flex justify-between items-center">
               <div className="flex gap-3">
-                <div className="loading-light dark:loading-dark rounded-[5px] px-2 w-[60px] h-[30px] flex items-center justify-center">
+                <div className="loading-light dark:loading-dark rounded-md px-2 w-[60px] h-[30px] flex items-center justify-center">
                 </div>
-                <div className="loading-light dark:loading-dark rounded-[5px] w-[75px] px-2 h-[30px] cursor-pointer text-main-white">
+                <div className="loading-light dark:loading-dark rounded-md w-[75px] px-2 h-[30px] cursor-pointer text-main-white">
                 </div>
               </div>
-              <div className="w-[80px] h-[30px] loading-light dark:loading-dark rounded-[5px]">
+              <div className="w-[80px] h-[30px] loading-light dark:loading-dark rounded-md">
               </div>
             </div>
           </div>

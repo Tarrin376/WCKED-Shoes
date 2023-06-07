@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { TProductCard } from "../@types/TProductCard";
 
 export const useGetRecommended = (URL: string) => {
-  const [products, setProducts] = useState<TProductCard[]>();
+  const [products, setProducts] = useState<TProductCard[]>(); 
 
   useEffect(() => {
     (async () => {

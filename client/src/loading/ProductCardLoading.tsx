@@ -1,5 +1,5 @@
 
-const ProductCardLoading: React.FC<{}> = () => {
+const ProductCardLoading = () => {
   return (
     <div className="dark:gray-component light-component !bg-transparent border-none !shadow-none p-0 w-[265px] h-fit">
       <div className="w-full h-[265px] rounded-[8px] relative bg-center bg-cover dark:loading-dark loading-light"></div>

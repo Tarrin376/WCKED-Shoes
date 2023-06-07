@@ -34,9 +34,6 @@ const defaultText = "Add to bag";
 const loadingText = "Adding to bag...";
 const completedText = "Added to bag";
 
-const boughtTogetherLimit = 3;
-const customerBoughtLimit = 20;
-
 const Product: React.FC<{}> = () => {
   const location = useLocation();
   const [product, setProduct] = useState<Readonly<TProduct | null>>(null);
@@ -48,8 +45,8 @@ const Product: React.FC<{}> = () => {
   const [quantity, setQuantity] = useState<number>(1);
   const navigate = useNavigate();
 
-  const boughtTogetherEndpoint = `/products/${product?.id}/freq-bought-together?limit=${boughtTogetherLimit}`;
-  const customerBoughtEndpoint = `/products/${product?.id}/recommend-customer-bought?limit=${customerBoughtLimit}`
+  const boughtTogetherEndpoint = `/products/${product?.id}/freq-bought-together?limit=${2}`;
+  const customerBoughtEndpoint = `/products/${product?.id}/recommend-customer-bought?limit=${20}`
 
   const updateShoeSize = (size?: TSize) => {
     if (size) {
@@ -208,14 +205,13 @@ const Product: React.FC<{}> = () => {
       <ProductDetails product={product} />
       <FreqBoughtTogether 
         URL={boughtTogetherEndpoint} 
-        styles="pb-8 border-y border-light-border dark:border-main-gray-border pt-5"
+        addToCart={addToCart}
       />
       <RecommendedProducts 
         title="Customers who bought this item also bought" 
         URL={customerBoughtEndpoint}
-        styles="mt-5 mb-[70px]"
+        styles="mb-[50px]"
       />
-      
       <div className="flex max-xl:flex-col gap-6 max-xl:h-fit max-2xl:h-[630px] pb-2">
         <Reviews product={product} />
         <WriteReview product={product} />
