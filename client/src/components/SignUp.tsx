@@ -1,0 +1,115 @@
+import PopUpWrapper from "../wrappers/PopUpWrapper";
+import Star from "./Star";
+import { useState, useEffect } from "react";
+import { isOkPassword, isMediumPassword, isStrongPassword } from "../utils/checkPasswordStrength";
+import { checkEmailAddress, checkPassword, checkEmailAndPass } from "../utils/checkEmailAndPass";
+import axios, { AxiosError } from "axios";
+import ErrorMessage from "./ErrorMessage";
+import { TUser } from "../@types/TUser";
+
+interface Props {
+  setSignUpPopUp: React.Dispatch<React.SetStateAction<boolean>>,
+  openLoginPopUp: () => void,
+  openVerifyEmailPopUp: () => void,
+  emailAddress: string
+  setEmailAddress: React.Dispatch<React.SetStateAction<string>>,
+  password: string,
+  setPassword: React.Dispatch<React.SetStateAction<string>>,
+}
+
+enum passwordStrength {
+  weak,
+  ok,
+  medium,
+  strong
+}
+
+const strengthColours = ["!bg-main-red", "!bg-[#ff8700]", "!bg-[#ffdd00]", "!bg-[#44da25]"];
+const passwordStrengthOptions = 4;
+
+const SignUp: React.FC<Props> = (props) => {
+  const [strength, setStrength] = useState(passwordStrength.weak);
+  const [errorMessage, setErrorMessage] = useState("");
+
+  const createAccount = async (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+
+    try {
+      const findUserRequest = await axios.post<TUser | string>("/users/find", { email: props.emailAddress });
+      if (findUserRequest.status === 200) {
+        if (typeof findUserRequest.data === "string") {
+          props.setSignUpPopUp(false);
+          props.openVerifyEmailPopUp();
+        } else {
+          setErrorMessage("User with this email address already exists.");
+        }
+      } else {
+        setErrorMessage(findUserRequest.data as string);
+      }
+    }
+    catch (error: any) {
+      if (error instanceof AxiosError) {
+        setErrorMessage(error!.response!.data);
+      } else {
+        setErrorMessage(error.message);
+      }
+    }
+  }
+
+  const updatePasswordStrength = (password: string) => {
+    if (isStrongPassword(password)) setStrength(passwordStrength.strong);
+    else if (isMediumPassword(password)) setStrength(passwordStrength.medium);
+    else if (isOkPassword(password)) setStrength(passwordStrength.ok);
+    else setStrength(passwordStrength.weak);
+  }
+
+  useEffect(() => {
+    updatePasswordStrength(props.password);
+  }, [props.password])
+
+  return (
+    <PopUpWrapper setPopUp={props.setSignUpPopUp}>
+      <form>
+        <Star />
+        <h1 className="text-main-text-black dark:text-main-text-white text-2xl mb-2">Sign up</h1>
+        <p className="mb-6 text-side-text-light dark:text-side-text-gray">Create an account and start saving thousands of design hours with a 30-day free trial</p>
+        {errorMessage.length > 0 && <ErrorMessage error={errorMessage} styles="mb-6" />}
+        <div className="flex flex-col gap-2 mb-4">
+          <label htmlFor="email" className="font-semibold">Email address</label>
+          <input type="email" className={`text-box-light dark:text-box h-[45px] ${!checkEmailAddress(props.emailAddress) ? 'text-box-error-focus' : ''}`} 
+          value={props.emailAddress} onChange={(e) => props.setEmailAddress(e.target.value)} id="email" placeholder="example@email.com" />
+        </div>
+        <div className="flex flex-col gap-2 mb-4">
+          <label htmlFor="email" className="font-semibold">Password</label>
+          <input type="password" className={`text-box-light dark:text-box h-[45px] ${!checkPassword(props.password) ? 'text-box-error-focus' : ''}`} 
+          value={props.password} onChange={(e) => props.setPassword(e.target.value)} id="email" placeholder="Must be at least 8 characters" />
+        </div>
+        <div className="flex justify-evenly gap-4 mb-6">
+          {new Array(passwordStrengthOptions).fill(0).map((_, i) => {
+            return (
+              <div className={`pass-strength ${i <= strength ? strengthColours[strength] : ``}`} key={i}>
+              </div>
+            );
+          })}
+        </div>
+        <button type="submit" className={`btn-primary w-full h-[45px] text-base
+        ${checkEmailAndPass(props.emailAddress, props.password) ? 'disabled-btn-light dark:disabled-btn' : ''}`}
+        onClick={createAccount}>
+          Sign up
+        </button>
+        <p className="text-center mt-4 text-side-text-light dark:text-side-text-gray">
+          Already have an account? 
+          <span className="underline font-semibold text-main-black dark:text-main-text-white ml-2 cursor-pointer"
+          onClick={() => {
+            props.setSignUpPopUp(false);
+            props.openLoginPopUp();
+          }}>
+            Log in
+          </span>
+        </p>
+      </form>
+    </PopUpWrapper>
+  )
+};
+
+export default SignUp;
