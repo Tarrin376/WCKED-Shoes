@@ -106,7 +106,7 @@ const Order: React.FC<Props> = ({ orderData, styles }) => {
             </div>}
             {orderData.order_details.delivery_instructions.length > 0 && orderData.order_details.order_status !== "Delivered" 
             && !orderData.order_details.cancelled &&
-            <div className="flex items-center gap-[7px] cursor-pointer" onClick={toggleDeliveryInstructions}>
+            <div className="flex items-center gap-[7px] cursor-pointer mt-[1px]" onClick={toggleDeliveryInstructions}>
               <img src={DeliveryInstructionsIcon} className="w-[16px] h-[16px]" alt="" />
               <p className="text-bg-primary-btn-hover">
                 {deliveryInstructions ? "Hide Delivery Instructions" : "Show Delivery instructions"}

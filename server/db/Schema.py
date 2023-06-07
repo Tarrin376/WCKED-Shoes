@@ -18,7 +18,6 @@ class User(settings.db.Model):
     return {
       "id": self.id,
       "email": self.email,
-      "cart": list(map(lambda item: item.as_dict(), self.cart)),
     }
   
 class HelpfulReview(settings.db.Model):

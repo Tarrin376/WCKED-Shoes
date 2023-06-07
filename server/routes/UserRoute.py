@@ -143,7 +143,7 @@ def checkout_cart():
     order_details = request.get_json()
     token = g.token
     details = checkout_cart_handler(token["sub"]["id"], order_details)
-    resp = Response(json.dumps({"cart": details["cart"], "id": details["id"]}), status=201, mimetype="text/plain")
+    resp = Response(json.dumps({"id": details["id"]}), status=201, mimetype="text/plain")
     resp.set_cookie(key="auth_token", value=details["token"], expires=datetime.datetime.utcnow() + datetime.timedelta(hours=DONT_REMEMBER_DURATION), httponly=True)
     return resp
   except DBException as e:

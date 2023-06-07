@@ -43,8 +43,7 @@ const ProductCard: React.FC<Props> = ({ product, styles, checkbox, setTotalPrice
   }
 
   return (
-    <div className={`dark:gray-component light-component !bg-transparent border-none !shadow-none p-0 h-fit ${styles}
-    ${smallSize ? "w-[220px]" : "w-[265px]"}`}>
+    <div className={`dark:gray-component light-component !bg-transparent border-none !shadow-none ${styles} ${smallSize ? "w-[220px]" : "w-[265px]"}`}>
       <div className={`w-full rounded-[8px] relative bg-center bg-cover border dark:border-search-border dark:shadow-none 
       shadow-light-component-shadow border-light-border ${smallSize ? "h-[220px]" : "h-[265px]"}`} 
       style={{backgroundImage: `url(${product.thumbnail})`}}>

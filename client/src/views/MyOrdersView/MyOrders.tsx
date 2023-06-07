@@ -31,7 +31,7 @@ const MyOrders = () => {
       </h1>
       <div className="flex justify-between 2xl:items-center gap-[40px] max-2xl:gap-7 max-2xl:flex-col">
         {windowSize >= 618 ? 
-        <ul className="flex w-[72%] max-2xl:w-full justify-between flex-grow text-main-text-black dark:text-main-text-white
+        <ul className="flex max-2xl:w-full justify-between flex-grow text-main-text-black dark:text-main-text-white
         border-b border-light-border dark:border-main-gray-border">
           {Object.keys(orderFilters).map((filter: string, index: number) => {
             return (
@@ -52,22 +52,22 @@ const MyOrders = () => {
             )
           })}
         </select>}
-        <div className="flex gap-4 2xl:w-[28%] max-2xl:max-w-[420px] max-md:max-w-full max-sm:flex-col">
-          <input type="text" className="text-box-light dark:text-box flex-grow h-[39px]" placeholder="Search by order ID" ref={searchRef} />
-          <button className={`secondary-btn w-[120px] h-[39px] ${getOrders.loading ? "dark:disabled-btn disabled-btn-light" : ""}`} 
+        <div className="flex gap-4 2xl:w-[320px] max-2xl:max-w-[420px] max-md:max-w-full max-sm:flex-col">
+          <input type="text" className="text-box-light dark:text-box w-[60%] h-[39px]" placeholder="Search by order ID" ref={searchRef} />
+          <button className={`secondary-btn w-[40%] h-[39px] ${getOrders.loading ? "dark:disabled-btn disabled-btn-light" : ""}`} 
           onClick={getOrders.handleSearch}>
             Search Orders
           </button>
         </div>
       </div>
-      <div className="flex gap-[40px] mt-[40px] max-2xl:flex-col pb-1 relative">
+      <div className="flex gap-[40px] mt-[40px] max-2xl:flex-col pb-1 relative 2xl:min-h-[100vh]">
         <div className="flex gap-[40px] flex-col flex-grow max-2xl:w-full">
           {getOrders.next.map((order: TOrderData) => {
             return (
               <Order 
                 orderData={order} 
                 key={order.order_details.id} 
-                styles={scrollPosition.top >= 345 ? "w-[calc(100%-320px-40px)]" : ""} 
+                styles={scrollPosition.top >= 345 && windowSize >= 1518 ? "w-[calc(100%-320px-40px)]" : ""} 
               />
             )
           })}
@@ -82,6 +82,7 @@ const MyOrders = () => {
             reachedLimit={getOrders.reachedLimit}
             title="No orders found here."
             message="If you are searching for an order, check that you entered the order ID correctly."
+            styles={scrollPosition.top >= 345 && windowSize >= 1518 ? "w-[calc(100%-320px-40px)]" : ""} 
           />
         </div>
         <RecommendedProducts 

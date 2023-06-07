@@ -1,7 +1,7 @@
 
 const ProductCardLoading = () => {
   return (
-    <div className="dark:gray-component light-component !bg-transparent border-none !shadow-none p-0 w-[265px] h-fit">
+    <div className="dark:gray-component light-component !bg-transparent border-none !shadow-none w-[265px]">
       <div className="w-full h-[265px] rounded-[8px] relative bg-center bg-cover dark:loading-dark loading-light"></div>
       <div className="border-b border-light-border dark:border-[#6f6f6f63] pb-4">
         <div className="mt-5 w-full h-[20px] dark:loading-dark loading-light">

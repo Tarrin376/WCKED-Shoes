@@ -282,9 +282,8 @@ def checkout_cart_handler(user_id, order_details):
       settings.db.session.commit()
 
     token = generate_auth_token(user.as_dict())
-    return {"token": token, "cart": [], "id" : order.id}
-  except exc.SQLAlchemyError as e:
-    print(e)
+    return {"token": token, "id" : order.id}
+  except exc.SQLAlchemyError:
     raise DBException("Unable to checkout. Try again.", 500)
   except KeyError:
     raise DBException("Important information missing from order details", 400)
