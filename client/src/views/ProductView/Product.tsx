@@ -62,14 +62,18 @@ const Product: React.FC<{}> = () => {
     setQuantity((cur) => Math.max(1, Math.min(cur + value, quantityLimit)));
   }
 
-  const addToCart = async (): Promise<boolean> => {
-    const inStock = await checkItemStock(curSize!.size);
-    if (!inStock || !curSize) {
+  const addToCart = async (productId: number, size: string | undefined): Promise<boolean> => {
+    if (size === undefined) {
+      return false;
+    }
+
+    const inStock = await checkItemStock(size);
+    if (!inStock) {
       return false;
     }
 
     try {
-      const response = await axios.post<TUser>(`/users/cart/${product!.id}/${curSize!.size}/${quantity}`);
+      const response = await axios.post<TUser>(`/users/cart/${productId}/${size}/${quantity}`);
       userContext?.setUserData((cur) => {
         return {
           ...cur,
@@ -168,8 +172,8 @@ const Product: React.FC<{}> = () => {
         </div>
         <div className="w-1/3 max-xl:w-full xl:h-[540px] bg-transparent xl:px-6">
           <div className="mb-4 flex gap-3">
-            {product.num_sold >= popularSoldCount && <p className="best-seller text-base h-fit py-1 max-sm:text-[15px]">Best Seller</p>}
-            <p className={`${getCarbonFootprintColour(product.carbon_footprint)} best-seller text-base h-fit py-1 max-sm:text-[15px]`}>
+            {product.num_sold >= popularSoldCount && <p className="popular text-base h-fit py-1 max-sm:text-[15px]">Popular</p>}
+            <p className={`${getCarbonFootprintColour(product.carbon_footprint)} popular text-base h-fit py-1 max-sm:text-[15px]`}>
               {`${product.carbon_footprint} kg CO2E`}
             </p>
           </div>
@@ -188,7 +192,7 @@ const Product: React.FC<{}> = () => {
           {product.sizes && <Sizes sizes={product.sizes} curSize={curSize} updateShoeSize={updateShoeSize} />}
           {errorMessage.length > 0 && <ErrorMessage error={errorMessage} styles="w-fit px-3" />}
           <div className="mt-7 flex gap-5">
-            <Button action={addToCart} completedText={completedText} defaultText={defaultText} loadingText={loadingText} 
+            <Button action={() => addToCart(product!.id, !curSize ? curSize : curSize.size)} completedText={completedText} defaultText={defaultText} loadingText={loadingText} 
             styles={`btn-primary h-[48px] w-[180px] flex items-center justify-center gap-4 px-4
             ${!curSize || userContext?.email === "" ? 'disabled-btn-light dark:disabled-btn' : ''}`}>
               <img src={DarkCartIcon} className="w-[23px] h-[23px]" alt="" />

@@ -4,23 +4,26 @@ import { getStockText } from "../utils/getStockText";
 import { getCarbonFootprintColour } from "../utils/getCarbonFootprintColour";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
+import { TSize } from "../@types/TSize";
+import { TCheckedItem } from "../@types/TCheckedItem";
 
 interface Props {
   product: Readonly<TProductCard>,
   styles?: string,
-  checkbox?: boolean,
   setTotalPrice?: React.Dispatch<React.SetStateAction<number>>,
   smallSize?: boolean,
-  setCheckedItems?: React.Dispatch<React.SetStateAction<TProductCard[]>>
+  setCheckedItems?: React.Dispatch<React.SetStateAction<Readonly<TCheckedItem[]>>>,
+  dropdown?: boolean,
 }
 
 export const popularSoldCount = 2;
 
-const ProductCard: React.FC<Props> = ({ product, styles, checkbox, setTotalPrice, smallSize, setCheckedItems }) => {
+const ProductCard: React.FC<Props> = ({ product, styles, setTotalPrice, smallSize, setCheckedItems, dropdown }) => {
   const navigate = useNavigate();
   const stockText = getStockText(product.stock);
   const carbonFootprintColour = getCarbonFootprintColour(product.carbon_footprint);
-  const [checked, setChecked] = useState<boolean>(true);
+  const [checked, setChecked] = useState<boolean>(false);
+  const [size, setSize] = useState<string>("");
 
   const goToProduct = () => {
     navigate(`/products/${product.id}`);
@@ -34,33 +37,62 @@ const ProductCard: React.FC<Props> = ({ product, styles, checkbox, setTotalPrice
     if (checked) {
       setTotalPrice((cur) => cur - product.price);
       setChecked(false);
-      setCheckedItems((cur) => cur.filter((curProd: TProductCard) => curProd.id !== product.id));
+      setCheckedItems((cur) => cur.filter((item: TCheckedItem) => item.productId !== product.id || item.size !== size));
     } else {
       setTotalPrice((cur) => cur + product.price);
       setChecked(true);
-      setCheckedItems((cur) => [...cur, product]);
+      setCheckedItems((cur) => [...cur, { productId: product.id, size: size }]);
+    }
+  }
+
+  const updateSize = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    if (setCheckedItems) {
+      const nextSize = e.target.value;
+      setCheckedItems((cur) => {
+        return (
+          [...cur.filter((item: TCheckedItem) => item.productId !== product.id || item.size !== size), {
+            productId: product.id, 
+            size: nextSize
+          }]
+        )
+      });
+      setSize(nextSize);
     }
   }
 
   return (
-    <div className={`dark:gray-component light-component !bg-transparent border-none !shadow-none ${styles} ${smallSize ? "w-[220px]" : "w-[265px]"}`}>
+    <div className={`dark:gray-component light-component !bg-transparent border-none !shadow-none 
+    ${styles} ${smallSize ? "w-[220px]" : "w-[265px]"}`}>
       <div className={`w-full rounded-[8px] relative bg-center bg-cover border dark:border-search-border dark:shadow-none 
       shadow-light-component-shadow border-light-border ${smallSize ? "h-[220px]" : "h-[265px]"}`} 
       style={{backgroundImage: `url(${product.thumbnail})`}}>
         <Rating rating={product.rating} styles={"absolute right-2 top-2 !bg-no-reviews-bg"} />
-        {product.num_sold >= popularSoldCount && !smallSize && <p className="best-seller absolute top-2 left-2">Best Seller</p>}
-        {checkbox && <input type="checkbox" checked={checked} onChange={toggleChecked} className="absolute bottom-2 right-2 w-[17px] h-[17px]" />}
+        {product.num_sold >= popularSoldCount && !smallSize && <p className="popular absolute top-2 left-2">Popular</p>}
+        {dropdown && product && 
+        <div className="absolute right-2 bottom-2 flex items-center gap-2">
+          <input type="checkbox" checked={checked} onChange={toggleChecked} className="w-[17px] h-[17px]" />
+          <select className={`rounded-md px-2 py-[2px] text-main-text-white bg-no-reviews-bg ${!checked ? "opacity-50" : ""}`} 
+          onChange={updateSize} defaultValue={""}>
+            <option value={""}>Select Size</option>
+            {product.sizes.filter((size: TSize) => size.stock > 0).map((size: TSize, index: number) => {
+              return (
+                <option value={size.size} key={index}>
+                  {size.size}
+                </option>
+              );
+            })}
+          </select>
+        </div>}
       </div>
       <div className="border-b border-light-border dark:border-[#6f6f6f63] pb-4">
-        <h3 className={`mt-3 text-[18px] cursor-pointer transition ease-in duration-150 
-        hover:text-bg-primary-btn-hover text-ellipsis whitespace-nowrap overflow-hidden ${smallSize ? "text-[16px]" : ""}
-        ${!checked ? "line-through text-side-text-light dark:text-side-text-gray" : ""}`}
+        <h3 className={`mt-3 text-[18px] cursor-pointer hover:!text-side-text-blue btn 
+        text-ellipsis whitespace-nowrap overflow-hidden ${smallSize ? "text-[16px]" : ""}`}
         onClick={goToProduct}>
           {product.name}
         </h3>
         <div className={`flex ${smallSize ? "flex-col items-start mt-1 gap-[6px]" : "items-center justify-between mt-2"}`}>
           <p className="text-[15px] dark:text-side-text-gray text-side-text-light">Carbon footprint</p>
-          <p className={`best-seller ${carbonFootprintColour}`}>{`${product.carbon_footprint} kg CO2E`}</p>
+          <p className={`popular ${carbonFootprintColour}`}>{`${product.carbon_footprint} kg CO2E`}</p>
         </div>
       </div>
       <div className="mt-1 flex justify-between items-center h-[37px]">

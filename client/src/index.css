@@ -10,13 +10,13 @@
     @apply rounded-md transition ease-linear duration-150 text-[15px];
   }
   .gray-component {
-    @apply bg-main-gray rounded-[10px] border border-[#333333] shadow-gray-component-shadow text-main-text-white focus:!outline-none;
+    @apply bg-main-gray rounded-[10px] border border-[#2c2c2c] shadow-gray-component-shadow text-main-text-white focus:!outline-none;
   }
   .light-component {
     @apply bg-nav-light rounded-[10px] border border-light-border text-main-text-black shadow-light-component-shadow;
   }
-  .best-seller {
-    @apply bg-[#1cad21] text-main-text-white px-3 rounded-md text-sm h-[22px] w-fit;
+  .popular {
+    @apply bg-[#9610ef] text-main-text-white px-3 rounded-md text-sm h-[22px] w-fit;
   }
   .loading-dark {
     @apply animate-pulse bg-loading-gray rounded-[8px];

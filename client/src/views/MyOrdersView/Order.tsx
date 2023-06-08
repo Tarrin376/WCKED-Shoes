@@ -145,11 +145,13 @@ const Order: React.FC<Props> = ({ orderData }) => {
               Cancel Order
             </button>}
             <div className="flex gap-3 max-xs:flex-col">
-              <button className="secondary-btn px-4 flex-grow h-[37px]" onClick={() => togglePopUps(!orderDetailsPopUp, false, false)}>
+              <button className="text-main-text-black bg-[#ececee] hover:bg-[#e6e6e7] dark:bg-[#464646] dark:dark:hover:bg-[#4e4e4e] 
+              dark:text-main-text-white rounded-md px-4 flex-grow h-[37px] btn" onClick={() => togglePopUps(!orderDetailsPopUp, false, false)}>
                 {orderDetailsPopUp ? "Hide order details" : "Show order details"}
               </button>
               {!orderData.order_details.cancelled && 
-              <button className="secondary-btn px-4 flex-grow h-[37px]" onClick={() => togglePopUps(false, !orderHistoryPopUp, false)}>
+              <button className="text-main-text-black bg-[#ececee] hover:bg-[#e6e6e7] dark:bg-[#464646] dark:dark:hover:bg-[#4e4e4e] 
+              dark:text-main-text-white rounded-md px-4 flex-grow h-[37px] btn" onClick={() => togglePopUps(false, !orderHistoryPopUp, false)}>
                 {orderHistoryPopUp ? "Hide order activity" : "View order activity"}
               </button>}
             </div>

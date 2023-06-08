@@ -74,8 +74,8 @@ const NavSidebar: React.FC<NavSidebarProps> = ({ props, navSidebar, toggleNavSid
   return (
     <>
       <OutsideClickHandler onOutsideClick={() => closeSidebar()}>
-        <div className={`fixed w-[320px] h-[100vh] transition-all ease-in duration-100 z-10 flex flex-col gap-8 top-0 p-5 
-        dark:shadow-gray-component-shadow shadow-light-component-shadow ${navSidebar ? "left-0" : "left-[-320px]"} dark:bg-nav-dark bg-nav-light`}>
+        <div className={`fixed w-[280px] h-[100vh] transition-all ease-in duration-100 z-10 flex flex-col gap-8 top-0 p-5 
+        dark:shadow-gray-component-shadow shadow-light-component-shadow ${navSidebar ? "left-0" : "left-[-280px]"} dark:bg-nav-dark bg-nav-light`}>
           <div>
             <div className="flex items-center justify-between">
               <h1 className="text-2xl text-main-text-black dark:text-main-text-white">The Shoes</h1>
@@ -92,7 +92,7 @@ const NavSidebar: React.FC<NavSidebarProps> = ({ props, navSidebar, toggleNavSid
             }} className="mt-16">
               <div className="flex items-center text-box-light dark:text-box gap-3">
                 <img src={SearchIcon} className="w-[23px] h-[23px]" alt="" />
-                <input type="text" value={props.searchQuery} placeholder="Search for order or product" 
+                <input type="text" value={props.searchQuery} placeholder="Search order or product" 
                 className="w-[370px] bg-transparent text-[15px] placeholder:text-search-placeholder focus:outline-none" 
                 onChange={props.updateSearchQuery} />
               </div>
@@ -124,8 +124,8 @@ const NavSidebar: React.FC<NavSidebarProps> = ({ props, navSidebar, toggleNavSid
           </div>
         </div>
       </OutsideClickHandler>
-      <div className={`fixed w-[calc(100vw-320px)] transition-all ease-in duration-100 z-10 h-[100vh] top-0 
-      ${navSidebar ? "left-[320px]" : "left-[100vw]"} bg-no-reviews-bg opacity-40 dark:opacity-70`}>
+      <div className={`fixed w-[calc(100vw-280px)] transition-all ease-in duration-100 z-10 h-[100vh] top-0 
+      ${navSidebar ? "left-[280px]" : "left-[100vw]"} bg-no-reviews-bg opacity-40 dark:opacity-70`}>
       </div>
     </>
   )

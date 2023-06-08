@@ -96,7 +96,8 @@ class Product(settings.db.Model):
       "carbon_footprint": self.carbon_footprint,
       "num_sold": self.num_sold,
       "thumbnail": self.thumbnail,
-      "stock": functools.reduce(lambda x, y: x + y, list(map(lambda size: size.stock, self.sizes)), 0)
+      "stock": functools.reduce(lambda x, y: x + y, list(map(lambda size: size.stock, self.sizes)), 0),
+      "sizes": list(map(lambda size: size.as_dict(), self.sizes)),
     }
 
 class ProductImage(settings.db.Model):

@@ -13,7 +13,6 @@ import InvoiceIcon from "../../assets/invoice.png";
 import { ThemeContext } from "../../providers/ThemeProvider";
 import { TOrderData } from "../../@types/TOrderData";
 import { getShortDateFormatRange } from "../../utils/getShortDateFormatRange";
-import { Link } from "react-router-dom";
 
 const OrderPlaced = () => {
   const location = useLocation();
@@ -141,11 +140,9 @@ const OrderPlaced = () => {
           </div>
         </div>
       </div>
-      <Link to="/">
-        <button className="btn-primary w-[180px] h-[45px] m-auto block mt-[70px]">
-          Continue shopping
-        </button>
-      </Link>
+      <button className="btn-primary w-[180px] h-[45px] m-auto block mt-[70px]" onClick={() => navigate("/")}>
+        Continue shopping
+      </button>
     </div>
   )
 };

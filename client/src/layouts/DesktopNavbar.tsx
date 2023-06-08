@@ -36,7 +36,7 @@ const DesktopNavbar: React.FC<Props> = (props) => {
         <form onSubmit={props.searchHandler}>
           <div className="flex items-center text-box-light dark:text-box gap-3">
             <img src={SearchIcon} className="w-[23px] h-[23px]" alt="" />
-            <input type="text" value={props.searchQuery} placeholder="Search for order or product" 
+            <input type="text" value={props.searchQuery} placeholder="Search order or product" 
             className={`${windowSize <= 1000 ? "w-[250px]" : "w-[320px]"} bg-transparent text-[15px] placeholder:text-search-placeholder-light 
             dark:placeholder:text-search-placeholder-dark focus:outline-none`}
             onChange={props.updateSearchQuery} />

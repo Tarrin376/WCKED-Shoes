@@ -29,7 +29,7 @@ const OrderActivity: React.FC<Props> = ({ dates, estDelivery }) => {
 
 const Status: React.FC<{ activity: TOrderActivty, isLast: boolean, estDelivery: string }> = ({ activity, isLast, estDelivery }) => {
   return (
-    <div className={`pl-6 ml-2 ${!isLast ? "border-l border-light-border dark:border-main-gray-border border-dashed" : ""} h-[60px] relative`}>
+    <div className={`pl-6 ml-2 ${!isLast ? "border-l border-light-border dark:border-main-gray-border" : ""} h-[60px] relative`}>
       <div className="absolute top-[-16px]">
         <h5 className="text-main-text-black dark:text-main-text-white">{activity.label}</h5>
         <p className="text-[15px] text-side-text-light dark:text-side-text-gray">

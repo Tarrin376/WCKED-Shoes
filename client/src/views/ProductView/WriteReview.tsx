@@ -16,7 +16,7 @@ const minReviewLength = 100;
 const maxReviewLength = 400;
 
 const WriteReview: React.FC<Props> = ({ product }) => {
-  const [rating, setRating] = useState<number>(1);
+  const [rating, setRating] = useState<number>(5);
   const [reviewTitle, setReviewTitle] = useState<string>("");
   const [review, setReview] = useState<string>("");
   const [errorMessage, setErrorMessage] = useState<string>("");

@@ -6,15 +6,17 @@ export const useGetRecommended = (URL: string) => {
   const [products, setProducts] = useState<TProductCard[]>(); 
 
   useEffect(() => {
-    (async () => {
-      try {
-        const response = await axios.get<TProductCard[]>(URL);
-        setProducts(response.data);
-      }
-      catch (error: any) {
-        console.log(error);
-      }
-    })()
+    setTimeout(() => {
+      (async () => {
+        try {
+          const response = await axios.get<TProductCard[]>(URL);
+          setProducts(response.data);
+        }
+        catch (error: any) {
+          console.log(error);
+        }
+      })()
+    }, 3000)
   }, [URL]);
 
   return products;

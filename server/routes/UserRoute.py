@@ -176,6 +176,6 @@ def cancel_order(order_id):
   try:
     token = g.token
     cancel_order_handler(order_id, token["sub"]["id"])
-    return Response(f"Order number {order_id} was successfully cancelled. Please refresh the page to see changes.", status=200, mimetype="text/plain")
+    return Response(f"Order was successfully cancelled.", status=200, mimetype="text/plain")
   except DBException as e:
     return Response(e.message, status=e.status_code, mimetype="text/plain")

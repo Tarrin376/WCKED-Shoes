@@ -1,3 +1,4 @@
+import { TSize } from "./TSize"
 
 export type TProductCard = {
   id: number,
@@ -7,5 +8,6 @@ export type TProductCard = {
   carbon_footprint: number,
   num_sold: number,
   thumbnail: string,
-  stock: number
+  stock: number,
+  sizes: readonly TSize[]
 }
