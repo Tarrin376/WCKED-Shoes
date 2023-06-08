@@ -107,7 +107,7 @@ const Checkout = () => {
     }
 
     if (!validForm) {
-      setErrorMessage("One or more required fields are empty. Please fill them in before continuing.");
+      setErrorMessage("One or more required fields are empty or invalid.");
       return;
     }
 
@@ -154,83 +154,91 @@ const Checkout = () => {
 
   return (
     <div className="max-w-screen-xl m-auto pb-1">
-      <form className="flex md:gap-16 max-md:gap-7 max-xl:flex-col-reverse h-fit" onSubmit={handlePayment} ref={formRef}>
-        <div className="xl:w-1/2">
-          <p className="md:text-2xl max-md:text-xl text-main-text-black dark:text-main-text-white pb-3">Delivery Information</p>
-          <div className="light-component dark:gray-component p-5 pt-3 md:mb-10 max-md:mb-7 flex gap-3 flex-col">
-            <div className="flex gap-5 items-center max-md:flex-col max-md:gap-3">
-              <div className="md:w-1/2 max-md:w-full">
-                <label className="block mb-3" htmlFor={"country/region"}>Country/region</label>
-                <CountryDropdown 
-                  selectedCountry={selectedCountry} 
-                  setSelectedCountry={setSelectedCountry} 
-                />
+      <form className="flex max-xl:gap-7 gap-16 max-xl:flex-col-reverse h-fit" onSubmit={handlePayment} ref={formRef}>
+        <div className="xl:w-1/2 flex flex-col gap-7">
+          <div>
+            <p className="md:text-2xl max-md:text-xl text-main-text-black dark:text-main-text-white pb-3">Delivery Information</p>
+            <div className="light-component dark:gray-component p-5 pt-3 flex gap-3 flex-col">
+              <div className="flex gap-5 items-center max-md:flex-col max-md:gap-3">
+                <div className="md:w-1/2 max-md:w-full">
+                  <label className="block mb-3" htmlFor={"country/region"}>Country/region</label>
+                  <CountryDropdown 
+                    selectedCountry={selectedCountry} 
+                    setSelectedCountry={setSelectedCountry} 
+                  />
+                </div>
+                <FormInput label="Mobile number" type="text" styles="md:w-1/2 max-md:w-full" optionalText={"optional"} maxLength={15} />
               </div>
-              <FormInput label="Mobile number" type="text" styles="md:w-1/2 max-md:w-full" optionalText={"optional"} maxLength={15} />
-            </div>
-            <FormInput 
-              label="Delivery instructions" 
-              type="text" styles="w-full" 
-              placeholder="e.g. Leave behind the black bin next to the shed"
-              optionalText={"optional"}
-              maxLength={100}
-            />
-            <div className="flex gap-5 items-center max-md:flex-col max-md:gap-3">
-              <FormInput label="Address line 1" type="text" styles="md:w-1/2 max-md:w-full" maxLength={46}  />
-              <FormInput label="Address line 2" type="text" styles="md:w-1/2 max-md:w-full" optionalText={"optional"} maxLength={46} />
-            </div>
-            <div className="flex gap-5 items-center max-md:flex-col max-md:gap-3">
-              <FormInput label="Town/City" type="text" styles="md:w-1/2 max-md:w-full" maxLength={30} />
-              <FormInput label="Postcode" type="text" styles="md:w-1/2 max-md:w-full" maxLength={10} />
+              <FormInput 
+                label="Delivery instructions" 
+                type="text" styles="w-full" 
+                placeholder="e.g. Leave behind the black bin next to the shed"
+                optionalText={"optional"}
+                maxLength={100}
+              />
+              <div className="flex gap-5 items-center max-md:flex-col max-md:gap-3">
+                <FormInput label="Address line 1" type="text" styles="md:w-1/2 max-md:w-full" maxLength={46}  />
+                <FormInput label="Address line 2" type="text" styles="md:w-1/2 max-md:w-full" optionalText={"optional"} maxLength={46} />
+              </div>
+              <div className="flex gap-5 items-center max-md:flex-col max-md:gap-3">
+                <FormInput label="Town/City" type="text" styles="md:w-1/2 max-md:w-full" maxLength={30} />
+                <FormInput label="Postcode" type="text" styles="md:w-1/2 max-md:w-full" maxLength={10} />
+              </div>
             </div>
           </div>
-          <p className="md:text-2xl max-md:text-xl text-main-text-black dark:text-main-text-white pb-3">Payment</p>
-          <div className="light-component dark:gray-component p-5 pt-3 flex gap-3 flex-col">
-            <div className="flex gap-5 items-center max-md:flex-col max-md:gap-3">
-              <FormInput label="First name" type="text" styles="md:w-1/2 max-md:w-full" maxLength={30} />
-              <FormInput label="Last name" type="text" styles="md:w-1/2 max-md:w-full" maxLength={30} />
+          <div className="flex-grow flex flex-col">
+            <p className="md:text-2xl max-md:text-xl text-main-text-black dark:text-main-text-white pb-3">Payment</p>
+            <div className="light-component dark:gray-component p-5 pt-3 flex justify-between flex-col flex-grow">
+              <div className="flex flex-col gap-3">
+                <div className="flex gap-5 items-center max-md:flex-col max-md:gap-3">
+                  <FormInput label="First name" type="text" styles="md:w-1/2 max-md:w-full" maxLength={30} />
+                  <FormInput label="Last name" type="text" styles="md:w-1/2 max-md:w-full" maxLength={30} />
+                </div>
+                <FormInput label="Email address" type="text" styles="md:w-full max-md:w-full" maxLength={320} />
+                <FormInput 
+                  label="Credit card number" type="text" 
+                  styles="w-full" showCardIcons={true}
+                  maxLength={19}
+                />
+                <div className="flex gap-5 items-center max-md:flex-col max-md:gap-3">
+                  <FormInput label="Expiry date" type="text" styles="md:w-1/2 max-md:w-full" optionalText={"yyyy-mm-dd"} maxLength={10} />
+                  <FormInput label="CVV" type="text" styles="md:w-1/2 max-md:w-full" maxLength={3} />
+                </div>
+                <FormInput 
+                  label="Apply discount code" 
+                  type="text" 
+                  styles="w-full" 
+                  optionalText={"No more than 1 per checkout"} 
+                  discountText={discountText}
+                  discountError={discountError}
+                  maxLength={50}
+                />
+                {discount.name.length === 0 && 
+                <button type="button" className="secondary-btn w-[120px] h-[35px] mt-1" onClick={applyDiscountCode}>
+                  Apply discount
+                </button>}
+              </div>
+              <div>
+                {cartItems.cart && methods.selectedMethod ? 
+                <CartPriceSummary 
+                  subtotal={cartItems.subtotal} 
+                  shipping={methods.selectedMethod.price} 
+                  discount={cartItems.subtotal * discount.percent_off}
+                  styles="pt-6"
+                /> : 
+                <CartPriceSummaryLoading />}
+                {errorMessage.length > 0 && <ErrorMessage error={errorMessage} styles="!mt-4" />}
+                <button className={`btn-primary w-full mt-6 h-[45px] text-base ${!cartItems.cart ? "disabled-btn-light dark:disabled-btn" : ""}`} type="submit">
+                  Make Payment
+                </button>
+              </div>
             </div>
-            <FormInput label="Email address" type="text" styles="md:w-full max-md:w-full" maxLength={320} />
-            <FormInput 
-              label="Credit card number" type="text" 
-              styles="w-full" showCardIcons={true}
-              maxLength={19}
-            />
-            <div className="flex gap-5 items-center max-md:flex-col max-md:gap-3">
-              <FormInput label="Expiry date" type="text" styles="md:w-1/2 max-md:w-full" optionalText={"yyyy-mm-dd"} maxLength={10} />
-              <FormInput label="CVV" type="text" styles="md:w-1/2 max-md:w-full" maxLength={3} />
-            </div>
-            <FormInput 
-              label="Apply discount code" 
-              type="text" 
-              styles="w-full" 
-              optionalText={"No more than 1 per checkout"} 
-              discountText={discountText}
-              discountError={discountError}
-              maxLength={50}
-            />
-            {discount.name.length === 0 && 
-            <button type="button" className="secondary-btn w-[120px] h-[35px] mt-1" onClick={applyDiscountCode}>
-              Apply discount
-            </button>}
-            {cartItems.cart && methods.selectedMethod ? 
-            <CartPriceSummary 
-              subtotal={cartItems.subtotal} 
-              shipping={methods.selectedMethod.price} 
-              discount={cartItems.subtotal * discount.percent_off}
-              styles="pt-3"
-            /> : 
-            <CartPriceSummaryLoading />}
-            {errorMessage.length > 0 && <ErrorMessage error={errorMessage} styles="!mt-4" />}
-            <button className={`btn-primary w-full mt-4 h-[45px] text-base ${!cartItems.cart ? "disabled-btn-light dark:disabled-btn" : ""}`} type="submit">
-              Make Payment
-            </button>
           </div>
         </div>
-        <div className="xl:w-1/2">
+        <div className="xl:w-1/2 flex flex-col max-xl:flex-col-reverse gap-7">
           <div>
             <p className="md:text-2xl max-md:text-xl text-main-text-black dark:text-main-text-white pb-3">Shipping Method</p>
-            <div className="light-component dark:gray-component flex h-[50%] flex-col justify-between md:mb-10 max-md:mb-7" onChange={updateDeliveryMethod}>
+            <div className="light-component dark:gray-component flex flex-col justify-between" onChange={updateDeliveryMethod}>
               {methods.selectedMethod && methods.deliveryMethods.map((method: TDeliveryMethod, index: number) => {
                 return (
                   <ShippingMethod 
@@ -243,11 +251,11 @@ const Checkout = () => {
               })}
             </div>
           </div>
-          <div>
+          <div className="flex-grow flex flex-col">
             <p className="md:text-2xl max-md:text-xl text-main-text-black dark:text-main-text-white pb-3">Order Summary</p>
-            <div className="light-component dark:gray-component p-5 flex flex-col justify-between h-[758px]">
+            <div className="light-component dark:gray-component p-5 flex flex-col justify-between flex-grow">
               {cartItems.cart ? 
-              <div className="h-[891px] overflow-y-scroll pr-5">
+              <div className="max-h-[670px] overflow-y-scroll pr-5">
                 {cartItems.cart.map((cartItem: TCartItem, index: number) => {
                   return (
                     <CheckoutItem
@@ -258,7 +266,7 @@ const Checkout = () => {
                     />
                   )
                 })}
-              </div> : 
+              </div> :
               <CheckoutItemsLoading />}
               {cartItems.cart && methods.selectedMethod ? 
               <CartPriceSummary 

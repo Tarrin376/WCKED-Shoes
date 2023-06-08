@@ -42,8 +42,10 @@ export const usePagination = <T1, T2>(order: readonly TOrderByOption<T2>[], limi
   }
 
   const handleFilter = (filter: string) => {
-    setSearchQuery("");
-    setFilter(filter);
+    if (!loading) {
+      setSearchQuery("");
+      setFilter(filter);
+    }
   }
 
   const resetState = () => {
@@ -58,26 +60,28 @@ export const usePagination = <T1, T2>(order: readonly TOrderByOption<T2>[], limi
 
   useEffect(() => {
     setLoading(true);
-    (async () => {
-      try {
-        const response = await axios.get<{ meta: TPaginationMetaData, next: T1[] }>(queryURL);
-        if (response.status === 200) {
-          setNext((state) => [...state, ...response.data.next]);
-          setTotalFound(response.data.meta.total_count);
-          setErrorMessage("");
-          
-          if (!response.data.meta.has_next) {
-            setReachedLimit(true);
+    setTimeout(() => {
+      (async () => {
+        try {
+          const response = await axios.get<{ meta: TPaginationMetaData, next: T1[] }>(queryURL);
+          if (response.status === 200) {
+            setNext((state) => [...state, ...response.data.next]);
+            setTotalFound(response.data.meta.total_count);
+            setErrorMessage("");
+            
+            if (!response.data.meta.has_next) {
+              setReachedLimit(true);
+            }
           }
         }
-      }
-      catch (error: any) {
-        setErrorMessage(error.message);
-      }
-      finally {
-        setLoading(false);
-      }
-    })()
+        catch (error: any) {
+          setErrorMessage(error.message);
+        }
+        finally {
+          setLoading(false);
+        }
+      })()
+    }, 3000);
   }, [queryURL, setLoading])
 
   const data = {

@@ -18,7 +18,6 @@ interface Props {
   searchHandler: (e: React.FormEvent<HTMLFormElement>) => void,
   logout: () => Promise<void>,
   openCartPage: () => void,
-  toggleTheme: () => void,
 }
 
 const DesktopNavbar: React.FC<Props> = (props) => {
@@ -64,9 +63,9 @@ const DesktopNavbar: React.FC<Props> = (props) => {
             Sign up
           </button>
         </>}
-        {themeContext?.darkMode ? 
-        <img className="cursor-pointer w-[30px] h-[30px]" src={LightThemeIcon} alt="Light Theme" onClick={props.toggleTheme} /> : 
-        <img className="cursor-pointer w-[30px] h-[30px]" src={DarkThemeIcon} alt="Dark Theme" onClick={props.toggleTheme} />}
+        {themeContext && (themeContext?.darkMode ? 
+        <img className="cursor-pointer w-[30px] h-[30px]" src={LightThemeIcon} alt="Light Theme" onClick={themeContext.toggleTheme} /> : 
+        <img className="cursor-pointer w-[30px] h-[30px]" src={DarkThemeIcon} alt="Dark Theme" onClick={themeContext.toggleTheme} />)}
       </div>
     </nav>
   )

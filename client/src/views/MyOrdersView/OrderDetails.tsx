@@ -18,7 +18,7 @@ const OrderDetails: React.FC<Props> = ({ order }) => {
       <div className="flex lg:gap-6 max-md:gap-4 items-center w-2/3 max-lg:w-full max-md:flex-col">
         <div className="w-1/2 max-md:w-full pb-1 md:border-r md:pr-6 md:border-light-border">
           <h4 className="text-[19px] mb-2 font-semibold max-xl:text-center">Customer Info</h4>
-          <OrderInfo info={order.mobile_number} title="Mobile Number" stylesOuter="mb-1 max-xl:items-center" stylesInner="text-bg-primary-btn-hover" />
+          <OrderInfo info={order.mobile_number} title="Mobile Number" stylesOuter="mb-1 max-xl:items-center" stylesInner="text-side-text-blue" />
           <OrderInfo info={order.country} title="Country" stylesOuter="mb-1 max-xl:items-center" stylesInner="text-main-text-black dark:text-main-text-white" />
           <OrderInfo info={order.postcode} title="Postcode" stylesOuter="mb-1 max-xl:items-center" stylesInner="text-main-text-black dark:text-main-text-white" />
           <div className="flex flex-wrap max-xl:items-center max-xl:flex-col justify-between">
@@ -26,7 +26,7 @@ const OrderDetails: React.FC<Props> = ({ order }) => {
               <p className="text-[15px] text-side-text-light dark:text-side-text-gray">Card Number</p>
               <CardImages styles="w-[25px] h-[25px]" />
             </div>
-            <p className="text-[15px] text-bg-primary-btn-hover">{`****${order.card_end}`}</p>
+            <p className="text-[15px] text-side-text-blue">{`****${order.card_end}`}</p>
           </div>
         </div>
         <div className="w-1/2 max-md:w-full pb-1 lg:border-r lg:pr-6 max-lg:pl-6 max-md:pl-0 lg:border-light-border max-lg:pr-0">

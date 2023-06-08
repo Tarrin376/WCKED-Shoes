@@ -82,17 +82,17 @@ const OrderPlaced = () => {
           </div>
         </div>
       </div>
-      {orderData.items.map((item: TOrderedItem, index) => {
-        return (
-          <OrderedItem 
-            item={item}
-            isFirst={false} 
-            noBorder={false} 
-            key={index}
-          />
-        );
-      })}
-      <div className="mt-5 flex max-lg:flex-wrap justify-between gap-4">
+      <div className="max-h-[600px] overflow-y-scroll pr-5">
+        {orderData.items.map((item: TOrderedItem, index) => {
+          return (
+            <OrderedItem 
+              item={item}
+              key={index}
+            />
+          );
+        })}
+      </div>
+      <div className="mt-5 flex max-lg:flex-wrap justify-between gap-4 bg-[#f9f9fa] dark:bg-[#111111] p-5 rounded-[8px]">
         <div className="lg:w-1/3 max-lg:w-[50%]">
           <h3 className="text-[18px] text-main-text-black dark:text-main-text-white font-semibold mb-3">Payment</h3>
           <div className="text-side-text-light dark:text-side-text-gray text-[15px]">

@@ -21,7 +21,6 @@ interface Props {
   searchHandler: (e: React.FormEvent<HTMLFormElement>) => void,
   logout: () => Promise<void>,
   openCartPage: () => void,
-  toggleTheme: () => void
 }
 
 interface NavSidebarProps {
@@ -34,7 +33,6 @@ interface LoggedInProps {
   logout: () => Promise<void>, 
   openCartPage: () => void, 
   closeSidebar: (next: () => void) => void,
-  toggleTheme: () => void
 }
 
 const MobileNavbar: React.FC<Props> = (props) => {
@@ -105,8 +103,7 @@ const NavSidebar: React.FC<NavSidebarProps> = ({ props, navSidebar, toggleNavSid
             <LoggedIn 
               logout={props.logout} 
               openCartPage={props.openCartPage} 
-              closeSidebar={closeSidebar} 
-              toggleTheme={props.toggleTheme} /> : 
+              closeSidebar={closeSidebar} /> : 
             <div className="flex flex-col justify-end h-full">
               <button className="btn border border-search-border  h-[45px] w-full mb-4 btn text-main-text-black 
               dark:text-main-text-white dark:border-search-border bg-transparent 
@@ -119,9 +116,9 @@ const NavSidebar: React.FC<NavSidebarProps> = ({ props, navSidebar, toggleNavSid
               </button>
               <div className="mt-4 flex items-center justify-between">
                 <p className="text-sm text-center text-side-text-light dark:text-side-text-gray">Copyright &copy; 2023</p>
-                {themeContext?.darkMode ? 
-                <img className="cursor-pointer w-[30px] h-[30px] block" src={LightThemeIcon} alt="Light Theme" onClick={props.toggleTheme} /> : 
-                <img className="cursor-pointer w-[30px] h-[30px] block" src={DarkThemeIcon} alt="Dark Theme" onClick={props.toggleTheme} />}
+                {themeContext && (themeContext?.darkMode ? 
+                <img className="cursor-pointer w-[30px] h-[30px]" src={LightThemeIcon} alt="Light Theme" onClick={themeContext.toggleTheme} /> : 
+                <img className="cursor-pointer w-[30px] h-[30px]" src={DarkThemeIcon} alt="Dark Theme" onClick={themeContext.toggleTheme} />)}
               </div>
             </div>}
           </div>
@@ -170,9 +167,9 @@ const LoggedIn: React.FC<LoggedInProps> = (props) => {
         </button>
         <div className="mt-4 flex items-center justify-between">
           <p className="text-sm text-center text-side-text-light dark:text-side-text-gray">Copyright &copy; 2023</p>
-          {themeContext?.darkMode ? 
-          <img className="cursor-pointer w-[30px] h-[30px] block" src={LightThemeIcon} alt="Light Theme" onClick={props.toggleTheme} /> : 
-          <img className="cursor-pointer w-[30px] h-[30px] block" src={DarkThemeIcon} alt="Dark Theme" onClick={props.toggleTheme} />}
+          {themeContext && (themeContext?.darkMode ? 
+          <img className="cursor-pointer w-[30px] h-[30px]" src={LightThemeIcon} alt="Light Theme" onClick={themeContext.toggleTheme} /> : 
+          <img className="cursor-pointer w-[30px] h-[30px]" src={DarkThemeIcon} alt="Dark Theme" onClick={themeContext.toggleTheme} />)}
         </div>
       </div>
     </div>

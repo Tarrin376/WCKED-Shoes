@@ -19,10 +19,10 @@ const RecommendedWrapper: React.FC<Props> = ({ numProducts, title, styles, child
   return (
     <>
       {numProducts > 0 && 
-      <div className={`py-5 border-t border-light-border dark:border-main-gray-border ${styles}`} 
+      <div className={`pt-5 border-t border-light-border dark:border-main-gray-border ${styles}`} 
       style={column && scrollPosition.top >= column.fixedPosition && scrollPosition.bottom < curBottomPos ? 
       {right: `${column.rightOffset}px`, position: "fixed", top: "32px"} : scrollPosition.bottom >= curBottomPos ? 
-      {position: "absolute", bottom: "0", right: "0"} : {}}>
+      {position: "absolute", bottom: "0", right: "0"} : {paddingBottom: "1.25rem"}}>
         <h4 className="text-main-text-black dark:text-main-text-white text-[21px] mb-5 font-semibold">
           {title}
         </h4>

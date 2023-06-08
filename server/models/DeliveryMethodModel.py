@@ -14,6 +14,9 @@ def add_delivery_method_handler(method_data):
     if find_method:
       raise DBException("Delivery method already exists", 400)
     
+    if estimated_lower_days > estimated_higher_days:
+      raise DBException("Delivery interval is invalid", 400)
+    
     new_delivery_method = DeliveryMethod(
       name=name, estimated_lower_days=estimated_lower_days, 
       estimated_higher_days=estimated_higher_days, price=price)

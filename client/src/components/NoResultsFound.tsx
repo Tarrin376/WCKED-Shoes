@@ -5,12 +5,11 @@ interface Props {
   reachedLimit: boolean,
   title: string,
   message: string,
-  styles?: string
 }
 
-const NoResultsFound: React.FC<Props> = ({ loading, totalFound, reachedLimit, title, message, styles }) => {
+const NoResultsFound: React.FC<Props> = ({ loading, totalFound, reachedLimit, title, message }) => {
   return (
-    <div className={styles}>
+    <div>
       {totalFound === 0 && !loading ? 
       <>
         <p className="text-center mt-[50px] text-2xl mb-[10px] text-main-text-black dark:text-main-text-white">

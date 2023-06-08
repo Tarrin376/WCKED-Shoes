@@ -4,8 +4,8 @@ import BuyAgain from "../../assets/buy-again.png";
 
 interface Props {
   item: TOrderedItem,
-  isFirst: boolean,
-  noBorder: boolean,
+  isFirst?: boolean,
+  noBorder?: boolean,
   styles?: string,
   buyAgain?: boolean
 }

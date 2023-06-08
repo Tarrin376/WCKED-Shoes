@@ -76,10 +76,6 @@ const Layout: React.FC<{}> = () => {
     }
   }
 
-  const toggleTheme = () => {
-    themeContext?.setDarkMode((curTheme) => !curTheme);
-  }
-
   return (
     <>
       <div className="dark:bg-nav-dark bg-nav-light flex justify-center items-center h-[90px] 
@@ -94,7 +90,6 @@ const Layout: React.FC<{}> = () => {
           searchHandler={searchHandler}
           logout={logout}
           openCartPage={openCartPage}
-          toggleTheme={toggleTheme}
         /> : 
         <MobileNavbar
           searchQuery={searchQuery}
@@ -105,11 +100,10 @@ const Layout: React.FC<{}> = () => {
           searchHandler={searchHandler}
           logout={logout} 
           openCartPage={openCartPage}
-          toggleTheme={toggleTheme}
         />}
       </div>
       <div className="mt-[70px] min-h-[calc(100vh-70px-90px)] max-w-screen-2xl max-2xl:max-w-screen-xl max-xl:max-w-screen-lg 
-      max-lg:max-w-screen-md w-screen max-md:max-w-screen-sm max-sm:max-w-screen-xs m-auto mb-[70px] px-5 overflow-hidden 
+      max-lg:max-w-screen-md w-screen max-md:max-w-screen-sm max-sm:max-w-screen-xs m-auto mb-[70px] px-[15px] overflow-hidden 
       dark:bg-bg-dark bg-bg-light">
         <Outlet />
       </div>

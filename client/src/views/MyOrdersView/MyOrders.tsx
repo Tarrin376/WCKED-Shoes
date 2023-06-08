@@ -10,6 +10,7 @@ import { orderFilters } from "../../utils/orderFilters";
 import RecommendedProducts from "../../components/RecommendedProducts";
 import { useScrollPosition } from "../../hooks/useScrollPosition";
 import { getPageSize } from "../../utils/getPageSize";
+import OrderCardsLoading from "../../loading/OrderCardsLoading";
 
 const MyOrders = () => {
   const searchRef = useRef<HTMLInputElement>(null);
@@ -35,7 +36,7 @@ const MyOrders = () => {
         border-b border-light-border dark:border-main-gray-border">
           {Object.keys(orderFilters).map((filter: string, index: number) => {
             return (
-              <li className={`nav-item pb-2 ${orderFilters[filter] === getOrders.filter ? `border-b-[3px] border-b-main-text-black 
+              <li className={`nav-item pb-[6px] ${orderFilters[filter] === getOrders.filter ? `border-b-[3px] border-b-main-text-black 
               dark:border-b-main-text-white` : ""}`} key={index} onClick={() => getOrders.handleFilter(orderFilters[filter])}>
                 {filter}
               </li>
@@ -53,24 +54,25 @@ const MyOrders = () => {
           })}
         </select>}
         <div className="flex gap-4 2xl:w-[320px] max-2xl:max-w-[420px] max-md:max-w-full max-sm:flex-col">
-          <input type="text" className="text-box-light dark:text-box w-[60%] h-[39px]" placeholder="Search by order ID" ref={searchRef} />
-          <button className={`secondary-btn w-[40%] h-[39px] ${getOrders.loading ? "dark:disabled-btn disabled-btn-light" : ""}`} 
+          <input type="text" className="text-box-light dark:text-box sm:w-[60%] h-[39px]" placeholder="Search by order ID" ref={searchRef} />
+          <button className={`secondary-btn sm:w-[40%] h-[39px] ${getOrders.loading ? "dark:disabled-btn disabled-btn-light" : ""}`} 
           onClick={getOrders.handleSearch}>
             Search Orders
           </button>
         </div>
       </div>
       <div className="flex gap-[40px] mt-[40px] max-2xl:flex-col pb-1 relative 2xl:min-h-[100vh]">
-        <div className="flex gap-[40px] flex-col flex-grow max-2xl:w-full">
+        <div className={`flex gap-[40px] flex-col max-2xl:w-full ${scrollPosition.top >= 345 && windowSize >= 1518 ? 
+          "w-[calc(100%-320px-40px)]" : "flex-grow"}`}>
           {getOrders.next.map((order: TOrderData) => {
             return (
               <Order 
                 orderData={order} 
                 key={order.order_details.id} 
-                styles={scrollPosition.top >= 345 && windowSize >= 1518 ? "w-[calc(100%-320px-40px)]" : ""} 
               />
             )
           })}
+          {getOrders.loading && <OrderCardsLoading />}
           {!getOrders.reachedLimit && !getOrders.loading && 
           <button className="m-auto block secondary-btn h-[40px] w-[180px]" 
           onClick={getOrders.handlePage}>
@@ -82,7 +84,6 @@ const MyOrders = () => {
             reachedLimit={getOrders.reachedLimit}
             title="No orders found here."
             message="If you are searching for an order, check that you entered the order ID correctly."
-            styles={scrollPosition.top >= 345 && windowSize >= 1518 ? "w-[calc(100%-320px-40px)]" : ""} 
           />
         </div>
         <RecommendedProducts 
@@ -91,7 +92,7 @@ const MyOrders = () => {
           column={windowSize >= 1518 ? {
             fixedPosition: 345,
             endFixedPosition: 523,
-            rightOffset: ((windowSize - pageSize) / 2) + 11,
+            rightOffset: ((windowSize - pageSize) / 2) + 6,
           } : undefined}
         />
       </div>
