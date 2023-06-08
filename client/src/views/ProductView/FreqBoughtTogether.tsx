@@ -7,19 +7,21 @@ import AddDarkIcon from "../../assets/add-dark.png";
 import { useContext, useState } from "react";
 import { ThemeContext } from "../../providers/ThemeProvider";
 import { TCheckedItem } from "../../@types/TCheckedItem";
+import { TProduct } from "../../@types/TProduct";
 
 interface Props {
-  URL: string,
+  product: TProduct,
+  curSize: string,
+  addToCart: (productId: number, size: string) => Promise<boolean>,
   styles?: string,
-  addToCart: (productId: number, size: string) => Promise<boolean>
 }
 
 const amounts = ["", "", "both", "all three"];
 
-const FreqBoughtTogether: React.FC<Props> = ({ URL, styles, addToCart }) => {
-  const recommended: TProductCard[] | undefined = useGetRecommended(URL);
-  const [totalPrice, setTotalPrice] = useState<number>(0);
-  const [checkedItems, setCheckedItems] = useState<Readonly<TCheckedItem[]>>([]);
+const FreqBoughtTogether: React.FC<Props> = ({ product, curSize, addToCart, styles }) => {
+  const recommended: TProductCard[] | undefined = useGetRecommended(`/products/${product.id}/freq-bought-together?limit=${2}`);
+  const [totalPrice, setTotalPrice] = useState<number>(product.price);
+  const [checkedItems, setCheckedItems] = useState<Readonly<TCheckedItem[]>>([{ productId: product.id, size: curSize }]);
   const themeContext = useContext(ThemeContext);
   
   const addItemsToCart = async () => {
@@ -52,7 +54,7 @@ const FreqBoughtTogether: React.FC<Props> = ({ URL, styles, addToCart }) => {
                 setTotalPrice={setTotalPrice}
                 smallSize={true}
                 setCheckedItems={setCheckedItems}
-                dropdown={true}
+                dropdown={index > 0}
               /> :
               <img src={themeContext?.darkMode ? AddDarkIcon : AddLightIcon} 
               className="w-[23px] h-[23px]" alt="" />}

@@ -126,7 +126,7 @@ const Layout: React.FC<{}> = () => {
         setSignUpPopUp={setSignUpPopUp}
         emailAddress={emailAddress} password={password}
       />}
-      <div className="bg-[#f4f4f5] dark:bg-[#0e0e0e] md:px-20 max-md:px-[30px] py-9">
+      <div className="bg-[#f4f4f5] dark:bg-[#0c0c0c] md:px-20 max-md:px-[30px] py-9">
         <div className="max-w-screen-2xl m-auto flex flex-col">
           <div className="flex items-center justify-between max-xl:flex-col max-xl:gap-5">
             <div>

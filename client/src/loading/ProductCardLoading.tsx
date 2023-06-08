@@ -11,7 +11,7 @@ const ProductCardLoading: React.FC<Props> = ({ styles, smallSize }) => {
       <div className={`w-full rounded-[8px] relative bg-center bg-cover dark:loading-dark loading-light 
       ${smallSize ? "h-[220px]" : "h-[265px]"}`}>
       </div>
-      <div className="border-b border-light-border dark:border-[#6f6f6f63] pb-4">
+      <div className="border-b border-light-border dark:border-main-gray-border pb-4">
         <div className="mt-5 w-full h-[20px] dark:loading-dark loading-light">
         </div>
         <div className={`flex ${smallSize ? "flex-col items-start mt-4 gap-[9px]" : "items-center justify-between mt-[14px]"}`}>

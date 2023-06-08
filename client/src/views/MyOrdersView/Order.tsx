@@ -49,7 +49,7 @@ const Order: React.FC<Props> = ({ orderData }) => {
   return (
     <OutsideClickHandler onOutsideClick={() => togglePopUps(false, false, false)}>
       <div className="light-component dark:gray-component overflow-hidden">
-        <div className="bg-[#f5f5f7] dark:bg-[#1d1d1d] p-4 pt-3 flex justify-between items-center">
+        <div className="bg-[#f5f5f7] dark:bg-[#171717] p-4 pt-3 flex justify-between items-center">
           <div className={`flex flex-grow ${windowSize >= 400 ? "gap-10" : "justify-between"}`}>
             <div>
               <p className="font-semibold">Order placed</p>
@@ -71,7 +71,7 @@ const Order: React.FC<Props> = ({ orderData }) => {
         <div className={`p-4 pt-3 flex flex-col`}>
           <div className="mb-4">
             <div className="flex items-center justify-between">
-              <h4 className="text-[19px] font-semibold text-side-text-light dark:text-side-text-gray">
+              <h4 className="text-[19px] font-semibold text-main-text-black dark:text-main-text-white">
                 Status:
                 {orderData.order_details.cancelled ? 
                 <span className="text-side-text-red">
@@ -124,7 +124,7 @@ const Order: React.FC<Props> = ({ orderData }) => {
               {orderData.order_details.delivery_instructions}
             </p>}
           </div>
-          <div className="flex-grow overflow-y-scroll bg-[#f9f9fa] dark:bg-[#1a1a1a] p-3 max-lg:py-0 rounded-[8px] max-h-[400px]">
+          <div className="flex-grow overflow-y-scroll bg-[#f9f9fa] dark:bg-[#181818] p-3 max-lg:py-0 rounded-[8px] max-h-[400px]">
             {orderData.items.map((item, index) => {
               return (
                 <OrderedItem 
@@ -145,12 +145,12 @@ const Order: React.FC<Props> = ({ orderData }) => {
               Cancel Order
             </button>}
             <div className="flex gap-3 max-xs:flex-col">
-              <button className="text-main-text-black bg-[#ececee] hover:bg-[#e6e6e7] dark:bg-[#464646] dark:dark:hover:bg-[#4e4e4e] 
+              <button className="text-main-text-black bg-[#ececee] hover:bg-[#e6e6e7] dark:bg-[#292929] dark:dark:hover:bg-[#2c2c2c] 
               dark:text-main-text-white rounded-md px-4 flex-grow h-[37px] btn" onClick={() => togglePopUps(!orderDetailsPopUp, false, false)}>
                 {orderDetailsPopUp ? "Hide order details" : "Show order details"}
               </button>
               {!orderData.order_details.cancelled && 
-              <button className="text-main-text-black bg-[#ececee] hover:bg-[#e6e6e7] dark:bg-[#464646] dark:dark:hover:bg-[#4e4e4e] 
+              <button className="text-main-text-black bg-[#ececee] hover:bg-[#e6e6e7] dark:bg-[#292929] dark:dark:hover:bg-[#2c2c2c] 
               dark:text-main-text-white rounded-md px-4 flex-grow h-[37px] btn" onClick={() => togglePopUps(false, !orderHistoryPopUp, false)}>
                 {orderHistoryPopUp ? "Hide order activity" : "View order activity"}
               </button>}
@@ -179,7 +179,7 @@ const Order: React.FC<Props> = ({ orderData }) => {
 const DiscountText: React.FC<{ name: string, percentOff: number, cancelled: boolean }> = ({ name, percentOff, cancelled }) => {
   const windowSize = useWindowSize();
   return (
-    <p className={`text-[15px] text-side-text-light dark:text-side-text-gray ${windowSize <= 618 ? "mt-[6px]" : ""}`}>
+    <p className={`text-[15px] text-side-text-light dark:text-main-text-white ${windowSize <= 618 ? "mt-[6px]" : ""}`}>
       {"Discount code: "}
       <span className={`text-side-text-blue ${cancelled && name !== "N/A" ? "line-through" : ""}`}>
         {`${name}${name !== "N/A" ? 

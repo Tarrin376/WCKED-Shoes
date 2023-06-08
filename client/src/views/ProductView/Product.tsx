@@ -45,7 +45,6 @@ const Product: React.FC<{}> = () => {
   const [quantity, setQuantity] = useState<number>(1);
   const navigate = useNavigate();
 
-  const boughtTogetherEndpoint = `/products/${product?.id}/freq-bought-together?limit=${2}`;
   const customerBoughtEndpoint = `/products/${product?.id}/recommend-customer-bought?limit=${20}`
 
   const updateShoeSize = (size?: TSize) => {
@@ -197,7 +196,7 @@ const Product: React.FC<{}> = () => {
             ${!curSize || userContext?.email === "" ? 'disabled-btn-light dark:disabled-btn' : ''}`}>
               <img src={DarkCartIcon} className="w-[23px] h-[23px]" alt="" />
             </Button>
-            <div className="flex w-[140px] h-[48px] border border-light-border dark:border-[#6F6F6F] shadow-light-component-shadow 
+            <div className="flex w-[140px] h-[48px] border border-light-border dark:border-[#444444] shadow-light-component-shadow 
             dark:shadow-gray-component-shadow btn items-center justify-between p-4 pb-[17px]">
               <button className="text-main-text-black dark:text-main-text-white font-bold text-[23px]" onClick={() => updateItemQuantity(-1)}>-</button>
               <p className="font-semibold text-[17px] text-main-text-black dark:text-main-text-white">{quantity}</p>
@@ -208,7 +207,8 @@ const Product: React.FC<{}> = () => {
       </div>
       <ProductDetails product={product} />
       <FreqBoughtTogether 
-        URL={boughtTogetherEndpoint} 
+        product={product}
+        curSize={curSize ? curSize.size : ""}
         addToCart={addToCart}
       />
       <RecommendedProducts 

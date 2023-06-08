@@ -70,8 +70,8 @@ const ProductCard: React.FC<Props> = ({ product, styles, setTotalPrice, smallSiz
         {product.num_sold >= popularSoldCount && !smallSize && <p className="popular absolute top-2 left-2">Popular</p>}
         {dropdown && product && 
         <div className="absolute right-2 bottom-2 flex items-center gap-2">
-          <input type="checkbox" checked={checked} onChange={toggleChecked} className="w-[17px] h-[17px]" />
-          <select className={`rounded-md px-2 py-[2px] text-main-text-white bg-no-reviews-bg ${!checked ? "opacity-50" : ""}`} 
+          <input type="checkbox" checked={checked} onChange={toggleChecked} className="w-[15px] h-[15px]" />
+          <select className={`popular bg-no-reviews-bg ${!checked ? "opacity-50" : ""}`} 
           onChange={updateSize} defaultValue={""}>
             <option value={""}>Select Size</option>
             {product.sizes.filter((size: TSize) => size.stock > 0).map((size: TSize, index: number) => {
@@ -83,15 +83,19 @@ const ProductCard: React.FC<Props> = ({ product, styles, setTotalPrice, smallSiz
             })}
           </select>
         </div>}
+        {dropdown === false && 
+        <p className="popular text-main-text-white absolute bottom-2 right-2 py-[1px]">
+          Your Item
+        </p>}
       </div>
-      <div className="border-b border-light-border dark:border-[#6f6f6f63] pb-4">
+      <div className="border-b border-light-border dark:border-main-gray-border pb-4">
         <h3 className={`mt-3 text-[18px] cursor-pointer hover:!text-side-text-blue btn 
         text-ellipsis whitespace-nowrap overflow-hidden ${smallSize ? "text-[16px]" : ""}`}
         onClick={goToProduct}>
           {product.name}
         </h3>
         <div className={`flex ${smallSize ? "flex-col items-start mt-1 gap-[6px]" : "items-center justify-between mt-2"}`}>
-          <p className="text-[15px] dark:text-side-text-gray text-side-text-light">Carbon footprint</p>
+          <p className="text-[15px] dark:text-side-text-gray text-side-text-light">Carbon footprint:</p>
           <p className={`popular ${carbonFootprintColour}`}>{`${product.carbon_footprint} kg CO2E`}</p>
         </div>
       </div>
