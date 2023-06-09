@@ -11,19 +11,25 @@ interface Props {
 }
 
 const VerifyEmail: React.FC<Props> = ({ setVerifyEmailPopUp, setSignUpPopUp, emailAddress, password }) => {
-  const [code, setCode] = useState(['', '', '', '']);
-  const [errorMessage, setErrorMessage] = useState("");
+  const [code, setCode] = useState<string[]>(['', '', '', '']);
+  const [errorMessage, setErrorMessage] = useState<string>("");
+  const [secretCode, setSecretCode] = useState<string>("d");
+  const [toggleSecretCode, setToggleSecretCode] = useState<boolean>(false);
+  const [inputIndex, setInputIndex] = useState<number>(0);
 
   const sendVerificationCode = useCallback(async () => {
     try {
-      await axios.post<string>(`/users/send-code`, { email: emailAddress });
+      const verificationCode = await axios.post<string>(`/users/send-code`, { email: emailAddress });
+      setSecretCode(verificationCode.data);
       setErrorMessage("");
     }
     catch (error: any) {
       if (error instanceof AxiosError) {
-        setErrorMessage(error!.response!.data);
-      } else {
-        setErrorMessage(error.message);
+        if (error.response?.status === 429) {
+          setErrorMessage("Error, too many requests. You must wait 1 minute before trying again.")
+        } else {
+          setErrorMessage(error.response?.data);
+        }
       }
     }
   }, [emailAddress]);
@@ -75,15 +81,34 @@ const VerifyEmail: React.FC<Props> = ({ setVerifyEmailPopUp, setSignUpPopUp, ema
     }
   }
 
+  const toggleSecretCodeHandler = () => {
+    setToggleSecretCode((cur) => !cur);
+  }
+
   return (
     <PopUpWrapper setPopUp={setVerifyEmailPopUp}>
       <h4 className="text-2xl mb-2">Please check your email</h4>
-      <p className="text-side-text-light dark:text-side-text-gray mb-7 text-lg">We've just sent a code to <span className="font-semibold">{emailAddress}</span></p>
+      <p className="text-side-text-light dark:text-side-text-gray text-lg mb-1">
+        We've just sent a code to
+        <span className="font-semibold">
+          {` ${emailAddress}`}
+        </span>
+      </p>
+      <button className={`text-bg-primary-btn-hover ${toggleSecretCode ? "mb-1" : "mb-6"} underline`} onClick={toggleSecretCodeHandler}>
+        Psst! Want to know a secret?
+      </button>
+      {toggleSecretCode && 
+      <p className="text-main-text-black mb-6 dark:text-main-text-white">
+        Code:
+        <span className="text-in-stock-green-text dark:text-in-stock-green-text-dark">
+          {` ${secretCode}`}
+        </span>
+      </p>}
       <div className="flex justify-between">
         {code.map((item, index) => {
           return (
-            <input type="text" key={index} value={item} maxLength={1} className="w-[85px] h-[85px] text-[45px] text-center text-box-light dark:text-box"
-            onChange={(e) => {
+            <input type="text" key={index} value={item} maxLength={1} 
+            className="w-[85px] h-[85px] text-[45px] text-center text-box-light dark:text-box" onChange={(e) => {
               const val = e.target.value;
               const num = val !== "" ? parseInt(val) : 0;
               if (!isNaN(num) || val === "") {

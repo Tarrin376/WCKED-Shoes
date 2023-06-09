@@ -54,7 +54,7 @@ const Reviews: React.FC<Props> = ({ product }) => {
           </p>}
         </div>
         {!getReviews.reachedLimit && !getReviews.loading &&
-        <button className="secondary-btn w-fit h-[40px] cursor-pointer m-auto block mt-6 mb-6"
+        <button className="secondary-btn h-[40px] cursor-pointer m-auto block mt-6 mb-6"
         onClick={getReviews.handlePage}>
           Read More Reviews
         </button>}

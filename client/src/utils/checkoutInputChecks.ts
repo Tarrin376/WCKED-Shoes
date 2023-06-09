@@ -39,7 +39,7 @@ export const checkoutInputChecks: {
     return { valid: true };
   },
   "Credit card number": (cardNumber: string): TCheckoutInputReturn => {
-    if (!validator.isCreditCard(cardNumber)) return { valid: false, "message": "Invalid card number" };
+    if (!cardNumber.match(new RegExp("[0-9]{13,19}"))) return { valid: false, "message": "Invalid card number" };
     return { valid: true };
   },
   "Expiry date": (expiryDate: string): TCheckoutInputReturn => {

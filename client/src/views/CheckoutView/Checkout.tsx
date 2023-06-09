@@ -127,7 +127,7 @@ const Checkout = () => {
         last_name: fieldValues["Last name"] as string,
         email_address: fieldValues["Email address"] as string,
         date_ordered: new Date().toDateString(),
-        total_cost: cartItems.subtotal + methods.selectedMethod!.price - cartItems.subtotal * discount.percent_off,
+        subtotal: cartItems.subtotal,
         card_end: cardNum.substring(cardNum.length - 4),
         country: selectedCountry,
         delivery_method: methods.selectedMethod!.name,
@@ -214,7 +214,7 @@ const Checkout = () => {
                   maxLength={50}
                 />
                 {discount.name.length === 0 && 
-                <button type="button" className="secondary-btn w-fit h-[35px] mt-1" onClick={applyDiscountCode}>
+                <button type="button" className="secondary-btn h-[35px] mt-1" onClick={applyDiscountCode}>
                   Apply discount
                 </button>}
               </div>

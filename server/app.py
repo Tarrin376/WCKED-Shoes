@@ -14,7 +14,7 @@ def run_app():
   #   settings.db.drop_all()
   #   settings.db.create_all()
   
-  settings.app.run(debug=True)
+  settings.app.run(port=os.environ.get('PORT'), debug=True)
 
 if __name__ == "__main__":
   run_app()

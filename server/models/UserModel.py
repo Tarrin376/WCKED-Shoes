@@ -1,10 +1,10 @@
 import bcrypt
 import settings
-from db.Schema import User, Product, Size, CartItem, Order, OrderItem, DiscountCode, DiscountJunction, ProductBoughtVector, BoughtTogether
+from db.Schema import User, Product, Size, CartItem, Order, OrderItem, DiscountCode, DiscountJunction, ProductBoughtVector, BoughtTogether, DeliveryMethod
 from sqlalchemy import exc
 from middleware.Authentication import generate_auth_token
 from db.Schema import VerificationCode
-from datetime import datetime, timedelta
+from datetime import datetime
 from CustomExceptions.DBException import DBException
 
 MAX_ITEM_QUANTITY = 10
@@ -59,30 +59,30 @@ def send_code_handler(email, code):
   send_email(email, code)
 
   try:
-    verificationCode: VerificationCode = VerificationCode.query.filter_by(email=email).first()
+    verification_code: VerificationCode = VerificationCode.query.filter_by(email=email).first()
 
-    if verificationCode is None:
+    if verification_code is None:
       newCode = VerificationCode(email=email, code=code, date_created=datetime.now())
       settings.db.session.add(newCode)
     else:
-      verificationCode.code = code
+      verification_code.code = code
 
     settings.db.session.commit()
   except exc.SQLAlchemyError:
     raise DBException("Unable to create verification code. Try again.", 500)
 
 def send_email(email, code):
-  print(code)
+  pass
 
 def verify_email_handler(email, code):
   try:
-    verificationCode: VerificationCode = VerificationCode.query.filter_by(email=email).first()
+    verification_code: VerificationCode = VerificationCode.query.filter_by(email=email).first()
 
-    if verificationCode is None:
+    if verification_code is None:
       raise DBException("Email address has no verification code. Please resend a code.", 404)
     
-    if verificationCode.code == code:
-      settings.db.session.delete(verificationCode)
+    if verification_code.code == code:
+      settings.db.session.delete(verification_code)
       settings.db.session.commit()
     else:
       raise DBException("Wrong code. Try again.", 401)
@@ -181,12 +181,14 @@ def get_cart_handler(user_id):
   except exc.SQLAlchemyError:
     raise DBException("Unable to get cart. Try again.", 500)
   
-def create_order(order_details, user_id):
+def create_order(order_details, user_id, percent_off, shipping):
+  total = order_details["subtotal"] - (order_details["subtotal"] * percent_off) + shipping
+
   order: Order = Order(
     user_id=user_id, 
     date_ordered=datetime.now(), 
     order_status="Order Created", 
-    total_cost=order_details["total_cost"],
+    total_cost=total,
     address_line1=order_details["address_line1"],
     address_line2=order_details["address_line2"],
     town_or_city=order_details["town_or_city"],
@@ -257,8 +259,17 @@ def add_order_items(cart_items, order, user, out_of_stock_items):
 def checkout_cart_handler(user_id, order_details):
   try:
     user: User = User.query.filter_by(id=user_id).first()
+    discount_code: DiscountCode = settings.db.session.query(DiscountCode).filter_by(name=order_details["discount"]).first()
+    shipping: DeliveryMethod = settings.db.session.query(DeliveryMethod).filter_by(name=order_details["delivery_method"]).first()
+
     if user is None: 
       raise DBException("User does not exist.", 404)
+    
+    if shipping is None:
+      raise DBException("Delivery method does not exist.", 404)
+    
+    if discount_code is None and order_details["discount"] != "":
+      raise DBException("Discount code does not exist.", 404)
     
     cart_items = CartItem.query.filter_by(user_id=user_id)\
       .join(Size, CartItem.item_id == Size.id)\
@@ -266,7 +277,7 @@ def checkout_cart_handler(user_id, order_details):
       .join(Product, Size.product_id == Product.id).all()
     
     out_of_stock_items = []
-    order = create_order(order_details, user_id)
+    order = create_order(order_details, user_id, discount_code.percent_off if discount_code else 0, shipping.price)
     settings.db.session.add(order)
     settings.db.session.commit()
 
@@ -286,25 +297,13 @@ def checkout_cart_handler(user_id, order_details):
   except exc.SQLAlchemyError:
     raise DBException("Unable to checkout. Try again.", 500)
   except KeyError:
-    raise DBException("Important information missing from order details", 400)
-  
-def apply_discount_handler(code_name, user_id):
-  try:
-    user: User = User.query.filter_by(id=user_id).first()
-    discount_code: DiscountCode = DiscountCode.query.filter_by(name=code_name).first()
-
-    if user is None: raise DBException("User does not exist", 404)
-    if discount_code is None: raise DBException("Discount code does not exist", 404)
-
-    settings.db.session.commit()
-    return discount_code.as_dict()
-  except exc.SQLAlchemyError:
-    raise DBException("Unable to apply discount. Try again.", 500)
+    raise DBException("Required information missing from order details", 400)
 
 def remove_discount_handler(user_id):
   try:
     user: User = User.query.filter_by(user_id=user_id).first()
-    if user is None: raise DBException("User does not exist", 404)
+    if user is None: 
+      raise DBException("User does not exist", 404)
     
     user.discount_code = None
     settings.db.session.commit()

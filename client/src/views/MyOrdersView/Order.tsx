@@ -25,7 +25,7 @@ const orderStatusColours: {
   "Order Created": "text-main-text-black dark:text-main-text-white",
   "Processing": "text-main-text-black dark:text-main-text-white",
   "Shipped": "text-main-text-black dark:text-main-text-white",
-  "Delivered": "text-green-light dark:text-green-dark",
+  "Delivered": "text-in-stock-green-text dark:text-in-stock-green-text-dark",
 }
 
 const Order: React.FC<Props> = ({ orderData }) => {
@@ -104,7 +104,7 @@ const Order: React.FC<Props> = ({ orderData }) => {
             {!orderData.order_details.cancelled && 
             <div className="flex items-center gap-[7px] mt-[6px]">
               <img src={themeContext?.darkMode ? AirplaneIconDark : AirplaneIconLight} className="w-[16px] h-[16px]" alt="" />
-              <p className="dark:text-in-stock-green-text-dark text-in-stock-green-text">
+              <p className="text-in-stock-green-text dark:text-in-stock-green-text-dark">
                 {orderData.order_details.order_status === "Delivered" ? 
                 `Delivered on ${convertDate(orderData.order_details.delivered_date, true)}`
                 : `${windowSize <= 480 ? "" : "Estimated Delivery: "}${getShortDateFormatRange(orderData.order_details.delivery_method.estimated_lower_days, 

@@ -9,7 +9,6 @@ from models.UserModel import \
   get_cart_handler,\
   update_item_quantity_handler,\
   checkout_cart_handler,\
-  apply_discount_handler,\
   remove_discount_handler,\
   cancel_order_handler
 
@@ -18,6 +17,7 @@ from random import randint
 import json
 from CustomExceptions.DBException import DBException
 from middleware.Authentication import authenticate_user
+from settings import limiter
 
 user_blueprint = Blueprint("users", __name__)
 
@@ -77,13 +77,15 @@ def find_user():
     return Response(e.message, status=e.status_code, mimetype="text/plain")
 
 @user_blueprint.route("/send-code", methods=["POST"])
+@limiter.limit("3 per minute")
 def send_code():
   email = request.json.get("email")
   code = "".join([str(randint(1, 9)) for _ in range(4)])
 
   try:
     send_code_handler(email, code)
-    return Response("success", status=201, mimetype="text/plain")
+    return Response(code, status=201, mimetype="text/plain")
+    # return Response("success", status=201, mimetype="application/json") Will be used when email sending works
   except DBException as e:
     return Response(e.message, status=e.status_code, mimetype="text/plain")
 
@@ -143,24 +145,14 @@ def checkout_cart():
     order_details = request.get_json()
     token = g.token
     details = checkout_cart_handler(token["sub"]["id"], order_details)
-    resp = Response(json.dumps({"id": details["id"]}), status=201, mimetype="text/plain")
+    resp = Response(json.dumps({"id": details["id"]}), status=201, mimetype="application/json")
     resp.set_cookie(key="auth_token", value=details["token"], expires=datetime.datetime.utcnow() + datetime.timedelta(hours=DONT_REMEMBER_DURATION), httponly=True)
     return resp
   except DBException as e:
     if e.data is not None: return Response(json.dumps(e.data), status=e.status_code, mimetype="application/json")
     else: return Response(e.message, status=e.status_code, mimetype="text/plain")
 
-@user_blueprint.route("/discount/<code_name>", methods=["PUT"])
-@authenticate_user
-def apply_discount(code_name):
-  try:
-    token = g.token
-    percent_off = apply_discount_handler(code_name, token["sub"]["id"])
-    return Response(json.dumps(percent_off), status=200, mimetype="application/json")
-  except DBException as e:
-    return Response(e.message, status=e.status_code, mimetype="text/plain")
-
-@user_blueprint.route("/discount", methods=["DELETE"])
+@user_blueprint.route("/discount/<code_name>", methods=["DELETE"])
 @authenticate_user
 def remove_discount():
   try:

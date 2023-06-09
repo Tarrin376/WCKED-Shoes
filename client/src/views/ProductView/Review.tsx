@@ -3,7 +3,6 @@ import { useState } from "react";
 import RatingStars from "../../components/RatingStars";
 import axios, { AxiosError } from "axios";
 import { convertDate } from "../../utils/convertDate";
-import Button from "../../components/Button";
 
 interface Props {
   review: Readonly<TReview>;
@@ -59,11 +58,11 @@ const Review: React.FC<Props> = ({ review, resetState }) => {
       </p>} 
       <div className="gap-3 flex items-center">
         {(!review.is_marked && disabled && !review.is_own_review) &&
-        <button className="secondary-btn h-[30px] w-[80px] mt-3 " onClick={addHelpfulCount}>
+        <button className="secondary-btn h-[30px] mt-3 " onClick={addHelpfulCount}>
           Helpful
         </button>}
         {review.is_own_review &&
-        <button className="danger-btn w-fit h-[30px] mt-3" onClick={deleteReview}>
+        <button className="danger-btn h-[30px] mt-3" onClick={deleteReview}>
           Delete Review
         </button>}
       </div>

@@ -39,10 +39,24 @@ def get_reviews_handler(product_id, sort, search, page, limit, asc, user_id):
 def delete_review_handler(id):
   try:
     review: Review = settings.db.session.query(Review).filter(Review.id == id).first()
+    product: Product = settings.db.session.query(Product).filter(Product.id == review.product_id).first()
 
     if review is None:
       raise DBException("Review not found", 404)
     
+    product.num_reviews -= 1
+    settings.db.session.commit()
+
+    product.ratings -= review.rating
+    settings.db.session.commit()
+
+    if product.num_reviews > 0:
+      product.rating = product.ratings / product.num_reviews
+      settings.db.session.commit()
+    else:
+      product.rating = 0
+      settings.db.session.commit()
+
     settings.db.session.delete(review)
     settings.db.session.commit()
   except exc.SQLAlchemyError:

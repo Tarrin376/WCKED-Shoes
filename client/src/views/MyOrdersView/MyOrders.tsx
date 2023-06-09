@@ -36,7 +36,7 @@ const MyOrders = () => {
         border-b border-light-border dark:border-main-gray-border">
           {Object.keys(orderFilters).map((filter: string, index: number) => {
             return (
-              <li className={`nav-item pb-[6px] ${orderFilters[filter] === getOrders.filter ? `border-b-[3px] border-b-main-text-black 
+              <li className={`nav-item pb-[14px] ${orderFilters[filter] === getOrders.filter ? `border-b-[3px] border-b-main-text-black 
               dark:border-b-main-text-white` : ""}`} key={index} onClick={() => getOrders.handleFilter(orderFilters[filter])}>
                 {filter}
               </li>
@@ -74,7 +74,7 @@ const MyOrders = () => {
           })}
           {getOrders.loading && <OrderCardsLoading />}
           {!getOrders.reachedLimit && !getOrders.loading && 
-          <button className="m-auto block secondary-btn h-[40px] w-fit" 
+          <button className="m-auto block secondary-btn h-[40px]" 
           onClick={getOrders.handlePage}>
             Show More Orders
           </button>}

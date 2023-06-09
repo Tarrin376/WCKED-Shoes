@@ -38,9 +38,11 @@ export const usePagination = <T1, T2>(order: readonly TOrderByOption<T2>[], limi
     }
 
     const query: string = searchRef.current.value.trim();
-    searchRef.current.value = "";
-    setSearchQuery(query);
-    resetState();
+    if (query.length > 0) {
+      searchRef.current.value = "";
+      setSearchQuery(query);
+      resetState();
+    }
   }
 
   const handleFilter = (filter: string) => {
@@ -80,7 +82,7 @@ export const usePagination = <T1, T2>(order: readonly TOrderByOption<T2>[], limi
           setLoading(false);
         }
       })()
-    }, 3000);
+    }, 500);
   }, [queryURL, setLoading, email])
 
   const data = {

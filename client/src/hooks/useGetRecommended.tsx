@@ -16,7 +16,7 @@ export const useGetRecommended = (URL: string) => {
           console.log(error);
         }
       })()
-    }, 3000)
+    }, 500)
   }, [URL]);
 
   return products;
