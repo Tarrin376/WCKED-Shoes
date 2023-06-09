@@ -17,9 +17,10 @@ const Button: React.FC<Props> = (props) => {
   const setBgColor = (color: string, text: string) => {
     if (btnRef && btnRef.current) {
       btnRef.current.style.backgroundColor = color;
+
       setTimeout(() => {
         if (btnRef && btnRef.current) {
-          btnRef!.current!.style.backgroundColor = "";
+          btnRef.current.style.backgroundColor = "";
           setBtnText(text);
         }
       }, 2000);
@@ -42,10 +43,14 @@ const Button: React.FC<Props> = (props) => {
     }
   }, [btnText, props.completedText, props.defaultText])
 
+  useEffect(() => {
+    setBtnText(props.defaultText);
+  }, [props.defaultText])
+
   return (
     <button className={`${props.styles} ${btnText !== props.defaultText ? "pointer-events-none btn" : ""}`} 
     ref={btnRef} onClick={handleAction}>
-      <div className="flex items-center gap-3">
+      <div className="flex items-center justify-center gap-3">
         {btnText === props.loadingText ? <img src={gear} className="w-[20px] h-[20px] mt-[1px]" alt="gear" />
         : props.children && btnText === props.defaultText && props.children}
         <p className="mb-[1px]">{btnText}</p>

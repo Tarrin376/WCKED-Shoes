@@ -9,7 +9,6 @@ import Login from "../components/Login";
 import SignUp from "../components/SignUp";
 import VerifyEmail from "../components/VerifyEmail";
 import { Outlet } from "react-router-dom";
-import { ThemeContext } from "../providers/ThemeProvider";
 import { useNavigate } from "react-router-dom";
 
 const Layout: React.FC<{}> = () => {
@@ -22,7 +21,6 @@ const Layout: React.FC<{}> = () => {
   const userContext = useContext(UserContext);
   const navigate = useNavigate();
   const windowSize = useWindowSize();
-  const themeContext = useContext(ThemeContext);
 
   const openLoginPopUp = () => {
     setLoginPopUp(true);
@@ -80,7 +78,7 @@ const Layout: React.FC<{}> = () => {
     <>
       <div className="dark:bg-nav-dark bg-nav-light flex justify-center items-center h-[90px] 
       px-3 border-b border-light-border dark:border-main-gray-border">
-        {windowSize >= 945 ? 
+        {windowSize >= 1076 ? 
         <DesktopNavbar 
           searchQuery={searchQuery}
           openLoginPopUp={openLoginPopUp}
@@ -103,7 +101,7 @@ const Layout: React.FC<{}> = () => {
         />}
       </div>
       <div className="mt-[70px] min-h-[calc(100vh-70px-90px)] max-w-screen-2xl max-2xl:max-w-screen-xl max-xl:max-w-screen-lg 
-      max-lg:max-w-screen-md w-screen max-md:max-w-screen-sm max-sm:max-w-screen-xs m-auto mb-[70px] px-[15px] overflow-hidden 
+      max-lg:max-w-screen-md w-screen max-md:max-w-screen-sm max-sm:max-w-screen-xs m-auto mb-[70px] px-[25px] max-md:px-[15px] overflow-hidden 
       dark:bg-bg-dark bg-bg-light">
         <Outlet />
       </div>
@@ -126,7 +124,7 @@ const Layout: React.FC<{}> = () => {
         setSignUpPopUp={setSignUpPopUp}
         emailAddress={emailAddress} password={password}
       />}
-      <div className="bg-[#f4f4f5] dark:bg-[#0c0c0c] md:px-20 max-md:px-[30px] py-9">
+      <div className="bg-[#f4f4f5] dark:bg-[#080808] md:px-20 max-md:px-[30px] py-9">
         <div className="max-w-screen-2xl m-auto flex flex-col">
           <div className="flex items-center justify-between max-xl:flex-col max-xl:gap-5">
             <div>

@@ -49,7 +49,7 @@ const Order: React.FC<Props> = ({ orderData }) => {
   return (
     <OutsideClickHandler onOutsideClick={() => togglePopUps(false, false, false)}>
       <div className="light-component dark:gray-component overflow-hidden">
-        <div className="bg-[#f5f5f7] dark:bg-[#171717] p-4 pt-3 flex justify-between items-center">
+        <div className="bg-[#f5f5f7] dark:bg-[#1b1b1b] p-4 pt-3 flex justify-between items-center">
           <div className={`flex flex-grow ${windowSize >= 400 ? "gap-10" : "justify-between"}`}>
             <div>
               <p className="font-semibold">Order placed</p>
@@ -104,7 +104,7 @@ const Order: React.FC<Props> = ({ orderData }) => {
             {!orderData.order_details.cancelled && 
             <div className="flex items-center gap-[7px] mt-[6px]">
               <img src={themeContext?.darkMode ? AirplaneIconDark : AirplaneIconLight} className="w-[16px] h-[16px]" alt="" />
-              <p className="text-green-light dark:text-green-dark">
+              <p className="dark:text-in-stock-green-text-dark text-in-stock-green-text">
                 {orderData.order_details.order_status === "Delivered" ? 
                 `Delivered on ${convertDate(orderData.order_details.delivered_date, true)}`
                 : `${windowSize <= 480 ? "" : "Estimated Delivery: "}${getShortDateFormatRange(orderData.order_details.delivery_method.estimated_lower_days, 
@@ -115,7 +115,7 @@ const Order: React.FC<Props> = ({ orderData }) => {
             && !orderData.order_details.cancelled &&
             <div className="flex items-center gap-[7px] cursor-pointer mt-[1px]" onClick={toggleDeliveryInstructions}>
               <img src={DeliveryInstructionsIcon} className="w-[16px] h-[16px]" alt="" />
-              <p className="text-side-text-blue">
+              <p className="text-bg-primary-btn-hover">
                 {deliveryInstructions ? "Hide Delivery Instructions" : "Show Delivery instructions"}
               </p>
             </div>}
@@ -140,18 +140,15 @@ const Order: React.FC<Props> = ({ orderData }) => {
           </div>
           <div className="mt-5 flex max-md:flex-col-reverse gap-3">
             {orderData.order_details.order_status === "Order Created" && !orderData.order_details.cancelled &&
-            <button className="bg-main-red hover:bg-main-red-hover px-4 h-[37px] text-main-text-white btn"
-            onClick={() => togglePopUps(false, false, !cancelOrderPopUp)}>
+            <button className="danger-btn" onClick={() => togglePopUps(false, false, !cancelOrderPopUp)}>
               Cancel Order
             </button>}
             <div className="flex gap-3 max-xs:flex-col">
-              <button className="text-main-text-black bg-[#ececee] hover:bg-[#e6e6e7] dark:bg-[#292929] dark:dark:hover:bg-[#2c2c2c] 
-              dark:text-main-text-white rounded-md px-4 flex-grow h-[37px] btn" onClick={() => togglePopUps(!orderDetailsPopUp, false, false)}>
+              <button className="secondary-btn flex-grow" onClick={() => togglePopUps(!orderDetailsPopUp, false, false)}>
                 {orderDetailsPopUp ? "Hide order details" : "Show order details"}
               </button>
               {!orderData.order_details.cancelled && 
-              <button className="text-main-text-black bg-[#ececee] hover:bg-[#e6e6e7] dark:bg-[#292929] dark:dark:hover:bg-[#2c2c2c] 
-              dark:text-main-text-white rounded-md px-4 flex-grow h-[37px] btn" onClick={() => togglePopUps(false, !orderHistoryPopUp, false)}>
+              <button className="secondary-btn flex-grow" onClick={() => togglePopUps(false, !orderHistoryPopUp, false)}>
                 {orderHistoryPopUp ? "Hide order activity" : "View order activity"}
               </button>}
             </div>
@@ -181,7 +178,7 @@ const DiscountText: React.FC<{ name: string, percentOff: number, cancelled: bool
   return (
     <p className={`text-[15px] text-side-text-light dark:text-main-text-white ${windowSize <= 618 ? "mt-[6px]" : ""}`}>
       {"Discount code: "}
-      <span className={`text-side-text-blue ${cancelled && name !== "N/A" ? "line-through" : ""}`}>
+      <span className={`text-bg-primary-btn-hover ${cancelled && name !== "N/A" ? "line-through" : ""}`}>
         {`${name}${name !== "N/A" ? 
         ` (${(percentOff * 100).toFixed(2)}% off)` : ""}`}
       </span>

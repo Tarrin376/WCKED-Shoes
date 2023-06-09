@@ -55,7 +55,7 @@ const CartItem: React.FC<Props> = ({ cartItem, setCart }) => {
       <div className="flex-grow pt-1 pb-3">
         <Link to={`/products/${cartItem.product_id}`}>
           <h2 className="text-main-text-black dark:text-main-text-white text-[21px] 
-          cursor-pointer hover:!text-side-text-blue btn max-sm:text-[19px] w-fit">
+          cursor-pointer hover:!text-bg-primary-btn-hover btn max-sm:text-[19px] w-fit">
             {cartItem.product_name}
           </h2>
         </Link>

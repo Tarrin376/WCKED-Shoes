@@ -7,9 +7,9 @@ interface Props {
 
 const PopUpWrapper: React.FC<Props> = ({ children, setPopUp }) => {
   return (
-    <div className="bg-[#31313123] dark:bg-no-reviews-bg fixed top-0 w-[100vw] h-[100vh] flex items-center justify-center">
+    <div className="bg-[#31313123] dark:bg-[#0c0c0cde] fixed top-0 w-[100vw] h-[100vh] flex items-center justify-center">
       <OutsideClickHandler onOutsideClick={() => setPopUp(false)}>
-        <div className="max-w-[430px] w-[90vw] m-auto light-component shadow-pop-up-light-shadow border-none dark:gray-component 
+        <div className="max-w-[430px] w-[90vw] m-auto light-component shadow-pop-up-light-shadow dark:gray-component 
         dark:shadow-pop-up-shadow p-5">
           {children}
         </div>

@@ -5,7 +5,7 @@ import { TUsePagination } from "../@types/TUsePagination";
 import { TPaginationMetaData } from "../@types/TPaginationMetaData";
 
 export const usePagination = <T1, T2>(order: readonly TOrderByOption<T2>[], limit: number, URL: string, 
-  initialSearch: string, initialFilter: string, searchRef?: React.RefObject<HTMLInputElement>)
+  initialSearch: string, initialFilter: string, email: string | undefined, searchRef?: React.RefObject<HTMLInputElement>)
   : TUsePagination<T1, TOrderByOption<T2>> => {
   
   const [searchQuery, setSearchQuery] = useState<string>(initialSearch);
@@ -17,7 +17,7 @@ export const usePagination = <T1, T2>(order: readonly TOrderByOption<T2>[], limi
   const [totalFound, setTotalFound] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState("");
-  
+
   const queryURL = `${URL}?search=${searchQuery}&filter=${filter}&sort=${sort.orderBy}&page=${page}&limit=${limit}&asc=${sort.order === 'asc'}`;
 
   const handlePage = () => {
@@ -29,6 +29,7 @@ export const usePagination = <T1, T2>(order: readonly TOrderByOption<T2>[], limi
   const handleSort = (optionIndex: number) => {
     const option: TOrderByOption<T2> = order[optionIndex];
     setSort(option);
+    resetState();
   }
 
   const handleSearch = () => {
@@ -39,12 +40,14 @@ export const usePagination = <T1, T2>(order: readonly TOrderByOption<T2>[], limi
     const query: string = searchRef.current.value.trim();
     searchRef.current.value = "";
     setSearchQuery(query);
+    resetState();
   }
 
   const handleFilter = (filter: string) => {
     if (!loading) {
       setSearchQuery("");
       setFilter(filter);
+      resetState();
     }
   }
 
@@ -53,10 +56,6 @@ export const usePagination = <T1, T2>(order: readonly TOrderByOption<T2>[], limi
     setNext([]);
     setPage(1);
   }
-
-  useEffect(() => {
-    resetState()
-  }, [sort, filter, searchQuery]);
 
   useEffect(() => {
     setLoading(true);
@@ -82,7 +81,7 @@ export const usePagination = <T1, T2>(order: readonly TOrderByOption<T2>[], limi
         }
       })()
     }, 3000);
-  }, [queryURL, setLoading])
+  }, [queryURL, setLoading, email])
 
   const data = {
     next,

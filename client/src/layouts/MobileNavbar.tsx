@@ -11,6 +11,8 @@ import LightCartIcon from "../assets/cart-light.png";
 import LightOrdersIcon from "../assets/orders-icon-light.png";
 import DarkOrdersIcon from "../assets/orders-icon-dark.png";
 import { useNavigate } from "react-router-dom";
+import DarkClose from "../assets/close-dark.png";
+import LightClose from "../assets/close-light.png";
 
 interface Props {
   searchQuery: string,
@@ -80,10 +82,7 @@ const NavSidebar: React.FC<NavSidebarProps> = ({ props, navSidebar, toggleNavSid
             <div className="flex items-center justify-between">
               <h1 className="text-2xl text-main-text-black dark:text-main-text-white">The Shoes</h1>
               <button onClick={toggleNavSidebar}>
-                <svg className="h-6 w-6 cursor-pointer" xmlns="http://www.w3.org/2000/svg" 
-                  fill="none" viewBox="0 0 24 24" stroke="white">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path>
-                </svg>
+                <img src={themeContext?.darkMode ? DarkClose : LightClose} className="w-[22px] h-[22px]" alt="" />
               </button>
             </div>
             <form onSubmit={(e) => {

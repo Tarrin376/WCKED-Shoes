@@ -12,7 +12,7 @@ const OrderCardLoading: React.FC<Props> = ({ styles }) => {
 
   return (
     <div className={`light-component dark:gray-component overflow-hidden ${styles}`}>
-      <div className="bg-[#f5f5f7] dark:bg-[#171717] p-4 flex justify-between items-center">
+      <div className="bg-[#f5f5f7] dark:bg-[#1b1b1b] p-4 flex justify-between items-center">
         <div className={`flex flex-grow ${windowSize >= 400 ? "gap-10" : "justify-between"}`}>
           <div>
             <div className="font-semibold loading-light dark:loading-dark w-[100px] h-[18px]"></div>

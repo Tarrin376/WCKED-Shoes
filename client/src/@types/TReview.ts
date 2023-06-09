@@ -8,5 +8,7 @@ export type TReview = {
   review: string,
   date_posted: string,
   helpful_count: number,
-  is_marked: boolean
+  is_marked: boolean,
+  verified_purchase: boolean,
+  is_own_review: boolean
 }

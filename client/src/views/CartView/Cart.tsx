@@ -22,15 +22,17 @@ const Cart: React.FC<{}> = () => {
       <h1 className="text-2xl max-sm:text-[22px] text-main-text-black dark:text-main-text-white pb-5">
         {`You have ${cartItems.cart.length} ${cartItems.cart.length !== 1 ? "items" : "item"} in your bag`}
       </h1>
-      {cartItems.cart.map((cartItem: TCartItem, index: number) => {
-        return (
-          <CartItem 
-            key={index} 
-            cartItem={cartItem} 
-            setCart={cartItems.setCart} 
-          />
-        )
-      })}
+      <div className="overflow-y-scroll max-h-[600px] pr-5">
+        {cartItems.cart.map((cartItem: TCartItem, index: number) => {
+          return (
+            <CartItem 
+              key={index} 
+              cartItem={cartItem} 
+              setCart={cartItems.setCart} 
+            />
+          )
+        })}
+      </div>
       <CartPriceSummary subtotal={cartItems.subtotal} discount={0} styles="pt-6" />
       <button className={`btn-primary block mt-6 h-[45px] w-[180px] text-base mb-[70px] 
       ${cartItems.cart.length === 0 || cartItems.cart.some((cartItem: TCartItem) => cartItem.curSize.stock < cartItem.quantity) ? 

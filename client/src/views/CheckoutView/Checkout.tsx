@@ -214,7 +214,7 @@ const Checkout = () => {
                   maxLength={50}
                 />
                 {discount.name.length === 0 && 
-                <button type="button" className="secondary-btn w-[120px] h-[35px] mt-1" onClick={applyDiscountCode}>
+                <button type="button" className="secondary-btn w-fit h-[35px] mt-1" onClick={applyDiscountCode}>
                   Apply discount
                 </button>}
               </div>

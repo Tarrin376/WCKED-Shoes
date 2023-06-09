@@ -42,7 +42,7 @@ const ProductCards: React.FC<Props> = ({ getProducts, productsLimit }) => {
         message="Try checking your spelling or use more general terms."
       />
       {!getProducts.reachedLimit && !getProducts.loading && 
-      <button className="m-auto block mt-[50px] mb-[50px] secondary-btn h-[40px] w-[180px]" 
+      <button className="m-auto block mt-[50px] mb-[50px] secondary-btn h-[40px] w-fit" 
       onClick={getProducts.handlePage}>
         Show More Products
       </button>}

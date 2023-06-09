@@ -70,7 +70,7 @@ const OrderPlaced = () => {
           </div>
           <div className="flex items-center gap-2">
             <img src={themeContext?.darkMode ? AirplaneIconDark : AirplaneIconLight} className="w-[16px] h-[16px]" alt="" />
-            <p className="text-green-light dark:text-green-dark">
+            <p className="dark:text-in-stock-green-text-dark text-in-stock-green-text">
               Estimated delivery:
               <span className="ml-2">
                 {getShortDateFormatRange(
@@ -91,7 +91,7 @@ const OrderPlaced = () => {
           );
         })}
       </div>
-      <div className="mt-5 flex max-lg:flex-wrap justify-between gap-4 bg-[#f9f9fa] dark:bg-[#111111] p-5 rounded-[8px]">
+      <div className="mt-5 flex max-lg:flex-wrap justify-between gap-4 bg-[#f9f9fa] dark:bg-[#161616] p-5 rounded-[8px]">
         <div className="lg:w-1/3 max-lg:w-[50%]">
           <h3 className="text-[18px] text-main-text-black dark:text-main-text-white font-semibold mb-3">Payment</h3>
           <div className="text-side-text-light dark:text-side-text-gray text-[15px]">

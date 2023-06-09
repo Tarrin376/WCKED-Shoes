@@ -26,7 +26,7 @@ const OrderedItem: React.FC<Props> = ({ item, isFirst, noBorder, styles, buyAgai
       </div>
       <div className="pt-2 pb-2">
         <h2 className="text-main-text-black dark:text-main-text-white lg:text-[19px] max-lg:text-[17px] cursor-pointer 
-        hover:!text-side-text-blue btn w-fit" onClick={goToProduct}>
+        hover:!text-bg-primary-btn-hover btn w-fit" onClick={goToProduct}>
           {item.product_name}
         </h2>
         <p className="text-side-text-light dark:text-side-text-gray mt-[2px]">

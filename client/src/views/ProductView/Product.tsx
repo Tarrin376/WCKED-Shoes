@@ -214,7 +214,7 @@ const Product: React.FC<{}> = () => {
       <RecommendedProducts 
         title="Customers who bought this item also bought" 
         URL={customerBoughtEndpoint}
-        styles="mb-[50px]"
+        styles="mb-[20px]"
       />
       <div className="flex max-xl:flex-col gap-6 max-xl:h-fit max-2xl:h-[630px] pb-2">
         <Reviews product={product} />

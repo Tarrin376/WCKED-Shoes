@@ -62,9 +62,9 @@ const ProductCard: React.FC<Props> = ({ product, styles, setTotalPrice, smallSiz
 
   return (
     <div className={`dark:gray-component light-component !bg-transparent border-none !shadow-none 
-    ${styles} ${smallSize ? "w-[220px]" : "w-[265px]"}`}>
+    ${styles} ${smallSize ? "w-[200px]" : "w-[265px]"}`}>
       <div className={`w-full rounded-[8px] relative bg-center bg-cover border dark:border-search-border dark:shadow-none 
-      shadow-light-component-shadow border-light-border ${smallSize ? "h-[220px]" : "h-[265px]"}`} 
+      shadow-light-component-shadow border-light-border ${smallSize ? "h-[200px]" : "h-[265px]"}`} 
       style={{backgroundImage: `url(${product.thumbnail})`}}>
         <Rating rating={product.rating} styles={"absolute right-2 top-2 !bg-no-reviews-bg"} />
         {product.num_sold >= popularSoldCount && !smallSize && <p className="popular absolute top-2 left-2">Popular</p>}
@@ -89,7 +89,7 @@ const ProductCard: React.FC<Props> = ({ product, styles, setTotalPrice, smallSiz
         </p>}
       </div>
       <div className="border-b border-light-border dark:border-main-gray-border pb-4">
-        <h3 className={`mt-3 text-[18px] cursor-pointer hover:!text-side-text-blue btn 
+        <h3 className={`mt-3 text-[18px] cursor-pointer hover:!text-bg-primary-btn-hover btn 
         text-ellipsis whitespace-nowrap overflow-hidden ${smallSize ? "text-[16px]" : ""}`}
         onClick={goToProduct}>
           {product.name}

@@ -89,7 +89,7 @@ def update_order_status_handler(id, status):
     if status not in order_status:
       raise DBException("Invalid order status provided.", 400)
     
-    if order.order_status == "Cancelled":
+    if order.cancelled:
       raise DBException("This order has already been cancelled", 400)
     
     if status == "Order Created":

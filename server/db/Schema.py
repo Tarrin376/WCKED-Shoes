@@ -115,8 +115,9 @@ class Review(settings.db.Model):
   review = settings.db.Column(settings.db.String(200), nullable=False)
   date_posted = settings.db.Column(settings.db.DateTime, default=datetime.now(), nullable=False)
   helpful_count = settings.db.Column(settings.db.Integer, default=0)
+  verified_purchase = settings.db.Column(settings.db.Boolean, default=False)
 
-  def as_dict(self, is_marked=False):
+  def as_dict(self, is_marked, is_own_review):
     return {
       "id": self.id,
       "user_id": self.user_id,
@@ -126,7 +127,9 @@ class Review(settings.db.Model):
       "review": self.review,
       "date_posted": f"{self.date_posted}",
       "helpful_count": self.helpful_count,
-      "is_marked": is_marked
+      "is_marked": is_marked,
+      "verified_purchase": self.verified_purchase,
+      "is_own_review": is_own_review
     }
   
   @staticmethod

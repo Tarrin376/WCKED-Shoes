@@ -37,8 +37,7 @@ const CancelOrder: React.FC<Props> = ({ orderID }) => {
       <p className="text-side-text-light dark:text-side-text-gray max-w-[330px] mb-5">
         Note: Refunds may take up to 5-7 business days to reflect on your account.
       </p>
-      <button className="bg-main-red hover:bg-main-red-hover px-4 h-[37px] text-main-text-white btn"
-      onClick={cancelOrder}>
+      <button className="danger-btn" onClick={cancelOrder}>
         Yes, cancel my order
       </button>
       {errorMessage !== "" && successMessage === "" && <ErrorMessage error={errorMessage} />}

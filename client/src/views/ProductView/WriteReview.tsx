@@ -52,10 +52,10 @@ const WriteReview: React.FC<Props> = ({ product }) => {
       await axios.post(`/reviews/${product.id}`, {
         rating: rating,
         title: reviewTitle,
-        review: review
+        review: review,
       });
       
-      setRating(1);
+      setRating(5);
       setReviewTitle("");
       setReview("");
       return true;

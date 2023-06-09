@@ -51,7 +51,7 @@ def find_user_handler(email):
       return ""
     
     user_data = user.as_dict()
-    return {"email": user_data["email"], "cart": user_data["cart"]}
+    return {"email": user_data["email"]}
   except Exception:
     raise DBException("Unable to check sign up credentials. Try again.", 500)
   

@@ -12,5 +12,5 @@ export type TUsePagination<T1, T2> = {
   handleSort: (optionIndex: number) => void,
   handleSearch: () => void,
   handleFilter: (filter: string) => void,
-  resetState: () => void
+  resetState: () => void,
 }

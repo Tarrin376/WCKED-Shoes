@@ -39,6 +39,9 @@ const Login: React.FC<Props> = (props) => {
             email: loginResponse.data.email,
           }
         });
+
+        props.setEmailAddress("");
+        props.setPassword("");
       }
     }
     catch (error: any) {

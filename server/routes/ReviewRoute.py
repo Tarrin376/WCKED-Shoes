@@ -20,9 +20,17 @@ def get_reviews(product_id):
     response = get_reviews_handler(product_id, sort, search, int(page), int(limit), asc, user_id)
     return Response(json.dumps(response), status=200, content_type="application/json")
   except DBException as e:
-    return Response(e.message, status=e.status_code)
+    return Response(e.message, status=e.status_code, mimetype="text/plain")
   except ValueError:
     return Response("'page' and 'limit' query parameters must be numbers", status=400, mimetype="text/plain")
+  
+@reviews_blueprint.route("/<id>", methods=["DELETE"])
+def delete_review(id):
+  try:
+    delete_review_handler(id)
+    return Response("Review deleted", status=200, mimetype="text/plain")
+  except DBException as e:
+    return Response(e.message, status=e.status_code, mimetype="text/plain")
 
 @reviews_blueprint.route("/<id>/helpful", methods=["PUT"])
 @authenticate_user
@@ -35,10 +43,6 @@ def add_helpful_count(id):
     return Response(e.message, status=e.status_code, mimetype="text/plain")
   except KeyError:
     return Response("Insufficient data supplied. Unable to perform requested action.", status=400, mimetype="text/plain")
-
-@reviews_blueprint.route("/<id>", methods=["DELETE"])
-def delete_review(id):
-  return Response(status=204)
 
 @reviews_blueprint.route("/<product_id>", methods=["POST"])
 @authenticate_user

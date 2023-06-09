@@ -6,7 +6,8 @@ import { ThemeContext } from "../providers/ThemeProvider";
 
 interface RatingStarsProps {
   rating: number,
-  setRating?: React.Dispatch<React.SetStateAction<number>>
+  setRating?: React.Dispatch<React.SetStateAction<number>>,
+  border?: boolean
 }
 
 interface StarsProps extends RatingStarsProps {
@@ -14,11 +15,11 @@ interface StarsProps extends RatingStarsProps {
   start: number
 }
 
-const RatingStars: React.FC<RatingStarsProps> = ({ rating, setRating }) => {
+const RatingStars: React.FC<RatingStarsProps> = ({ rating, setRating, border }) => {
   const themeContext = useContext(ThemeContext);
 
   return (
-    <div className="flex gap-1 mt-1 mb-2">
+    <div className={`flex gap-1 ${border ? "pr-3 border-r border-light-border dark:border-main-gray-border" : ""}`}>
       <Stars rating={rating} src={ReviewStar1} setRating={setRating} start={1} />
       <Stars rating={5 - rating} src={themeContext?.darkMode ? ReviewStar2 : ReviewStar3} setRating={setRating} start={rating + 1} />
     </div>

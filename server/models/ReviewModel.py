@@ -1,4 +1,4 @@
-from db.Schema import Review, Product, User, HelpfulReview
+from db.Schema import Review, Product, User, HelpfulReview, Order, OrderItem, Size
 import settings
 from sqlalchemy import exc
 from CustomExceptions.DBException import DBException
@@ -14,8 +14,8 @@ def get_reviews_handler(product_id, sort, search, page, limit, asc, user_id):
     result = []
     for review in reviews.items:
       is_marked: HelpfulReview = settings.db.session.query(HelpfulReview).filter(HelpfulReview.review_id == review.id).filter(HelpfulReview.user_id == user_id).first()
-      if is_marked is None: result.append(review.as_dict())
-      else: result.append(review.as_dict(True))
+      if is_marked is None: result.append(review.as_dict(False, review.user_id == user_id))
+      else: result.append(review.as_dict(True, review.user_id == user_id))
 
     return {
       "next": result,
@@ -35,10 +35,25 @@ def get_reviews_handler(product_id, sort, search, page, limit, asc, user_id):
     raise DBException("Invalid sort query parameter specified", 400)
   except Exception:
     raise DBException("Resource not found. This could be due to specifying an out of range page number or a product that doesn't exist", 404)
+  
+def delete_review_handler(id):
+  try:
+    review: Review = settings.db.session.query(Review).filter(Review.id == id).first()
+
+    if review is None:
+      raise DBException("Review not found", 404)
+    
+    settings.db.session.delete(review)
+    settings.db.session.commit()
+  except exc.SQLAlchemyError:
+    raise DBException("Failed to delete review", 500)
 
 def add_helpful_count_handler(id, user_id):
   try:
-    has_marked: HelpfulReview = settings.db.session.query(HelpfulReview).filter(HelpfulReview.review_id == id).filter(HelpfulReview.user_id == user_id).first()
+    has_marked: HelpfulReview = settings.db.session.query(HelpfulReview)\
+      .filter(HelpfulReview.review_id == id)\
+      .filter(HelpfulReview.user_id == user_id)\
+      .first()
 
     if has_marked is None:
       helpful = HelpfulReview(review_id=id, user_id=user_id)
@@ -54,9 +69,6 @@ def add_helpful_count_handler(id, user_id):
   except exc.SQLAlchemyError:
     raise DBException("Failed to add helpful count", 500)
 
-def delete_review_handler(id):
-  pass
-
 def add_review_handler(product_id, user_id, data):
   try:
     product: Product = settings.db.session.query(Product).filter(Product.id == product_id).first()
@@ -69,7 +81,18 @@ def add_review_handler(product_id, user_id, data):
       if review.user_id == user_id:
         raise DBException("You have already reviewed this product", status_code=409)
     
-    settings.db.session.add(Review(user_id=user_id, product_id=product_id, rating=data["rating"], title=data["title"], review=data["review"]))
+    has_purchased_product = settings.db.session.query(Order).filter(Order.user_id == user_id, Order.delivered_date != None)\
+      .join(OrderItem, OrderItem.order_id == Order.id)\
+      .join(Size, Size.id == OrderItem.item_id)\
+      .join(Product, Product.id == Size.product_id)\
+      .filter(Product.id == product_id)\
+      .first()
+
+    new_review = Review(user_id=user_id, product_id=product_id, rating=data["rating"], title=data["title"], review=data["review"])
+    if has_purchased_product is not None:
+      new_review.verified_purchase = True
+
+    settings.db.session.add(new_review)
     settings.db.session.commit()
 
     product.num_reviews = product.num_reviews + 1

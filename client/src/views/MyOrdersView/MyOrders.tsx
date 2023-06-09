@@ -14,7 +14,7 @@ import OrderCardsLoading from "../../loading/OrderCardsLoading";
 
 const MyOrders = () => {
   const searchRef = useRef<HTMLInputElement>(null);
-  const getOrders = usePagination<TOrderData, TOrderOptions>(orderOrders, 3, "/orders", "", "active", searchRef);
+  const getOrders = usePagination<TOrderData, TOrderOptions>(orderOrders, 3, "/orders", "", "active", undefined, searchRef);
   const windowSize = useWindowSize();
   const scrollPosition = useScrollPosition();
   const pageSize = getPageSize(windowSize);
@@ -57,12 +57,12 @@ const MyOrders = () => {
           <input type="text" className="text-box-light dark:text-box sm:w-[60%] h-[39px]" placeholder="Search by order ID" ref={searchRef} />
           <button className={`secondary-btn sm:w-[40%] h-[39px] ${getOrders.loading ? "dark:disabled-btn disabled-btn-light" : ""}`} 
           onClick={getOrders.handleSearch}>
-            Search Orders
+            Find Order
           </button>
         </div>
       </div>
       <div className="flex gap-[40px] mt-[40px] max-2xl:flex-col pb-1 relative 2xl:min-h-[100vh]">
-        <div className={`flex gap-[40px] flex-col max-2xl:w-full ${scrollPosition.top >= 345 && windowSize >= 1518 ? 
+        <div className={`flex gap-[25px] flex-col max-2xl:w-full ${scrollPosition.top >= 345 && windowSize >= 1518 ? 
           "w-[calc(100%-320px-40px)]" : "flex-grow"}`}>
           {getOrders.next.map((order: TOrderData) => {
             return (
@@ -74,7 +74,7 @@ const MyOrders = () => {
           })}
           {getOrders.loading && <OrderCardsLoading />}
           {!getOrders.reachedLimit && !getOrders.loading && 
-          <button className="m-auto block secondary-btn h-[40px] w-[180px]" 
+          <button className="m-auto block secondary-btn h-[40px] w-fit" 
           onClick={getOrders.handlePage}>
             Show More Orders
           </button>}
@@ -92,7 +92,7 @@ const MyOrders = () => {
           column={windowSize >= 1518 ? {
             fixedPosition: 345,
             endFixedPosition: 523,
-            rightOffset: ((windowSize - pageSize) / 2) + 6,
+            rightOffset: ((windowSize - pageSize) / 2) + 18,
           } : undefined}
         />
       </div>
