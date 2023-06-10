@@ -1,7 +1,7 @@
 import { TReview } from "../../@types/TReview";
 import Rating from "../../components/Rating";
 import { usePagination } from "../../hooks/usePagination";
-import { useEffect, useContext } from "react";
+import { useContext } from "react";
 import { TReviewOptions } from "../../@types/TReviewOptions";
 import { orderReviews } from "../../utils/orderReviews";
 import { TProduct } from "../../@types/TProduct";
@@ -9,6 +9,7 @@ import OrderByOptions from "../../components/OrderByOptions";
 import ReviewsLoading from "../../loading/ReviewsLoading";
 import { UserContext } from "../../providers/UserProvider";
 import Review from "./Review";
+import ErrorMessage from "../../components/ErrorMessage";
 
 interface Props {
   product: TProduct;
@@ -19,10 +20,6 @@ const reviewsLimit = 4;
 const Reviews: React.FC<Props> = ({ product }) => {
   const userContext = useContext(UserContext);
   const getReviews = usePagination<TReview, TReviewOptions>(orderReviews, reviewsLimit, `/reviews/${product.id}`, "", "", userContext?.email);
-
-  useEffect(() => {
-    getReviews.resetState();
-  }, [product, userContext?.email])
 
   return (
     <div className="light-component dark:gray-component p-5 pt-3 2xl:w-[65%] max-2xl:w-[60%] max-xl:w-full relative">
@@ -42,8 +39,7 @@ const Reviews: React.FC<Props> = ({ product }) => {
             return (
               <Review 
                 review={review} 
-                key={index} 
-                resetState={getReviews.resetState}
+                key={index}
               />
             )
           })}
@@ -54,10 +50,11 @@ const Reviews: React.FC<Props> = ({ product }) => {
           </p>}
         </div>
         {!getReviews.reachedLimit && !getReviews.loading &&
-        <button className="secondary-btn h-[40px] cursor-pointer m-auto block mt-6 mb-6"
+        <button className="secondary-btn h-[40px] cursor-pointer m-auto block mt-6 mb-5"
         onClick={getReviews.handlePage}>
           Read More Reviews
         </button>}
+        {getReviews.errorMessage && <ErrorMessage error={getReviews.errorMessage.message} styles="!mt-0" />}
       </div> :
       <div className="absolute w-full h-full top-1/2 left-1/2 translate-x-[-50%] translate-y-[-50%] flex items-center justify-center
       backdrop-filter backdrop-blur-md bg-[#bbbbbb09] dark:bg-[#1c1c1ca6]">

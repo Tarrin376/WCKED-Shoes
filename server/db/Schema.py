@@ -240,6 +240,7 @@ class ProductBoughtVector(settings.db.Model):
   product_id = settings.db.Column(settings.db.Integer, settings.db.ForeignKey('product.id'), nullable=False, primary_key=True)
   user_id = settings.db.Column(settings.db.Integer, settings.db.ForeignKey('user.id'), nullable=False, primary_key=True)
   bought = settings.db.Column(settings.db.Integer, default=0)
+  times_bought = settings.db.Column(settings.db.Integer, default=0)
 
 class BoughtTogether(settings.db.Model):
   product_id = settings.db.Column(settings.db.Integer, settings.db.ForeignKey('product.id'), nullable=False, primary_key=True)

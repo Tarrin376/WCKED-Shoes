@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import { TOrderByOption } from "../@types/TOrderByOption";
 import { TUsePagination } from "../@types/TUsePagination";
 import { TPaginationMetaData } from "../@types/TPaginationMetaData";
+import { getAPIErrorMessage } from "../utils/getAPIErrorMessage";
+import { TErrorMessage } from "../@types/TErrorMessage";
 
 export const usePagination = <T1, T2>(order: readonly TOrderByOption<T2>[], limit: number, URL: string, 
   initialSearch: string, initialFilter: string, email: string | undefined, searchRef?: React.RefObject<HTMLInputElement>)
@@ -16,9 +18,9 @@ export const usePagination = <T1, T2>(order: readonly TOrderByOption<T2>[], limi
   const [reachedLimit, setReachedLimit] = useState<boolean>(false);
   const [totalFound, setTotalFound] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(false);
-  const [errorMessage, setErrorMessage] = useState("");
+  const [errorMessage, setErrorMessage] = useState<TErrorMessage>();
 
-  const queryURL = `${URL}?search=${searchQuery}&filter=${filter}&sort=${sort.orderBy}&page=${page}&limit=${limit}&asc=${sort.order === 'asc'}`;
+  const queryURL = `${URL}?search=${searchQuery}&filter=${filter}&sort=${sort.orderBy}&page=${page}&limit=${limit}&asc=${sort.order === "asc"}`;
 
   const handlePage = () => {
     if (!reachedLimit && !loading) {
@@ -68,7 +70,7 @@ export const usePagination = <T1, T2>(order: readonly TOrderByOption<T2>[], limi
           if (response.status === 200) {
             setNext((state) => [...state, ...response.data.next]);
             setTotalFound(response.data.meta.total_count);
-            setErrorMessage("");
+            setErrorMessage(undefined);
             
             if (!response.data.meta.has_next) {
               setReachedLimit(true);
@@ -76,14 +78,15 @@ export const usePagination = <T1, T2>(order: readonly TOrderByOption<T2>[], limi
           }
         }
         catch (error: any) {
-          setErrorMessage(error.message);
+          const errorMsg = getAPIErrorMessage(error as AxiosError);
+          setErrorMessage(errorMsg);
         }
         finally {
           setLoading(false);
         }
       })()
     }, 500);
-  }, [queryURL, setLoading, email])
+  }, [queryURL, setLoading])
 
   const data = {
     next,

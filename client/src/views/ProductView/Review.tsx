@@ -1,17 +1,21 @@
 import { TReview } from "../../@types/TReview";
 import { useState } from "react";
 import RatingStars from "../../components/RatingStars";
-import axios, { AxiosError } from "axios";
+import axios from "axios";
 import { convertDate } from "../../utils/convertDate";
+import Button from "../../components/Button";
+import { getAPIErrorMessage } from "../../utils/getAPIErrorMessage";
+import { AxiosError } from "axios";
+import { TErrorMessage } from "../../@types/TErrorMessage";
 
 interface Props {
   review: Readonly<TReview>;
-  resetState: () => void
 }
 
-const Review: React.FC<Props> = ({ review, resetState }) => {
+const Review: React.FC<Props> = ({ review }) => {
   const [helpfulCount, setHelpfulCount] = useState(review.helpful_count);
   const [disabled, setDisabled] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<TErrorMessage>();
   
   const addHelpfulCount = async () => {
     try {
@@ -20,19 +24,19 @@ const Review: React.FC<Props> = ({ review, resetState }) => {
       setDisabled(true);
     }
     catch (error: any) {
-      console.log(error);
+      const errorMsg = getAPIErrorMessage(error as AxiosError);
+      setErrorMessage(errorMsg);
     }
   }
 
-  const deleteReview = async (): Promise<boolean> => {
+  const deleteReview = async (): Promise<TErrorMessage | undefined> => {
     try {
       await axios.delete<string>(`/reviews/${review.id}`);
-      resetState();
-      return true;
+      return undefined;
     }
     catch (error: any) {
-      console.log(error);
-      return false;
+      const errorMsg = getAPIErrorMessage(error as AxiosError);
+      return errorMsg;
     }
   }
 
@@ -57,14 +61,19 @@ const Review: React.FC<Props> = ({ review, resetState }) => {
         {`${helpfulCount === 1 ? 'One person' : `${helpfulCount} people`} found this review helpful`}
       </p>} 
       <div className="gap-3 flex items-center">
-        {(!review.is_marked && disabled && !review.is_own_review) &&
+        {(!review.is_marked && !disabled && !review.is_own_review) &&
         <button className="secondary-btn h-[30px] mt-3 " onClick={addHelpfulCount}>
           Helpful
         </button>}
         {review.is_own_review &&
-        <button className="danger-btn h-[30px] mt-3" onClick={deleteReview}>
-          Delete Review
-        </button>}
+        <Button
+          action={deleteReview} 
+          completedText="Review deleted." 
+          defaultText="Delete review" 
+          loadingText="Deleting review" 
+          styles="danger-btn h-[30px] mt-3"
+          setErrorMessage={setErrorMessage}
+        />}
       </div>
     </div>
   )

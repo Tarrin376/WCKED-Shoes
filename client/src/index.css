@@ -64,4 +64,15 @@
     @apply bg-main-red hover:!bg-main-red-hover hover:!text-main-text-white hover:!border-main-red dark:bg-[#292929] 
     dark:text-side-text-red px-4 h-[37px] text-main-text-white btn dark:border dark:border-[#444444];
   }
+  .success-btn {
+    @apply !bg-rating-green !border-rating-green !text-main-text-white;
+  }
+  .login-btn {
+    @apply btn text-main-text-black dark:text-main-text-white border border-main-text-black 
+    dark:border-search-border bg-transparent py-2 px-4 w-[100px] rounded-md 
+    dark:hover:bg-[#2B2B2B] hover:bg-main-text-black hover:text-main-text-white;
+  }
+  .signup-btn {
+    @apply py-2 px-4 w-[100px] btn-primary;
+  }
 }

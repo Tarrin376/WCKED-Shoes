@@ -1,27 +1,35 @@
 import { useEffect, useState } from "react";
 import { TDeliveryMethod } from "../@types/TDeliveryMethod";
 import axios, { AxiosError } from "axios";
+import { TErrorMessage } from "../@types/TErrorMessage";
+import { getAPIErrorMessage } from "../utils/getAPIErrorMessage";
 
-export const useDeliveryMethods = () => {
-  const [deliveryMethods, setDeliveryMethods] = useState<TDeliveryMethod[]>([]);
-  const [selectedMethod, setSelectedMethod] = useState<TDeliveryMethod | null>(deliveryMethods.length === 0 ? null : deliveryMethods[0]);
+export const useDeliveryMethods = (): {
+  methods: TDeliveryMethod[],
+  errorMessage: TErrorMessage | undefined
+} => {
+  const [methods, setMethods] = useState<TDeliveryMethod[]>([]);
+  const [errorMessage, setErrorMessage] = useState<TErrorMessage>();
 
   useEffect(() => {
     (async () => {
       try {
         const response = await axios.get<TDeliveryMethod[]>("/delivery-methods");
-        setDeliveryMethods(response.data);
-        setSelectedMethod(response.data[0]);
+        setMethods(response.data);
       }
       catch (error: any) {
-        console.log(error);
+        const err = error as AxiosError;
+        if (err.response!.status === 429) {
+          setErrorMessage(getAPIErrorMessage(err));
+        } else {
+          setErrorMessage({ message: "Unable to get delivery methods", status: 500 });
+        }
       }
     })()
   }, []);
 
   return {
-    deliveryMethods,
-    selectedMethod,
-    setSelectedMethod
+    methods,
+    errorMessage
   }
 }

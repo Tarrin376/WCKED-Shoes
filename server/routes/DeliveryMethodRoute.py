@@ -10,7 +10,7 @@ def add_delivery_method():
   method_json = request.get_json()
   try:
     add_delivery_method_handler(method_json)
-    return Response("New delivery method added successfully", status=201, mimetype="text/plain")
+    return Response("New delivery method added successfully.", status=201, mimetype="text/plain")
   except DBException as e:
     return Response(e.message, status=e.status_code, mimetype="text/plain")
 
@@ -18,7 +18,7 @@ def add_delivery_method():
 def delete_delivery_method(name):
   try:
     delete_delivery_method_handler(name)
-    return Response("Delivery method has been deleted successfully", status=200, mimetype="text/plain")
+    return Response("Delivery method has been deleted successfully.", status=200, mimetype="text/plain")
   except DBException as e:
     return Response(e.message, e.status_code, mimetype="text/plain")
 

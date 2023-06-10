@@ -26,7 +26,7 @@ module.exports = {
       'line-gray': '#4f4f4f',
       'green-dark': '#1CCF3E',
       'green-light': '#18c147',
-      'rating-green': '#47b62d',
+      'rating-green': '#15a019',
       'no-reviews-bg': '#060606a6',
       'side-text-red': '#ff4d47',
       'limited-stock-orange': '#ffb349',

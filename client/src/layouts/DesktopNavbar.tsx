@@ -8,6 +8,7 @@ import { ThemeContext } from "../providers/ThemeProvider";
 import LightThemeIcon from "../assets/sun.png";
 import DarkThemeIcon from "../assets/moon.png";
 import { useWindowSize } from "../hooks/useWindowSize";
+import { TErrorMessage } from "../@types/TErrorMessage";
 
 interface Props {
   searchQuery: string,
@@ -18,6 +19,13 @@ interface Props {
   searchHandler: (e: React.FormEvent<HTMLFormElement>) => void,
   logout: () => Promise<void>,
   openCartPage: () => void,
+  errorMessage: TErrorMessage | undefined
+}
+
+interface LoggedInProps {
+  logout: () => Promise<void>, 
+  openCartPage: () => void,
+  errorMessage: TErrorMessage | undefined
 }
 
 const DesktopNavbar: React.FC<Props> = (props) => {
@@ -52,16 +60,15 @@ const DesktopNavbar: React.FC<Props> = (props) => {
         </ul>}
       </div>
       <div className="flex items-center gap-5">
-        {userContext?.email !== "" ? <LoggedIn logout={props.logout} openCartPage={props.openCartPage} /> : 
+        {userContext?.email !== "" ? 
+        <LoggedIn 
+          logout={props.logout} 
+          openCartPage={props.openCartPage} 
+          errorMessage={props.errorMessage} 
+        /> : 
         <>
-          <button className="btn text-main-text-black dark:text-main-text-white border border-main-text-black 
-          dark:border-search-border bg-transparent h-[40px] w-[100px] rounded-md 
-          dark:hover:bg-[#2B2B2B] hover:bg-main-text-black hover:text-main-text-white text-[15px]" onClick={props.openLoginPopUp}>
-            Log in
-          </button>
-          <button className="h-[40px] w-[100px] btn-primary text-[15px]" onClick={props.openSignUpPopUp}>
-            Sign up
-          </button>
+          <button className="login-btn" onClick={props.openLoginPopUp}>Log in</button>
+          <button className="signup-btn" onClick={props.openSignUpPopUp}>Sign up</button>
         </>}
         {themeContext && (themeContext?.darkMode ? 
         <img className="cursor-pointer w-[30px] h-[30px]" src={LightThemeIcon} alt="Light Theme" onClick={themeContext.toggleTheme} /> : 
@@ -71,7 +78,7 @@ const DesktopNavbar: React.FC<Props> = (props) => {
   )
 };
 
-const LoggedIn: React.FC<{ logout: () => Promise<void>, openCartPage: () => void }> = ({ logout, openCartPage }) => {
+const LoggedIn: React.FC<LoggedInProps> = ({ logout, openCartPage, errorMessage }) => {
   const userContext = useContext(UserContext);
   const themeContext = useContext(ThemeContext);
 
@@ -81,7 +88,9 @@ const LoggedIn: React.FC<{ logout: () => Promise<void>, openCartPage: () => void
         <p>Logged in as:</p>
         <p className="font-semibold">{userContext?.email}</p>
       </div>
-      <button className="h-[40px] w-[100px] btn-primary text-[15px]" onClick={logout}>Log out</button>
+      <button className={`signup-btn ${errorMessage && errorMessage.message ? "!bg-main-red !w-fit" : ""}`} onClick={logout}>
+        {!errorMessage || !errorMessage.message ? "Log out" : errorMessage.message}
+      </button>
       <div className={`${userContext?.cartChanged ? `after:bg-[#ff4b4d] after:w-[6px] after:h-[6px] after:absolute after:top-[-4px] 
       after:rounded-xl after:right-[-4px] after:text-main-text-white after:text-[11px] relative` : ""} cursor-pointer`} onClick={openCartPage}>
         {themeContext?.darkMode ?

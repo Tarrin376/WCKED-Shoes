@@ -40,7 +40,7 @@ def get_order_handler(id, user_id):
   
 def get_orders_handler(user_id, search, page, limit, filter):
   if filter not in filter_options:
-    raise DBException("Filter option provided is not supported")
+    raise DBException("Filter option provided is not supported.")
 
   try:
     orders = settings.db.session.query(Order)\
@@ -74,9 +74,9 @@ def get_orders_handler(user_id, search, page, limit, filter):
   except exc.SQLAlchemyError:
     raise DBException("Unable to load your orders. Try again.", 500)
   except KeyError:
-    raise DBException("Invalid sort query parameter specified", 400)
+    raise DBException("Invalid sort query parameter specified.", 400)
   except Exception:
-    raise DBException("Resource not found. This could be due to specifying an out of range page number or a product that doesn't exist", 404)
+    raise DBException("Resource not found. This could be due to specifying an out of range page number or a product that doesn't exist.", 404)
   
 def update_order_status_handler(id, status):
   try:
@@ -84,13 +84,13 @@ def update_order_status_handler(id, status):
     order: Order = Order.query.filter(Order.id == id).first()
 
     if order is None:
-      raise DBException("Order not found. Please verify that the order id is correct", 404)
+      raise DBException("Order not found. Please verify that the order id is correct.", 404)
     
     if status not in order_status:
       raise DBException("Invalid order status provided.", 400)
     
     if order.cancelled:
-      raise DBException("This order has already been cancelled", 400)
+      raise DBException("This order has already been cancelled.", 400)
     
     if status == "Order Created":
       order.date_ordered = date

@@ -1,9 +1,15 @@
 import axios, { AxiosError } from "axios";
 import { useEffect, useState } from "react";
 import { TProductCard } from "../@types/TProductCard";
+import { getAPIErrorMessage } from "../utils/getAPIErrorMessage";
+import { TErrorMessage } from "../@types/TErrorMessage";
 
-export const useGetRecommended = (URL: string) => {
-  const [products, setProducts] = useState<TProductCard[]>(); 
+export const useGetRecommended = (URL: string): {
+  products: TProductCard[] | undefined,
+  errorMessage: TErrorMessage | undefined
+} => {
+  const [products, setProducts] = useState<TProductCard[]>();
+  const [errorMessage, setErrorMessage] = useState<TErrorMessage>();
 
   useEffect(() => {
     setTimeout(() => {
@@ -13,11 +19,15 @@ export const useGetRecommended = (URL: string) => {
           setProducts(response.data);
         }
         catch (error: any) {
-          console.log(error);
+          const errorMsg = getAPIErrorMessage(error as AxiosError);
+          setErrorMessage(errorMsg);
         }
       })()
-    }, 500)
+    }, 2000)
   }, [URL]);
 
-  return products;
+  return {
+    products,
+    errorMessage
+  }
 }

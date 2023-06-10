@@ -22,13 +22,13 @@ def get_reviews(product_id):
   except DBException as e:
     return Response(e.message, status=e.status_code, mimetype="text/plain")
   except ValueError:
-    return Response("'page' and 'limit' query parameters must be numbers", status=400, mimetype="text/plain")
+    return Response("'page' and 'limit' query parameters must be numbers.", status=400, mimetype="text/plain")
   
 @reviews_blueprint.route("/<id>", methods=["DELETE"])
 def delete_review(id):
   try:
     delete_review_handler(id)
-    return Response("Review deleted", status=200, mimetype="text/plain")
+    return Response("Review deleted.", status=200, mimetype="text/plain")
   except DBException as e:
     return Response(e.message, status=e.status_code, mimetype="text/plain")
 
@@ -52,6 +52,6 @@ def add_review(product_id):
 
   try:
     add_review_handler(product_id, token["sub"]["id"], data)
-    return Response("Successfully added review", status=201, mimetype="text/plain")
+    return Response("Successfully added review.", status=201, mimetype="text/plain")
   except DBException as e:
     return Response(e.message, status=e.status_code, mimetype="text/plain")

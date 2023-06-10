@@ -1,6 +1,4 @@
 import { TOrderedItem } from "../../@types/TOrderedItem";
-import { Link } from "react-router-dom";
-import BuyAgain from "../../assets/buy-again.png";
 import { useNavigate } from "react-router-dom";
 
 interface Props {

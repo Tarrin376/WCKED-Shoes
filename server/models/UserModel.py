@@ -1,6 +1,17 @@
 import bcrypt
 import settings
-from db.Schema import User, Product, Size, CartItem, Order, OrderItem, DiscountCode, DiscountJunction, ProductBoughtVector, BoughtTogether, DeliveryMethod
+from db.Schema import User,\
+  Product,\
+  Size,\
+  CartItem,\
+  Order,\
+  OrderItem,\
+  DiscountCode,\
+  DiscountJunction,\
+  ProductBoughtVector,\
+  BoughtTogether,\
+  DeliveryMethod
+
 from sqlalchemy import exc
 from middleware.Authentication import generate_auth_token
 from db.Schema import VerificationCode
@@ -48,12 +59,12 @@ def find_user_handler(email):
     user: User = User.query.filter_by(email=email).first()
 
     if user is None: 
-      return ""
+      raise DBException("User not found", 404)
     
     user_data = user.as_dict()
     return {"email": user_data["email"]}
-  except Exception:
-    raise DBException("Unable to check sign up credentials. Try again.", 500)
+  except exc.SQLAlchemyError:
+    raise DBException("There was a problem signing you up. Try again.", 500)
   
 def send_code_handler(email, code):
   send_email(email, code)
@@ -236,8 +247,12 @@ def add_order_items(cart_items, order, user, out_of_stock_items):
       user.purchased_products.append(product)
       settings.db.session.commit()
 
-    unit_v: ProductBoughtVector = settings.db.session.query(ProductBoughtVector).filter_by(product_id=item[1], user_id=user.id).first()
+    unit_v: ProductBoughtVector = settings.db.session.query(ProductBoughtVector)\
+      .filter_by(product_id=item[1], user_id=user.id)\
+      .first()
+    
     unit_v.bought = 1
+    unit_v.times_bought += item[0].quantity
     settings.db.session.commit()
 
     settings.db.session.delete(item[0])
@@ -246,7 +261,9 @@ def add_order_items(cart_items, order, user, out_of_stock_items):
   for i in range(len(cart_items)):
     for j in range(len(cart_items)):
       if i != j:
-        bought_with: BoughtTogether = settings.db.session.query(BoughtTogether).filter_by(product_id=cart_items[i][1], bought_with_id=cart_items[j][1]).first()
+        bought_with: BoughtTogether = settings.db.session.query(BoughtTogether)\
+          .filter_by(product_id=cart_items[i][1], bought_with_id=cart_items[j][1])\
+            .first()
 
         if bought_with is None:
           new_pair: BoughtTogether = BoughtTogether(product_id=cart_items[i][1], bought_with_id=cart_items[j][1])
@@ -297,13 +314,13 @@ def checkout_cart_handler(user_id, order_details):
   except exc.SQLAlchemyError:
     raise DBException("Unable to checkout. Try again.", 500)
   except KeyError:
-    raise DBException("Required information missing from order details", 400)
+    raise DBException("Required information missing from order details.", 400)
 
 def remove_discount_handler(user_id):
   try:
     user: User = User.query.filter_by(user_id=user_id).first()
     if user is None: 
-      raise DBException("User does not exist", 404)
+      raise DBException("User does not exist.", 404)
     
     user.discount_code = None
     settings.db.session.commit()
@@ -315,9 +332,9 @@ def cancel_order_handler(id, user_id):
     order: Order = Order.query.filter(Order.id == id).first()
 
     if order is None: 
-      raise DBException("Order not found. Please verify that the order id is correct", 404)
+      raise DBException("Order not found. Please verify that the order id is correct.", 404)
     if order.cancelled: 
-      raise DBException("Order has already been cancelled", 400)
+      raise DBException("Order has already been cancelled.", 400)
     
     if order.discount != "":
       discount_code: DiscountJunction = DiscountJunction.query.filter(
@@ -333,10 +350,40 @@ def cancel_order_handler(id, user_id):
 
     order_items = OrderItem.query.filter(OrderItem.order_id == order.id).all()
 
-    for order_item in order_items:
-      item: Size = Size.query.filter(Size.id == order_item.item_id).first()
-      item.stock += order_item.quantity
+    for i in range(len(order_items)):
+      item: Size = Size.query.filter(Size.id == order_items[i].item_id).first()
+      product: Product = Product.query.filter(Product.id == item.product_id).first()
+      item.stock += order_items[i].quantity
       settings.db.session.commit()
 
+      product.num_sold -= order_items[i].quantity
+      settings.db.session.commit()
+
+      unit_v: ProductBoughtVector = settings.db.session.query(ProductBoughtVector)\
+        .filter_by(product_id=item.product_id, user_id=user_id)\
+        .first()
+      
+      unit_v.times_bought -= order_items[i].quantity
+      settings.db.session.commit()
+
+      if unit_v.times_bought == 0:
+        unit_v.bought = 0
+        settings.db.session.commit()
+
+      for j in range(len(order_items)):
+        if i != j:
+          paired_item: Size = Size.query.filter(Size.id == order_items[j].item_id).first()
+          bought_with: BoughtTogether = settings.db.session.query(BoughtTogether)\
+            .filter_by(product_id=item.product_id, bought_with_id=paired_item.product_id)\
+            .first()
+          
+          bought_with.frequency -= 1
+          if bought_with.frequency == 0:
+            settings.db.session.delete(bought_with)
+          
+          settings.db.session.commit()
   except exc.SQLAlchemyError:
     raise DBException("Unable to update order status. Try again.", 500)
+  
+def buy_it_again_handler(user_id):
+  pass

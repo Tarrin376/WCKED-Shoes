@@ -33,7 +33,7 @@ const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => 
         });
       }
       catch (error: any) {
-        console.log(error.message);
+        // Ignore the jwt login attempt and have the user manually log in.
       }
     })()
   }, [])

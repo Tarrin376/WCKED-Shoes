@@ -13,6 +13,7 @@ import DarkOrdersIcon from "../assets/orders-icon-dark.png";
 import { useNavigate } from "react-router-dom";
 import DarkClose from "../assets/close-dark.png";
 import LightClose from "../assets/close-light.png";
+import { TErrorMessage } from "../@types/TErrorMessage";
 
 interface Props {
   searchQuery: string,
@@ -23,6 +24,7 @@ interface Props {
   searchHandler: (e: React.FormEvent<HTMLFormElement>) => void,
   logout: () => Promise<void>,
   openCartPage: () => void,
+  errorMessage: TErrorMessage | undefined
 }
 
 interface NavSidebarProps {
@@ -35,6 +37,7 @@ interface LoggedInProps {
   logout: () => Promise<void>, 
   openCartPage: () => void, 
   closeSidebar: (next: () => void) => void,
+  errorMessage: TErrorMessage | undefined
 }
 
 const MobileNavbar: React.FC<Props> = (props) => {
@@ -102,17 +105,12 @@ const NavSidebar: React.FC<NavSidebarProps> = ({ props, navSidebar, toggleNavSid
             <LoggedIn 
               logout={props.logout} 
               openCartPage={props.openCartPage} 
-              closeSidebar={closeSidebar} /> : 
+              closeSidebar={closeSidebar}
+              errorMessage={props.errorMessage} 
+            /> : 
             <div className="flex flex-col justify-end h-full">
-              <button className="btn border border-search-border  h-[45px] w-full mb-4 btn text-main-text-black 
-              dark:text-main-text-white dark:border-search-border bg-transparent 
-              dark:hover:bg-[#2B2B2B] hover:bg-main-text-black hover:text-main-text-white text-[15px]" 
-              onClick={() => closeSidebar(props.openLoginPopUp)}>
-                Log in
-              </button>
-              <button className="btn-primary w-full h-[45px]" onClick={() => closeSidebar(props.openSignUpPopUp)}>
-                Sign up
-              </button>
+              <button className="login-btn !w-full mb-3" onClick={() => closeSidebar(props.openLoginPopUp)}>Log in</button>
+              <button className="signup-btn !w-full" onClick={() => closeSidebar(props.openSignUpPopUp)}>Sign up</button>
               <div className="mt-4 flex items-center justify-between">
                 <p className="text-sm text-center text-side-text-light dark:text-side-text-gray">Copyright &copy; 2023</p>
                 {themeContext && (themeContext?.darkMode ? 
@@ -161,8 +159,8 @@ const LoggedIn: React.FC<LoggedInProps> = (props) => {
           Logged in as:
           <span className="font-semibold ml-2">{userContext?.email}</span>
         </p>
-        <button className="h-[45px] w-full btn-primary text-[15px]" onClick={props.logout}>
-          Log out
+        <button className={`signup-btn ${props.errorMessage && props.errorMessage.message ? "!bg-main-red !w-fit" : ""}`} onClick={props.logout}>
+          {!props.errorMessage || !props.errorMessage.message ? "Log out" : props.errorMessage.message}
         </button>
         <div className="mt-4 flex items-center justify-between">
           <p className="text-sm text-center text-side-text-light dark:text-side-text-gray">Copyright &copy; 2023</p>

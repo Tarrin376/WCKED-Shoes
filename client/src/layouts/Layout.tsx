@@ -10,6 +10,8 @@ import SignUp from "../components/SignUp";
 import VerifyEmail from "../components/VerifyEmail";
 import { Outlet } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
+import { getAPIErrorMessage } from "../utils/getAPIErrorMessage";
+import { TErrorMessage } from "../@types/TErrorMessage";
 
 const Layout: React.FC<{}> = () => {
   const [loginPopUp, setLoginPopUp] = useState(false);
@@ -21,6 +23,7 @@ const Layout: React.FC<{}> = () => {
   const userContext = useContext(UserContext);
   const navigate = useNavigate();
   const windowSize = useWindowSize();
+  const [errorMessage, setErrorMessage] = useState<TErrorMessage>();
 
   const openLoginPopUp = () => {
     setLoginPopUp(true);
@@ -51,16 +54,13 @@ const Layout: React.FC<{}> = () => {
 
   const logout = async () => {
     try {
-      const logoutRequest = await axios.get<string>("/users/logout");
-      if (logoutRequest.status === 200) {
-        userContext?.setUserData(defaultUserData);
-      }
+      await axios.get<string>("/users/logout");
+      userContext?.setUserData(defaultUserData);
     }
     catch (error: any) {
-      if (error instanceof AxiosError) {
-        const err = error as AxiosError;
-        console.log(err?.response?.data);
-      }
+      const errorMsg = getAPIErrorMessage(error as AxiosError);
+      setErrorMessage(errorMsg);
+      setTimeout(() => setErrorMessage(undefined), 5000);
     }
   }
 
@@ -88,6 +88,7 @@ const Layout: React.FC<{}> = () => {
           searchHandler={searchHandler}
           logout={logout}
           openCartPage={openCartPage}
+          errorMessage={errorMessage}
         /> : 
         <MobileNavbar
           searchQuery={searchQuery}
@@ -98,6 +99,7 @@ const Layout: React.FC<{}> = () => {
           searchHandler={searchHandler}
           logout={logout} 
           openCartPage={openCartPage}
+          errorMessage={errorMessage}
         />}
       </div>
       <div className="mt-[70px] min-h-[calc(100vh-70px-90px)] max-w-screen-2xl max-2xl:max-w-screen-xl max-xl:max-w-screen-lg 

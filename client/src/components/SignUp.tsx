@@ -6,6 +6,8 @@ import { checkEmailAddress, checkPassword, checkEmailAndPass } from "../utils/ch
 import axios, { AxiosError } from "axios";
 import ErrorMessage from "./ErrorMessage";
 import { TUser } from "../@types/TUser";
+import { TErrorMessage } from "../@types/TErrorMessage";
+import { getAPIErrorMessage } from "../utils/getAPIErrorMessage";
 
 interface Props {
   setSignUpPopUp: React.Dispatch<React.SetStateAction<boolean>>,
@@ -29,29 +31,22 @@ const passwordStrengthOptions = 4;
 
 const SignUp: React.FC<Props> = (props) => {
   const [strength, setStrength] = useState(passwordStrength.weak);
-  const [errorMessage, setErrorMessage] = useState("");
+  const [errorMessage, setErrorMessage] = useState<TErrorMessage>();
 
   const createAccount = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
 
     try {
-      const findUserRequest = await axios.post<TUser | string>("/users/find", { email: props.emailAddress });
-      if (findUserRequest.status === 200) {
-        if (typeof findUserRequest.data === "string") {
-          props.setSignUpPopUp(false);
-          props.openVerifyEmailPopUp();
-        } else {
-          setErrorMessage("User with this email address already exists.");
-        }
-      } else {
-        setErrorMessage(findUserRequest.data as string);
-      }
+      await axios.post<TUser | string>("/users/find", { email: props.emailAddress });
+      setErrorMessage({ message: "User with this email address already exists.", status: 400 });
     }
     catch (error: any) {
-      if (error instanceof AxiosError) {
-        setErrorMessage(error!.response!.data);
+      const errorMsg = getAPIErrorMessage(error as AxiosError);
+      if (errorMsg.status === 404) {
+        props.setSignUpPopUp(false);
+        props.openVerifyEmailPopUp();
       } else {
-        setErrorMessage(error.message);
+        setErrorMessage(errorMsg);
       }
     }
   }
@@ -73,7 +68,7 @@ const SignUp: React.FC<Props> = (props) => {
         <Star />
         <h1 className="text-main-text-black dark:text-main-text-white text-2xl mb-2">Sign up</h1>
         <p className="mb-6 text-side-text-light dark:text-side-text-gray">Create an account and start saving thousands of design hours with a 30-day free trial</p>
-        {errorMessage.length > 0 && <ErrorMessage error={errorMessage} styles="mb-6" />}
+        {errorMessage && <ErrorMessage error={errorMessage.message} styles="mb-6" />}
         <div className="flex flex-col gap-2 mb-4">
           <label htmlFor="email" className="font-semibold">Email address</label>
           <input type="email" className={`text-box-light dark:text-box h-[45px] ${!checkEmailAddress(props.emailAddress) ? 'text-box-error-focus' : ''}`} 

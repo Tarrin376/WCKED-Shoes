@@ -25,7 +25,7 @@ const App: React.FC<{}> = () => {
                   <Route path="orders/" element={<MyOrders />} />
                   <Route path="orders/:id" element={<OrderPlaced />} />
                   <Route path="*" element={<Error />} />
-                  </Route>            
+                  </Route>
               </Routes>
               </BrowserRouter>
           </UserProvider>

@@ -10,7 +10,7 @@ def authenticate_user(func):
     try:
       auth_token = request.cookies.get("auth_token")
       if auth_token is None:
-        resp = Response("You must log in to perform this action", status=401, mimetype="application/json")
+        resp = Response("You are not logged in.", status=401, mimetype="application/json")
         resp.set_cookie("auth_token", "", expires=0)
         return resp
       
@@ -18,10 +18,10 @@ def authenticate_user(func):
       g.token = token
       return func(*args, **kwargs)
     except jwt.ExpiredSignatureError:
-      return Response("Signature expired", status=403, mimetype="application/json")
+      return Response("Session expired. Please log back in.", status=403, mimetype="application/json")
     except jwt.InvalidTokenError:
-      resp = Response("Your session token has been modified. Please refresh the page and log back in.", status=400, mimetype="application/json")
-      resp.set_cookie("auth_token", "", expires=0)
+      resp = Response("Session token is invalid.", status=400, mimetype="application/json")
+      resp.set_cookie("auth_token", "", expires=0) # Set samesite attribute to True when app is using https.
       return resp
 
   return get_auth_token

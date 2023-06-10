@@ -10,7 +10,8 @@ from models.UserModel import \
   update_item_quantity_handler,\
   checkout_cart_handler,\
   remove_discount_handler,\
-  cancel_order_handler
+  cancel_order_handler,\
+  buy_it_again_handler
 
 import datetime
 from random import randint
@@ -52,7 +53,7 @@ def register():
 
   try:
     register_handler(email, password)
-    return Response("Account created successfully", status=201, mimetype="text/plain")
+    return Response("Account created successfully.", status=201, mimetype="text/plain")
   except DBException as e:
     return Response(e.message, status=e.status_code, mimetype="text/plain")
 
@@ -60,7 +61,7 @@ def register():
 @authenticate_user
 def logout():
   try:
-    resp = Response("Logged out successfully", status=200, mimetype="text/plain")
+    resp = Response("Logged out successfully.", status=200, mimetype="text/plain")
     resp.set_cookie("auth_token", "", expires=0)
     return resp
   except DBException as e:
@@ -77,7 +78,7 @@ def find_user():
     return Response(e.message, status=e.status_code, mimetype="text/plain")
 
 @user_blueprint.route("/send-code", methods=["POST"])
-@limiter.limit("3 per minute")
+@limiter.limit("500 per 5 minutes")
 def send_code():
   email = request.json.get("email")
   code = "".join([str(randint(1, 9)) for _ in range(4)])
@@ -85,7 +86,7 @@ def send_code():
   try:
     send_code_handler(email, code)
     return Response(code, status=201, mimetype="text/plain")
-    # return Response("success", status=201, mimetype="application/json") Will be used when email sending works
+    # return Response("Code sent.", status=201, mimetype="application/json") Will be used when email sending works
   except DBException as e:
     return Response(e.message, status=e.status_code, mimetype="text/plain")
 
@@ -96,7 +97,7 @@ def verify_email():
 
   try:
     verify_email_handler(email, code)
-    return Response("success", status=200, mimetype="text/plain")
+    return Response("Email verified.", status=200, mimetype="text/plain")
   except DBException as e:
     return Response(e.message, status=e.status_code, mimetype="text/plain")
   
@@ -122,7 +123,7 @@ def add_to_cart(product_id, size, quantity):
   except DBException as e:
     return Response(e.message, status=e.status_code, mimetype="text/plain")
   except ValueError:
-    return Response("Invalid quantity", status=400, mimetype="text/plain")
+    return Response("Invalid quantity.", status=400, mimetype="text/plain")
   
 @user_blueprint.route("/cart/<product_id>/<size>/<quantity>", methods=["PUT", "DELETE"])
 @authenticate_user
@@ -136,7 +137,7 @@ def update_item_quantity(product_id, size, quantity):
   except DBException as e:
     return Response(e.message, status=e.status_code, mimetype="text/plain")
   except ValueError:
-    return Response("Invalid quantity", status=400, mimetype="text/plain")
+    return Response("Invalid quantity.", status=400, mimetype="text/plain")
   
 @user_blueprint.route("/cart/checkout", methods=["POST"])
 @authenticate_user
@@ -158,7 +159,7 @@ def remove_discount():
   try:
     token = g.token
     remove_discount_handler(token["sub"]["id"])
-    return Response(f"Discount code was removed")
+    return Response(f"Discount code was removed.")
   except DBException as e:
     return Response(e.message, status=e.status_code, mimetype="text/plain")
 
@@ -169,5 +170,15 @@ def cancel_order(order_id):
     token = g.token
     cancel_order_handler(order_id, token["sub"]["id"])
     return Response(f"Order was successfully cancelled.", status=200, mimetype="text/plain")
+  except DBException as e:
+    return Response(e.message, status=e.status_code, mimetype="text/plain")
+  
+@user_blueprint.route("/buy-it-again", methods=["GET"])
+@authenticate_user
+def buy_it_again():
+  try:
+    token = g.token
+    products = buy_it_again_handler(token["sub"]["id"])
+    return Response(json.dumps(products), status=200, mimetype="application/json")
   except DBException as e:
     return Response(e.message, status=e.status_code, mimetype="text/plain")

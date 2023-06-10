@@ -4,6 +4,8 @@ import axios, { AxiosError } from "axios";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import ErrorMessage from "../../components/ErrorMessage";
+import { getAPIErrorMessage } from "../../utils/getAPIErrorMessage";
+import { TErrorMessage } from "../../@types/TErrorMessage";
 
 interface Props {
   cartItem: TCartItem,
@@ -15,15 +17,16 @@ export const quantityLimit = 10;
 const CartItem: React.FC<Props> = ({ cartItem, setCart }) => {
   const [changingQuantity, setChangingQuantity] = useState(false);
   const removeURL = `/users/cart/${cartItem.product_id}/${cartItem.curSize.size}/${-cartItem.quantity}`;
-  const [errorMessage, setErrorMessage] = useState("");
+  const [errorMessage, setErrorMessage] = useState<TErrorMessage>();
 
   const removeFromCart = async () => {
     try {
       const removeResponse = await axios.delete<{user_data: TUser, cart: TCartItem[]}>(removeURL);
       setCart(removeResponse.data.cart);
     }
-    catch (err: any) {
-      console.log(err);
+    catch (error: any) {
+      const errorMsg = getAPIErrorMessage(error as AxiosError);
+      setErrorMessage(errorMsg);
     }
   }
 
@@ -33,14 +36,11 @@ const CartItem: React.FC<Props> = ({ cartItem, setCart }) => {
       const change = parseInt(e.target.value) - cartItem.quantity;
       const updateResponse = await axios.put<{user_data: TUser, cart: TCartItem[]}>(`/users/cart/${cartItem.product_id}/${cartItem.curSize.size}/${change}`);
       setCart(updateResponse.data.cart);
-      setErrorMessage("");
+      setErrorMessage(undefined);
     }
     catch (error: any) {
-      if (error instanceof AxiosError) {
-        setCart(error.response!.data.cart);
-      } else {
-        setErrorMessage("Something went wrong.")
-      }
+      const errorMsg = getAPIErrorMessage(error as AxiosError);
+      setErrorMessage(errorMsg);
     }
     finally {
       setChangingQuantity(false);
@@ -86,13 +86,13 @@ const CartItem: React.FC<Props> = ({ cartItem, setCart }) => {
             Remove
           </button>
         </div>
-        {(errorMessage !== "" || cartItem.curSize.stock < cartItem.quantity) && 
+        {(errorMessage || cartItem.curSize.stock < cartItem.quantity) && 
         <ErrorMessage 
-          error={errorMessage === "" ? 
+          error={!errorMessage ? 
           cartItem.curSize.stock > 0 ? 
           `Only ${cartItem.curSize.stock} available` 
           : "Out of stock" 
-          : errorMessage} 
+          : errorMessage.message} 
           styles={"py-1 text-[15px] mt-[14px]"} 
         />}
       </div>

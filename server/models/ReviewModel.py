@@ -30,20 +30,19 @@ def get_reviews_handler(product_id, sort, search, page, limit, asc, user_id):
       }
     }
   except exc.SQLAlchemyError:
-    raise DBException("Failed to get products", 500)
+    raise DBException("Failed to get products.", 500)
   except KeyError:
-    raise DBException("Invalid sort query parameter specified", 400)
+    raise DBException("Invalid sort query parameter specified.", 400)
   except Exception:
-    raise DBException("Resource not found. This could be due to specifying an out of range page number or a product that doesn't exist", 404)
+    raise DBException("Resource not found. This could be due to specifying an out of range page number or a product that doesn't exist.", 404)
   
 def delete_review_handler(id):
   try:
     review: Review = settings.db.session.query(Review).filter(Review.id == id).first()
-    product: Product = settings.db.session.query(Product).filter(Product.id == review.product_id).first()
-
     if review is None:
-      raise DBException("Review not found", 404)
+      raise DBException("Review not found.", 404)
     
+    product: Product = settings.db.session.query(Product).filter(Product.id == review.product_id).first()
     product.num_reviews -= 1
     settings.db.session.commit()
 
@@ -60,7 +59,7 @@ def delete_review_handler(id):
     settings.db.session.delete(review)
     settings.db.session.commit()
   except exc.SQLAlchemyError:
-    raise DBException("Failed to delete review", 500)
+    raise DBException("Failed to delete review.", 500)
 
 def add_helpful_count_handler(id, user_id):
   try:
@@ -79,9 +78,9 @@ def add_helpful_count_handler(id, user_id):
       settings.db.session.commit()
       return review.helpful_count
     else:
-      raise DBException("You have already marked this review as helpful", status_code=409)
+      raise DBException("You have already marked this review as helpful.", status_code=409)
   except exc.SQLAlchemyError:
-    raise DBException("Failed to add helpful count", 500)
+    raise DBException("Failed to add helpful count.", 500)
 
 def add_review_handler(product_id, user_id, data):
   try:
@@ -89,11 +88,11 @@ def add_review_handler(product_id, user_id, data):
     user: User = settings.db.session.query(User).filter(User.id == user_id).first()
     
     if product is None or user is None:
-      raise DBException("Product or user does not exist", status_code=404)
+      raise DBException("Product or user does not exist.", status_code=404)
     
     for review in product.reviews:
       if review.user_id == user_id:
-        raise DBException("You have already reviewed this product", status_code=409)
+        raise DBException("You have already reviewed this product.", status_code=409)
     
     has_purchased_product = settings.db.session.query(Order).filter(Order.user_id == user_id, Order.delivered_date != None)\
       .join(OrderItem, OrderItem.order_id == Order.id)\
@@ -116,4 +115,4 @@ def add_review_handler(product_id, user_id, data):
   except exc.SQLAlchemyError as e:
     raise DBException(str(e), status_code=500)
   except KeyError:
-    raise DBException("Missing required fields", status_code=400)
+    raise DBException("Missing required fields.", status_code=400)

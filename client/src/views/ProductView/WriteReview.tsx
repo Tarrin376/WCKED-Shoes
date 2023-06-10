@@ -4,6 +4,8 @@ import { TProduct } from "../../@types/TProduct";
 import axios, { AxiosError } from "axios";
 import Button from "../../components/Button";
 import ErrorMessage from "../../components/ErrorMessage";
+import { getAPIErrorMessage } from "../../utils/getAPIErrorMessage";
+import { TErrorMessage } from "../../@types/TErrorMessage";
 
 interface Props {
   product: Readonly<TProduct>
@@ -19,7 +21,7 @@ const WriteReview: React.FC<Props> = ({ product }) => {
   const [rating, setRating] = useState<number>(5);
   const [reviewTitle, setReviewTitle] = useState<string>("");
   const [review, setReview] = useState<string>("");
-  const [errorMessage, setErrorMessage] = useState<string>("");
+  const [errorMessage, setErrorMessage] = useState<TErrorMessage>();
 
   const updateReviewTitle = (title: string) => {
     setReviewTitle(title);
@@ -29,23 +31,17 @@ const WriteReview: React.FC<Props> = ({ product }) => {
     setReview(review);
   }
 
-  const submitReview = async (): Promise<boolean> => {
+  const submitReview = async (): Promise<TErrorMessage | undefined> => {
     if (!product) {
-      return true;
+      return { message: "Product not found", status: 400 };
     }
 
     if (reviewTitle.trim().length === 0) {
-      setErrorMessage("Review heading must be specified");
-      setTimeout(() => setErrorMessage(""), 5000);
-      return false;
+      return { message: "Review heading must be specified", status: 400 };
     } else if (review.trim().length < minReviewLength) {
-      setErrorMessage("Review must be at least " + minReviewLength + " characters long");
-      setTimeout(() => setErrorMessage(""), 5000);
-      return false;
+      return { message: "Review must be at least " + minReviewLength + " characters long", status: 400 };
     } else if (review.trim().length > maxReviewLength) {
-      setErrorMessage("Review cannot be more than " + maxReviewLength + " characters long");
-      setTimeout(() => setErrorMessage(""), 5000);
-      return false;
+      return { message: "Review cannot be more than " + maxReviewLength + " characters long", status: 400 };
     }
 
     try {
@@ -58,15 +54,10 @@ const WriteReview: React.FC<Props> = ({ product }) => {
       setRating(5);
       setReviewTitle("");
       setReview("");
-      return true;
     }
     catch (error: any) {
-      if (error instanceof AxiosError) {
-        setErrorMessage(error!.response!.data);
-        setTimeout(() => setErrorMessage(""), 5000);
-      }
-
-      return false;
+      const errorMsg = getAPIErrorMessage(error as AxiosError);
+      return errorMsg;
     }
   }
 
@@ -81,9 +72,9 @@ const WriteReview: React.FC<Props> = ({ product }) => {
       <p className="text-side-text-light dark:text-side-text-gray mb-4">{`Review of the product (must be between ${minReviewLength} and ${maxReviewLength} characters)`}</p>
       <textarea className="text-box-light dark:text-box w-full h-[250px]" placeholder="Share your thoughts on the product" value={review}
       onChange={(e) => updateReview(e.target.value)} />
-      {errorMessage.length > 0 && 
+      {errorMessage && 
       <ErrorMessage
-        error={errorMessage} 
+        error={errorMessage.message} 
         styles="absolute top-0 left-0 w-full !mt-0 rounded-b-[0px]"
       />}
       <Button 
@@ -92,6 +83,7 @@ const WriteReview: React.FC<Props> = ({ product }) => {
         defaultText={defaultText} 
         loadingText={loadingText}
         styles={`btn-primary px-3 h-[40px] ml-auto block mt-6`}
+        setErrorMessage={setErrorMessage}
       />
     </div>
   )

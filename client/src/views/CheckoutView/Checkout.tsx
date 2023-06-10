@@ -17,12 +17,8 @@ import { TDiscount } from "../../@types/TDiscount";
 
 interface ShippingMethodProps {
   index: number,
-  methods: {
-    deliveryMethods: TDeliveryMethod[];
-    selectedMethod: TDeliveryMethod | null;
-    setSelectedMethod: React.Dispatch<React.SetStateAction<TDeliveryMethod | null>>;
-  }, 
-  method: TDeliveryMethod
+  methods: TDeliveryMethod[];
+  method: TDeliveryMethod,
 }
 
 const Checkout = () => {
@@ -32,10 +28,11 @@ const Checkout = () => {
   const [notEnoughStockItems, setNotEnoughStockItems] = useState<number[]>([]);
   const [selectedCountry, setSelectedCountry] = useState<string>("United Kingdom 🇬🇧");
   const navigate = useNavigate();
-  const methods = useDeliveryMethods();
+  const deliveryMethods = useDeliveryMethods();
   const [discount, setDiscount] = useState<TDiscount>({ name: "", percent_off: 0 });
   const [discountText, setDiscountText] = useState<string>("");
   const [discountError, setDiscountError] = useState<string>("");
+  const [selectedMethod, setSelectedMethod] = useState<TDeliveryMethod>();
 
   const isValidForm = () => {
     if (!formRef || !formRef.current) {
@@ -60,10 +57,10 @@ const Checkout = () => {
 
   const updateDeliveryMethod = (e: React.ChangeEvent<HTMLInputElement>) => {
     const methodName = e.target.value;
-    const methodObj = methods.deliveryMethods.find((deliveryMethod) => deliveryMethod.name === methodName);
+    const methodObj = deliveryMethods.methods.find((deliveryMethod) => deliveryMethod.name === methodName);
 
     if (methodObj) {
-      methods.setSelectedMethod(methodObj);
+      setSelectedMethod(methodObj);
     }
   }
 
@@ -111,6 +108,11 @@ const Checkout = () => {
       return;
     }
 
+    if (!selectedMethod) {
+      setErrorMessage("Please select a delivery method.");
+      return;
+    }
+
     try {
       const formData = new FormData(formRef.current);
       const fieldValues = Object.fromEntries(formData.entries());
@@ -130,7 +132,7 @@ const Checkout = () => {
         subtotal: cartItems.subtotal,
         card_end: cardNum.substring(cardNum.length - 4),
         country: selectedCountry,
-        delivery_method: methods.selectedMethod!.name,
+        delivery_method: selectedMethod!.name,
         discount: discount.name
       });
       
@@ -219,10 +221,10 @@ const Checkout = () => {
                 </button>}
               </div>
               <div>
-                {cartItems.cart && methods.selectedMethod ? 
+                {cartItems.cart ? 
                 <CartPriceSummary 
                   subtotal={cartItems.subtotal} 
-                  shipping={methods.selectedMethod.price} 
+                  shipping={selectedMethod ? selectedMethod.price : 0}
                   discount={cartItems.subtotal * discount.percent_off}
                   styles="pt-6"
                 /> : 
@@ -239,13 +241,13 @@ const Checkout = () => {
           <div>
             <p className="md:text-2xl max-md:text-xl text-main-text-black dark:text-main-text-white pb-3">Shipping Method</p>
             <div className="light-component dark:gray-component flex flex-col justify-between" onChange={updateDeliveryMethod}>
-              {methods.selectedMethod && methods.deliveryMethods.map((method: TDeliveryMethod, index: number) => {
+              {deliveryMethods.methods.map((method: TDeliveryMethod, index: number) => {
                 return (
                   <ShippingMethod 
                     index={index} 
-                    methods={methods} 
+                    methods={deliveryMethods.methods}
                     method={method}
-                    key={index} 
+                    key={index}
                   />
                 )
               })}
@@ -268,10 +270,10 @@ const Checkout = () => {
                 })}
               </div> :
               <CheckoutItemsLoading />}
-              {cartItems.cart && methods.selectedMethod ? 
+              {cartItems.cart ? 
               <CartPriceSummary 
                 subtotal={cartItems.subtotal}
-                shipping={methods.selectedMethod.price}
+                shipping={selectedMethod ? selectedMethod.price : 0}
                 discount={cartItems.subtotal * discount.percent_off}
                 styles="pt-6"
               /> : 
@@ -286,9 +288,9 @@ const Checkout = () => {
 
 const ShippingMethod: React.FC<ShippingMethodProps> = ({ index, methods, method }) => {
   return (
-    <div className={`${index < methods.deliveryMethods.length - 1 ? "border-b border-light-border" : ""} p-5 flex items-center justify-between`}>
+    <div className={`${index < methods.length - 1 ? "border-b border-light-border dark:border-main-gray-border" : ""} p-5 flex items-center justify-between`}>
       <div className="flex gap-3 items-center">
-        <input type="radio" value={method.name} name="deliveryMethod" defaultChecked={method.name === methods.selectedMethod!.name} />
+        <input type="radio" value={method.name} name="deliveryMethod" />
         <div>
           <p className="font-semibold text-main-text-black dark:text-main-text-white">{method.name}</p>
           <p className="text-[15px] text-side-text-light dark:text-side-text-gray">

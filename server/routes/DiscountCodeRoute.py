@@ -20,7 +20,7 @@ def apply_discount(code_name):
 def delete_discount_code(code_name):
   try:
     delete_discount_code_handler(code_name)
-    return Response(f"Succesfully deleted discount code: {code_name}", status=200, mimetype="text/plain")
+    return Response(f"Succesfully deleted discount code: {code_name}.", status=200, mimetype="text/plain")
   except DBException as e:
     return Response(e.message, e.status_code, mimetype="text/plain")
 
@@ -30,8 +30,8 @@ def create_discount_code():
     code_name = request.json.get("code_name")
     percent_off = request.json.get("percent_off")
     create_discount_code_handler(code_name, (float)(percent_off))
-    return Response(f"Successfully created discount code: {code_name}", status=200, mimetype="text/plain")
+    return Response(f"Successfully created discount code: {code_name}.", status=200, mimetype="text/plain")
   except DBException as e:
     return Response(e.message, e.status_code, mimetype="text/plain")
   except ValueError:
-    return Response("Discount percentage is invalid", status=400, mimetype="text/plain")
+    return Response("Discount percentage is invalid.", status=400, mimetype="text/plain")

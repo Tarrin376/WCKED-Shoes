@@ -12,10 +12,10 @@ def add_delivery_method_handler(method_data):
 
     find_method: DeliveryMethod = DeliveryMethod.query.filter_by(name=name).first()
     if find_method:
-      raise DBException("Delivery method already exists", 400)
+      raise DBException("Delivery method already exists.", 400)
     
     if estimated_lower_days > estimated_higher_days:
-      raise DBException("Delivery interval is invalid", 400)
+      raise DBException("Delivery interval is invalid.", 400)
     
     new_delivery_method = DeliveryMethod(
       name=name, estimated_lower_days=estimated_lower_days, 
@@ -24,25 +24,25 @@ def add_delivery_method_handler(method_data):
     settings.db.session.add(new_delivery_method)
     settings.db.session.commit()
   except exc.SQLAlchemyError:
-    raise DBException("Failed to create delivery method", 500)
+    raise DBException("Failed to create delivery method.", 500)
   except KeyError:
-    raise DBException("Delivery method is missing required fields", 400)
+    raise DBException("Delivery method is missing required fields.", 400)
 
 def delete_delivery_method_handler(name):
   try:
     method: DeliveryMethod = DeliveryMethod.query.filter_by(name=name).first()
 
     if method is None:
-      raise DBException("Delivery method could not be found", 404)
+      raise DBException("Delivery method could not be found.", 404)
     
     settings.db.session.delete(method)
     settings.db.session.commit()
   except exc.SQLAlchemyError:
-    raise DBException("Failed to delete delivery method", 500)
+    raise DBException("Failed to delete delivery method.", 500)
   
 def get_delivery_methods_handler():
   try:
     delivery_methods = DeliveryMethod.query.all()
     return [method.as_dict() for method in delivery_methods]
   except exc.SQLAlchemyError:
-    raise DBException("Failed to retrieve delivery methods", 500)
+    raise DBException("Failed to retrieve delivery methods.", 500)

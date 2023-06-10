@@ -20,7 +20,7 @@ def get_orders():
   except DBException as e:
     return Response(e.message, status=e.status_code, mimetype="text/plain")
   except ValueError:
-    return Response("'page' and 'limit' query parameters must be numbers", status=400, mimetype="text/plain")
+    return Response("'page' and 'limit' query parameters must be numbers.", status=400, mimetype="text/plain")
 
 @orders_blueprint.route("/<id>", methods=["GET"])
 @authenticate_user
@@ -36,10 +36,10 @@ def get_order(id):
 def update_order_status(id):
   status = request.json.get("status")
   if status != "Order Created" and status != "Processing" and status != "Shipped" and status != "Delivered":
-    return Response("Order status is not valid", status=400, mimetype="text/plain")
+    return Response("Order status is not valid.", status=400, mimetype="text/plain")
   
   try:
     update_order_status_handler(id, status)
-    return Response(f"Order status was updated to: {status}", status=200, mimetype="text/plain")
+    return Response(f"Order status was updated to: {status}.", status=200, mimetype="text/plain")
   except DBException as e:
     return Response(e.message, status=e.status_code, mimetype="text/plain")

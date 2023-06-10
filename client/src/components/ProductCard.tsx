@@ -26,7 +26,7 @@ const ProductCard: React.FC<Props> = ({ product, styles, setTotalPrice, smallSiz
   const [size, setSize] = useState<string>("");
 
   const goToProduct = () => {
-    navigate(`/products/${product.id}`);
+    navigate(`/products/${product.id}`, { replace: true });
   }
 
   const toggleChecked = () => {

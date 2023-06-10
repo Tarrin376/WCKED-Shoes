@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useRef, useEffect } from "react";
 import { TOrderData } from "../../@types/TOrderData";
 import Order from "./Order";
 import { usePagination } from "../../hooks/usePagination";
@@ -11,6 +11,7 @@ import RecommendedProducts from "../../components/RecommendedProducts";
 import { useScrollPosition } from "../../hooks/useScrollPosition";
 import { getPageSize } from "../../utils/getPageSize";
 import OrderCardsLoading from "../../loading/OrderCardsLoading";
+import { useNavigate } from "react-router-dom";
 
 const MyOrders = () => {
   const searchRef = useRef<HTMLInputElement>(null);
@@ -18,6 +19,13 @@ const MyOrders = () => {
   const windowSize = useWindowSize();
   const scrollPosition = useScrollPosition();
   const pageSize = getPageSize(windowSize);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (getOrders.errorMessage && getOrders.errorMessage.status === 401) {
+      navigate("/");
+    }
+  }, [getOrders.errorMessage, navigate])
 
   return (
     <>

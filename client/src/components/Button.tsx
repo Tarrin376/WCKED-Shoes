@@ -1,45 +1,53 @@
 import gear from "../assets/gear.svg";
 import { useEffect, useRef, useState } from "react";
+import { TErrorMessage } from "../@types/TErrorMessage";
 
 interface Props {
-  action: () => Promise<boolean>,
+  action: () => Promise<TErrorMessage | undefined>,
   completedText: string,
   defaultText: string,
   loadingText: string,
   styles: string,
-  children?: React.ReactNode
+  children?: React.ReactNode,
+  setErrorMessage: React.Dispatch<React.SetStateAction<TErrorMessage | undefined>>
 }
 
 const Button: React.FC<Props> = (props) => {
   const btnRef = useRef<HTMLButtonElement>(null);
   const [btnText, setBtnText] = useState(props.defaultText);
 
-  const setBgColor = (color: string, text: string) => {
+  const setStyle = (text: string) => {
     if (btnRef && btnRef.current) {
-      btnRef.current.style.backgroundColor = color;
+      btnRef.current.classList.add('success-btn');
 
       setTimeout(() => {
         if (btnRef && btnRef.current) {
-          btnRef.current.style.backgroundColor = "";
+          btnRef.current.classList.remove('success-btn');
           setBtnText(text);
         }
-      }, 2000);
+      }, 3000);
     }
   }
 
   const handleAction = async () => {
     setBtnText(props.loadingText);
-    const success = await props.action();
-    if (success) {
-      setBtnText(props.completedText);
-    } else {
-      setBtnText(props.defaultText);
-    }
+    setTimeout(() => {
+      (async () => {
+        const error = await props.action();
+        if (!error) {
+          setBtnText(props.completedText);
+        } else {
+          props.setErrorMessage(error);
+          setTimeout(() => props.setErrorMessage(undefined), 5000);
+          setBtnText(props.defaultText);
+        }
+      })()
+    }, 500)
   }
 
   useEffect(() => {
     if (btnText === props.completedText) {
-      setBgColor("#1cad21", props.defaultText);
+      setStyle(props.defaultText);
     }
   }, [btnText, props.completedText, props.defaultText])
 

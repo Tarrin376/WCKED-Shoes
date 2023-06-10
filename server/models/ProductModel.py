@@ -35,9 +35,9 @@ def create_product_handler(product):
     settings.db.session.commit()
     create_product_vector(new_product.id)
   except exc.SQLAlchemyError:
-    raise DBException("Failed to create product", 500)
+    raise DBException("Failed to create product.", 500)
   except KeyError:
-    raise DBException("Product is missing required fields", 400)
+    raise DBException("Product is missing required fields.", 400)
   
 def create_product_vector(product_id):
   users = settings.db.session.query(User).all()
@@ -67,11 +67,11 @@ def get_products_handler(sort, search, page, limit, asc):
       }
     }
   except exc.SQLAlchemyError:
-    raise DBException("Failed to get products", 500)
+    raise DBException("Failed to get products.", 500)
   except KeyError:
-    raise DBException("Invalid sort query parameter specified", 400)
+    raise DBException("Invalid sort query parameter specified.", 400)
   except Exception:
-    raise DBException("Resource not found. This could be due to specifying an out of range page number or a product that doesn't exist", 404)
+    raise DBException("Resource not found. This could be due to specifying an out of range page number or a product that doesn't exist.", 404)
 
 def get_product_handler(product_id):
   try:
@@ -80,27 +80,27 @@ def get_product_handler(product_id):
      .first()
     
     if product is None:
-      raise DBException("Product not found", 404)
+      raise DBException("Product not found.", 404)
     
     return product
   except exc.SQLAlchemyError:
-    raise DBException("Failed to get product", 500)
+    raise DBException("Failed to get product.", 500)
 
 def check_size_stock_handler(product_id, size):
   try:
     product: Product = settings.db.session.query(Product).filter(Product.id == product_id).first()
 
     if product is None:
-      raise DBException("Product not found", 404)
+      raise DBException("Product not found.", 404)
     
     size: Size = settings.db.session.query(Size).filter(Size.product_id == product.id).filter(Size.size == size).first()
 
     if size is None:
-      raise DBException("Size not found", 404)
+      raise DBException("Size not found.", 404)
     
     return { "inStock": size.stock > 0 }
   except exc.SQLAlchemyError:
-    raise DBException("Failed to check size stock", 500)
+    raise DBException("Failed to check size stock.", 500)
   
 def update_product_handler(product_id, product):
   pass
@@ -110,57 +110,60 @@ def delete_product_handler(product_id):
     product: Product = settings.db.session.query(Product).filter(Product.id == product_id).first()
 
     if product is None:
-      raise DBException("Product not found", 404)
+      raise DBException("Product not found.", 404)
     
     settings.db.session.delete(product)
     settings.db.session.commit()
   except exc.SQLAlchemyError as e:
     print(e)
-    raise DBException("Failed to delete product", 500)
+    raise DBException("Failed to delete product.", 500)
 
 def add_product_image_handler(product_id, image_url):
   try:
     product: Product = settings.db.session.query(Product).filter(Product.id == product_id).first()
     
     if product is None:
-      raise DBException("Product not found", 404)
+      raise DBException("Product not found.", 404)
     
     settings.db.session.add(ProductImage(product_id=product.id, image_url=image_url))
     settings.db.session.commit()
   except exc.SQLAlchemyError:
-    raise DBException("Failed to add product image", 500)
+    raise DBException("Failed to add product image.", 500)
 
 def update_product_thumbnail_handler(product_id, thumbnail_url):
   try:
     product: Product = settings.db.session.query(Product).filter(Product.id == product_id).first()
 
     if product is None:
-      raise DBException("Product not found", 404)
+      raise DBException("Product not found.", 404)
     
     product.thumbnail = thumbnail_url
     settings.db.session.commit()
   except exc.SQLAlchemyError:
-    raise DBException("Failed to update product thumbnail", 500)
+    raise DBException("Failed to update product thumbnail.", 500)
   
 def recommend_customer_bought_handler(product_id, limit):
-  N = len(settings.db.session.query(User).all())
-  target_vector = get_product_vector(product_id, N)
-  products = []
+  try:
+    N = len(settings.db.session.query(User).all())
+    target_vector = get_product_vector(product_id, N)
+    products = []
 
-  if np.linalg.norm(target_vector) == 0:
-    return products
+    if np.linalg.norm(target_vector) == 0:
+      return products
 
-  all_products = settings.db.session.query(Product).all()
+    all_products = settings.db.session.query(Product).all()
 
-  for product in all_products:
-    vector = get_product_vector(product.id, N)
-    if product.id != product_id:
+    for product in all_products:
       vector = get_product_vector(product.id, N)
-      angle = get_vector_angle(target_vector, vector)
-      products.append([angle, product])
-  
-  products.sort(key=lambda x: x[0])
-  return [product.card_details() for _, product in list(filter(lambda x: x[0] < 90, products[:min(len(products), limit)]))]
+      if product.id != product_id:
+        vector = get_product_vector(product.id, N)
+        angle = get_vector_angle(target_vector, vector)
+        products.append([angle, product])
+    
+    products.sort(key=lambda x: x[0])
+    return [product.card_details() for _, product in list(filter(lambda x: x[0] < 90, products[:min(len(products), limit)]))]
+  except exc.SQLAlchemyError:
+    raise DBException("Failed to load product.", 500)
 
 def get_vector_angle(u, v):
   u_norm = np.linalg.norm(u)
@@ -173,31 +176,37 @@ def get_vector_angle(u, v):
   return math.degrees(math.acos(theta))
 
 def get_product_vector(product_id, N):
-  unit_vectors: list[ProductBoughtVector] = settings.db.session.query(ProductBoughtVector)\
-    .filter(ProductBoughtVector.product_id == product_id)\
-    .order_by(ProductBoughtVector.user_id)\
-    .all()
-  
-  vector = np.zeros(N)
-  for i in range(N):
-    vector[i] = unit_vectors[i].bought
-  
-  return vector
+  try:
+    unit_vectors: list[ProductBoughtVector] = settings.db.session.query(ProductBoughtVector)\
+      .filter(ProductBoughtVector.product_id == product_id)\
+      .order_by(ProductBoughtVector.user_id)\
+      .all()
+    
+    vector = np.zeros(N)
+    for i in range(N):
+      vector[i] = unit_vectors[i].bought
+    
+    return vector
+  except exc.SQLAlchemyError:
+    raise DBException("Failed to load product.", 500)
 
 def frequently_bought_together_handler(product_id, limit):
-  bought_with_products: list[BoughtTogether] = settings.db.session.query(BoughtTogether)\
-  .filter(BoughtTogether.product_id == product_id)\
-  .all()
-  
-  products = []
-  for edge in bought_with_products:
-    products.append([edge.bought_with, edge.frequency])
-  
-  products.sort(key=lambda x: (x[1], x[0].rating), reverse=True)
-  res = [product.card_details() for product, _ in products[:min(len(products), limit)]]
+  try:
+    bought_with_products: list[BoughtTogether] = settings.db.session.query(BoughtTogether)\
+    .filter(BoughtTogether.product_id == product_id)\
+    .all()
+    
+    products = []
+    for edge in bought_with_products:
+      products.append([edge.bought_with, edge.frequency])
+    
+    products.sort(key=lambda x: (x[1], x[0].rating), reverse=True)
+    res = [product.card_details() for product, _ in products[:min(len(products), limit)]]
 
-  if len(res) == 0:
+    if len(res) == 0:
+      return res
+    
+    res.insert(0, bought_with_products[0].product.card_details())
     return res
-  
-  res.insert(0, bought_with_products[0].product.card_details())
-  return res
+  except exc.SQLAlchemyError:
+    raise DBException("Failed to load product.", 500)

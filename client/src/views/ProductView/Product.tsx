@@ -23,6 +23,8 @@ import { quantityLimit } from "../CartView/CartItem";
 import RecommendedProducts from "../../components/RecommendedProducts";
 import { useNavigate } from "react-router-dom";
 import FreqBoughtTogether from "./FreqBoughtTogether";
+import { getAPIErrorMessage } from "../../utils/getAPIErrorMessage";
+import { TErrorMessage } from "../../@types/TErrorMessage";
 
 interface ProductImagesProps {
   images: readonly string[], 
@@ -41,7 +43,7 @@ const Product: React.FC<{}> = () => {
   const [curSize, setCurSize] = useState<TSize>();
   const [selectedImage, setSelectedImage] = useState<number>(0);
   const itemStock = useGetItemStock(curSize);
-  const [errorMessage, setErrorMessage] = useState<string>("");
+  const [errorMessage, setErrorMessage] = useState<TErrorMessage>();
   const [quantity, setQuantity] = useState<number>(1);
   const navigate = useNavigate();
 
@@ -61,14 +63,14 @@ const Product: React.FC<{}> = () => {
     setQuantity((cur) => Math.max(1, Math.min(cur + value, quantityLimit)));
   }
 
-  const addToCart = async (productId: number, size: string | undefined): Promise<boolean> => {
+  const addToCart = async (productId: number, size: string | undefined): Promise<TErrorMessage | undefined> => {
     if (size === undefined) {
-      return false;
+      return { message: "Please select a size", status: 400 };
     }
 
-    const inStock = await checkItemStock(size);
-    if (!inStock) {
-      return false;
+    const checkStock = await checkItemStock(size);
+    if (checkStock !== "") {
+      return { message: checkStock, status: 400 };
     }
 
     try {
@@ -82,55 +84,46 @@ const Product: React.FC<{}> = () => {
       });
 
       setQuantity(1);
-      return true;
     }
     catch (error: any) {
-      if (error instanceof AxiosError) {
-        setErrorMessage(error.response!.data);
-      } else {
-        setErrorMessage(error.message);
-      }
-      
-      setTimeout(() => setErrorMessage(""), 5000);
-      return false;
+      const errorMsg = getAPIErrorMessage(error as AxiosError);
+      return errorMsg;
     }
   }
 
-  const checkItemStock = async (size: string): Promise<boolean> => {
+  const checkItemStock = async (size: string): Promise<string> => {
     try {
       const stockResponse = await axios.get<{ inStock: boolean }>(`/products/${product!.id}/${size}`);
-      return stockResponse.data.inStock;
+      return stockResponse.data.inStock ? "" : "Out of stock";
     }
     catch (error: any) {
-      if (error instanceof AxiosError) {
-        setErrorMessage(error.response!.data);
-      } else {
-        setErrorMessage(error.message);
-      }
-      
-      return false;
+      const errorMsg = getAPIErrorMessage(error as AxiosError);
+      return errorMsg.message;
     }
   }
 
   useEffect(() => {
-    (async () => {
-      try {
-        const productResponse = await axios.get<TProduct>(location.pathname);
-        if (productResponse.status === 200) {
-          const size = productResponse.data.sizes.find((cur: TSize) => cur.stock > 0);
-          setProduct({...productResponse.data, images: [productResponse.data.thumbnail, ...productResponse.data.images] });
-          setCurSize(size);
-          setSelectedImage(0);
-        }
-      }
-      catch (error: any) {
-        if (error instanceof AxiosError) {
-          if (error.response!.status === 404) {
-            navigate("/error", { state: { error: error.response!.data }});
+    setTimeout(() => {
+      (async () => {
+        try {
+          const productResponse = await axios.get<TProduct>(location.pathname);
+          if (productResponse.status === 200) {
+            const size = productResponse.data.sizes.find((cur: TSize) => cur.stock > 0);
+            setProduct({...productResponse.data, images: [productResponse.data.thumbnail, ...productResponse.data.images] });
+            setCurSize(size);
+            setSelectedImage(0);
           }
         }
-      }
-    })()
+        catch (error: any) {
+          const errorMsg = getAPIErrorMessage(error as AxiosError);
+          if (errorMsg.status === 404) {
+            navigate("/error", { state: { error: errorMsg.message }});
+          } else if (errorMsg.status === 429) {
+            navigate(-1);
+          }
+        }
+      })()
+    }, 1000)
   }, [location.pathname, navigate]);
 
   if (!product) {
@@ -189,11 +182,16 @@ const Product: React.FC<{}> = () => {
             <p className={itemStock?.color}>{itemStock?.message}</p>
           </div>
           {product.sizes && <Sizes sizes={product.sizes} curSize={curSize} updateShoeSize={updateShoeSize} />}
-          {errorMessage.length > 0 && <ErrorMessage error={errorMessage} styles="w-fit px-3" />}
+          {errorMessage && <ErrorMessage error={errorMessage.message} styles="w-fit px-3" />}
           <div className="mt-7 flex gap-5">
-            <Button action={() => addToCart(product!.id, !curSize ? curSize : curSize.size)} completedText={completedText} defaultText={defaultText} loadingText={loadingText} 
-            styles={`btn-primary h-[48px] w-[180px] flex items-center justify-center gap-4 px-4
-            ${!curSize || userContext?.email === "" ? 'disabled-btn-light dark:disabled-btn' : ''}`}>
+            <Button 
+              action={() => addToCart(product!.id, !curSize ? curSize : curSize.size)} 
+              completedText={completedText} 
+              defaultText={defaultText} 
+              loadingText={loadingText} 
+              styles={`btn-primary h-[48px] w-[180px] flex items-center justify-center gap-4 px-4
+              ${!curSize || userContext?.email === "" ? 'disabled-btn-light dark:disabled-btn' : ''}`}
+              setErrorMessage={setErrorMessage}>
               <img src={DarkCartIcon} className="w-[23px] h-[23px]" alt="" />
             </Button>
             <div className="flex w-[140px] h-[48px] border border-light-border dark:border-[#444444] shadow-light-component-shadow 

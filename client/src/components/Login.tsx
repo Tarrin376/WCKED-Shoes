@@ -6,6 +6,8 @@ import { useState, useContext } from "react";
 import ErrorMessage from "./ErrorMessage";
 import { UserContext } from "../providers/UserProvider";
 import { TUser } from "../@types/TUser";
+import { TErrorMessage } from "../@types/TErrorMessage";
+import { getAPIErrorMessage } from "../utils/getAPIErrorMessage";
 
 interface Props {
   setLoginPopUp: React.Dispatch<React.SetStateAction<boolean>>,
@@ -17,7 +19,7 @@ interface Props {
 }
 
 const Login: React.FC<Props> = (props) => {
-  const [errorMessage, setErrorMessage] = useState("");
+  const [errorMessage, setErrorMessage] = useState<TErrorMessage>();
   const userContext = useContext(UserContext);
   const [rememberMe, setRememberMe] = useState(false);
 
@@ -45,11 +47,8 @@ const Login: React.FC<Props> = (props) => {
       }
     }
     catch (error: any) {
-      if (error instanceof AxiosError) {
-        setErrorMessage(error!.response!.data);
-      } else {
-        setErrorMessage(error.message);
-      }
+      const errorMsg = getAPIErrorMessage(error as AxiosError);
+      setErrorMessage(errorMsg);
     }
   }
 
@@ -62,7 +61,7 @@ const Login: React.FC<Props> = (props) => {
       <form>
         <Star />
         <h1 className="text-main-text-black dark:text-main-text-white text-2xl mb-6">Log in</h1>
-        {errorMessage.length > 0 && <ErrorMessage error={errorMessage} styles="mb-6" />}
+        {errorMessage && <ErrorMessage error={errorMessage.message} styles="mb-6" />}
         <div className="flex flex-col gap-2 mb-4">
           <label htmlFor="email" className="font-semibold">Email address</label>
           <input type="email" className={`text-box-light dark:text-box h-[45px] ${!checkEmailAddress(props.emailAddress) ? 'text-box-error-focus' : ''}`} 
