@@ -18,7 +18,6 @@ const Home: React.FC<{}> = () => {
     "/products", 
     location.state || "", 
     "", 
-    undefined, 
     searchRef
   );
 

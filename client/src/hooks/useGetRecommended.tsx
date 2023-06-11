@@ -23,7 +23,7 @@ export const useGetRecommended = (URL: string): {
           setErrorMessage(errorMsg);
         }
       })()
-    }, 2000)
+    }, 700)
   }, [URL]);
 
   return {

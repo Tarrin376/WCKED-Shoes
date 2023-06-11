@@ -51,7 +51,7 @@ def add_review(product_id):
   token = g.token
 
   try:
-    add_review_handler(product_id, token["sub"]["id"], data)
-    return Response("Successfully added review.", status=201, mimetype="text/plain")
+    new_review = add_review_handler(product_id, token["sub"]["id"], data)
+    return Response(json.dumps(new_review), status=201, mimetype="application/json")
   except DBException as e:
     return Response(e.message, status=e.status_code, mimetype="text/plain")

@@ -17,6 +17,7 @@ import { TOrderStatus } from "../../@types/TOrderStatus";
 
 interface Props {
   orderData: TOrderData,
+  setNext: React.Dispatch<React.SetStateAction<TOrderData[]>>
 }
 
 const orderStatusColours: {
@@ -28,7 +29,7 @@ const orderStatusColours: {
   "Delivered": "text-in-stock-green-text dark:text-in-stock-green-text-dark",
 }
 
-const Order: React.FC<Props> = ({ orderData }) => {
+const Order: React.FC<Props> = ({ orderData, setNext }) => {
   const themeContext = useContext(ThemeContext);
   const [orderDetailsPopUp, setOrderDetailsPopUp] = useState(false);
   const [orderHistoryPopUp, setOrderHistoryPopUp] = useState(false);
@@ -154,7 +155,7 @@ const Order: React.FC<Props> = ({ orderData }) => {
             </div>
           </div>
           {orderDetailsPopUp && <OrderDetails order={orderData.order_details} />}
-          {cancelOrderPopUp && <CancelOrder orderID={orderData.order_details.id} />}
+          {cancelOrderPopUp && <CancelOrder orderID={orderData.order_details.id} setNext={setNext} />}
           {orderHistoryPopUp &&
           <OrderActivity 
             dates={[

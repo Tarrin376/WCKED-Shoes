@@ -159,7 +159,8 @@ const LoggedIn: React.FC<LoggedInProps> = (props) => {
           Logged in as:
           <span className="font-semibold ml-2">{userContext?.email}</span>
         </p>
-        <button className={`signup-btn ${props.errorMessage && props.errorMessage.message ? "!bg-main-red !w-fit" : ""}`} onClick={props.logout}>
+        <button className={`signup-btn !w-full ${props.errorMessage && props.errorMessage.message ? "!bg-main-red !border-main-red" : ""}`} 
+        onClick={props.logout}>
           {!props.errorMessage || !props.errorMessage.message ? "Log out" : props.errorMessage.message}
         </button>
         <div className="mt-4 flex items-center justify-between">

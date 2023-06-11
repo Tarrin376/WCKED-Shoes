@@ -263,7 +263,7 @@ def add_order_items(cart_items, order, user, out_of_stock_items):
       if i != j:
         bought_with: BoughtTogether = settings.db.session.query(BoughtTogether)\
           .filter_by(product_id=cart_items[i][1], bought_with_id=cart_items[j][1])\
-            .first()
+          .first()
 
         if bought_with is None:
           new_pair: BoughtTogether = BoughtTogether(product_id=cart_items[i][1], bought_with_id=cart_items[j][1])
@@ -385,5 +385,18 @@ def cancel_order_handler(id, user_id):
   except exc.SQLAlchemyError:
     raise DBException("Unable to update order status. Try again.", 500)
   
-def buy_it_again_handler(user_id):
-  pass
+def buy_it_again_handler(user_id, limit):
+  try:
+    products_bought: ProductBoughtVector = settings.db.session.query(ProductBoughtVector)\
+      .filter(ProductBoughtVector.user_id == user_id, ProductBoughtVector.bought == 1)\
+      .order_by(ProductBoughtVector.times_bought.desc())\
+      .all()
+    
+    recommended = []
+    for i in range(min(len(products_bought), limit)):
+      product: Product = settings.db.session.query(Product).filter(Product.id == products_bought[i].product_id).first()
+      recommended.append(product.card_details())
+
+    return recommended
+  except exc.SQLAlchemyError:
+    raise DBException("Failed to load product.", 500)

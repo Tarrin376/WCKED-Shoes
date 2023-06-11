@@ -77,7 +77,7 @@ const SignUp: React.FC<Props> = (props) => {
         <div className="flex flex-col gap-2 mb-4">
           <label htmlFor="email" className="font-semibold">Password</label>
           <input type="password" className={`text-box-light dark:text-box h-[45px] ${!checkPassword(props.password) ? 'text-box-error-focus' : ''}`} 
-          value={props.password} onChange={(e) => props.setPassword(e.target.value)} id="email" placeholder="Must be at least 8 characters" />
+          value={props.password} onChange={(e) => props.setPassword(e.target.value)} id="email" placeholder="Minimum of 8 characters" />
         </div>
         <div className="flex justify-evenly gap-4 mb-6">
           {new Array(passwordStrengthOptions).fill(0).map((_, i) => {

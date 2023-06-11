@@ -1,4 +1,4 @@
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, useContext } from "react";
 import { TOrderData } from "../../@types/TOrderData";
 import Order from "./Order";
 import { usePagination } from "../../hooks/usePagination";
@@ -12,20 +12,22 @@ import { useScrollPosition } from "../../hooks/useScrollPosition";
 import { getPageSize } from "../../utils/getPageSize";
 import OrderCardsLoading from "../../loading/OrderCardsLoading";
 import { useNavigate } from "react-router-dom";
+import { UserContext } from "../../providers/UserProvider";
 
 const MyOrders = () => {
   const searchRef = useRef<HTMLInputElement>(null);
-  const getOrders = usePagination<TOrderData, TOrderOptions>(orderOrders, 3, "/orders", "", "active", undefined, searchRef);
+  const getOrders = usePagination<TOrderData, TOrderOptions>(orderOrders, 3, "/orders", "", "active", searchRef);
   const windowSize = useWindowSize();
   const scrollPosition = useScrollPosition();
   const pageSize = getPageSize(windowSize);
   const navigate = useNavigate();
+  const userContext = useContext(UserContext);
 
   useEffect(() => {
-    if (getOrders.errorMessage && getOrders.errorMessage.status === 401) {
+    if ((getOrders.errorMessage && getOrders.errorMessage.status === 401) || !userContext?.email) {
       navigate("/");
     }
-  }, [getOrders.errorMessage, navigate])
+  }, [getOrders.errorMessage, navigate, userContext?.email])
 
   return (
     <>
@@ -76,7 +78,8 @@ const MyOrders = () => {
             return (
               <Order 
                 orderData={order} 
-                key={order.order_details.id} 
+                key={order.order_details.id}
+                setNext={getOrders.setNext}
               />
             )
           })}
@@ -96,7 +99,7 @@ const MyOrders = () => {
         </div>
         <RecommendedProducts 
           title={"Buy it again"} 
-          URL={`/products/${1}/recommend-customer-bought?limit=${20}`} 
+          URL={`/users/buy-it-again?limit=${20}`} 
           column={windowSize >= 1518 ? {
             fixedPosition: 345,
             endFixedPosition: 523,

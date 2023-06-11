@@ -88,11 +88,13 @@ const LoggedIn: React.FC<LoggedInProps> = ({ logout, openCartPage, errorMessage 
         <p>Logged in as:</p>
         <p className="font-semibold">{userContext?.email}</p>
       </div>
-      <button className={`signup-btn ${errorMessage && errorMessage.message ? "!bg-main-red !w-fit" : ""}`} onClick={logout}>
+      <button className={`signup-btn ${errorMessage && errorMessage.message ? "!bg-main-red !w-fit !border-main-red" : ""}`} 
+      onClick={logout}>
         {!errorMessage || !errorMessage.message ? "Log out" : errorMessage.message}
       </button>
       <div className={`${userContext?.cartChanged ? `after:bg-[#ff4b4d] after:w-[6px] after:h-[6px] after:absolute after:top-[-4px] 
-      after:rounded-xl after:right-[-4px] after:text-main-text-white after:text-[11px] relative` : ""} cursor-pointer`} onClick={openCartPage}>
+      after:rounded-xl after:right-[-4px] after:text-main-text-white after:text-[11px] relative` : ""} cursor-pointer`} 
+      onClick={openCartPage}>
         {themeContext?.darkMode ?
             <img src={DarkCartIcon} className="w-[28px] h-[28px] ml-5" alt="cart" /> : 
             <img src={LightCartIcon} className="w-[28px] h-[28px] ml-5" alt="cart" />}

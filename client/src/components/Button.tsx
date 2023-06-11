@@ -9,58 +9,57 @@ interface Props {
   loadingText: string,
   styles: string,
   children?: React.ReactNode,
-  setErrorMessage: React.Dispatch<React.SetStateAction<TErrorMessage | undefined>>
+  setErrorMessage: React.Dispatch<React.SetStateAction<TErrorMessage | undefined>>,
+  whenComplete?: () => void
 }
 
-const Button: React.FC<Props> = (props) => {
+const Button: React.FC<Props> = ({ action, completedText, defaultText, loadingText, styles, children, setErrorMessage, whenComplete }) => {
   const btnRef = useRef<HTMLButtonElement>(null);
-  const [btnText, setBtnText] = useState(props.defaultText);
-
-  const setStyle = (text: string) => {
-    if (btnRef && btnRef.current) {
-      btnRef.current.classList.add('success-btn');
-
-      setTimeout(() => {
-        if (btnRef && btnRef.current) {
-          btnRef.current.classList.remove('success-btn');
-          setBtnText(text);
-        }
-      }, 3000);
-    }
-  }
+  const [btnText, setBtnText] = useState(defaultText);
 
   const handleAction = async () => {
-    setBtnText(props.loadingText);
+    setBtnText(loadingText);
     setTimeout(() => {
       (async () => {
-        const error = await props.action();
+        const error = await action();
         if (!error) {
-          setBtnText(props.completedText);
+          setBtnText(completedText);
         } else {
-          props.setErrorMessage(error);
-          setTimeout(() => props.setErrorMessage(undefined), 5000);
-          setBtnText(props.defaultText);
+          setErrorMessage(error);
+          setTimeout(() => setErrorMessage(undefined), 5000);
+          setBtnText(defaultText);
         }
       })()
     }, 500)
   }
 
   useEffect(() => {
-    if (btnText === props.completedText) {
-      setStyle(props.defaultText);
+    if (btnText !== completedText || !btnRef || !btnRef.current) {
+      return;
     }
-  }, [btnText, props.completedText, props.defaultText])
+    
+    btnRef.current.classList.add('success-btn');
+    setTimeout(() => {
+      if (btnRef && btnRef.current) {
+        btnRef.current.classList.remove('success-btn');
+        setBtnText(defaultText);
+        if (whenComplete) {
+          whenComplete();
+        }
+      }
+    }, 2500);
+  }, [btnText, completedText, defaultText, whenComplete])
 
   useEffect(() => {
-    setBtnText(props.defaultText);
-  }, [props.defaultText])
+    setBtnText(defaultText);
+  }, [defaultText])
 
   return (
-    <button className={`${props.styles} ${btnText !== props.defaultText ? "pointer-events-none btn" : ""}`} 
+    <button className={`${styles} ${btnText !== defaultText ? "pointer-events-none btn" : ""}`} 
     ref={btnRef} onClick={handleAction}>
       <div className="flex items-center justify-center gap-3">
-        {btnText === props.loadingText ? <img src={gear} className="w-[20px] h-[20px] mt-[1px]" alt="gear" />
-        : props.children && btnText === props.defaultText && props.children}
+        {btnText === loadingText ? <img src={gear} className="w-[20px] h-[20px] mt-[1px]" alt="gear" />
+        : children && btnText === defaultText && children}
         <p className="mb-[1px]">{btnText}</p>
       </div>
     </button>

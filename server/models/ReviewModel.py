@@ -112,6 +112,7 @@ def add_review_handler(product_id, user_id, data):
     product.ratings = product.ratings + data["rating"]
     product.rating = product.ratings / product.num_reviews
     settings.db.session.commit()
+    return new_review.as_dict(False, True)
   except exc.SQLAlchemyError as e:
     raise DBException(str(e), status_code=500)
   except KeyError:

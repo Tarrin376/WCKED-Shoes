@@ -8,7 +8,6 @@ import { UserContext } from "../../providers/UserProvider";
 import Reviews from "./Reviews";
 import BackArrow from "../../assets/back-arrow.png";
 import NextArrow from "../../assets/next-arrow.png";
-import WriteReview from "./WriteReview";
 import ProductDetails from "./ProductDetails";
 import Rating from "../../components/Rating";
 import Sizes from "./Sizes";
@@ -103,6 +102,9 @@ const Product: React.FC<{}> = () => {
   }
 
   useEffect(() => {
+    setQuantity(1);
+    setProduct(null);
+    
     setTimeout(() => {
       (async () => {
         try {
@@ -124,7 +126,7 @@ const Product: React.FC<{}> = () => {
         }
       })()
     }, 1000)
-  }, [location.pathname, navigate]);
+  }, [location.pathname, navigate, userContext?.email]);
 
   if (!product) {
     return <ProductLoading />
@@ -212,12 +214,8 @@ const Product: React.FC<{}> = () => {
       <RecommendedProducts 
         title="Customers who bought this item also bought" 
         URL={customerBoughtEndpoint}
-        styles="mb-[20px]"
       />
-      <div className="flex max-xl:flex-col gap-6 max-xl:h-fit max-2xl:h-[630px] pb-2">
-        <Reviews product={product} />
-        <WriteReview product={product} />
-      </div>
+      <Reviews product={product} />
     </>
   )
 };

@@ -73,6 +73,6 @@
     dark:hover:bg-[#2B2B2B] hover:bg-main-text-black hover:text-main-text-white;
   }
   .signup-btn {
-    @apply py-2 px-4 w-[100px] btn-primary;
+    @apply py-2 px-4 w-[100px] btn-primary border border-bg-primary-btn;
   }
 }

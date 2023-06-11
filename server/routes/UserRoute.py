@@ -176,9 +176,16 @@ def cancel_order(order_id):
 @user_blueprint.route("/buy-it-again", methods=["GET"])
 @authenticate_user
 def buy_it_again():
+  limit = request.args.get("limit", "", str)
+
+  if limit == "":
+    return Response("Limit is not specified.", status=400, mimetype="text/plain")
+
   try:
     token = g.token
-    products = buy_it_again_handler(token["sub"]["id"])
+    products = buy_it_again_handler(token["sub"]["id"], (int)(limit))
     return Response(json.dumps(products), status=200, mimetype="application/json")
   except DBException as e:
     return Response(e.message, status=e.status_code, mimetype="text/plain")
+  except ValueError:
+    return Response("'limit' is not a number.", status=400, mimetype="text/plain")

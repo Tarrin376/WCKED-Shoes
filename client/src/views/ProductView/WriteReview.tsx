@@ -6,9 +6,16 @@ import Button from "../../components/Button";
 import ErrorMessage from "../../components/ErrorMessage";
 import { getAPIErrorMessage } from "../../utils/getAPIErrorMessage";
 import { TErrorMessage } from "../../@types/TErrorMessage";
+import { TReview } from "../../@types/TReview";
+import { TOrderByOption } from "../../@types/TOrderByOption";
+import { TReviewOptions } from "../../@types/TReviewOptions";
+import { orderReviews } from "../../utils/orderReviews";
 
 interface Props {
-  product: Readonly<TProduct>
+  product: Readonly<TProduct>,
+  setNext: React.Dispatch<React.SetStateAction<TReview[]>>,
+  sort: TOrderByOption<TReviewOptions>,
+  handleSort: (optionIndex: number) => void
 }
 
 const defaultText = "Submit review";
@@ -17,7 +24,7 @@ const completedText = "Review submitted";
 const minReviewLength = 100;
 const maxReviewLength = 400;
 
-const WriteReview: React.FC<Props> = ({ product }) => {
+const WriteReview: React.FC<Props> = ({ product, setNext, sort, handleSort }) => {
   const [rating, setRating] = useState<number>(5);
   const [reviewTitle, setReviewTitle] = useState<string>("");
   const [review, setReview] = useState<string>("");
@@ -45,7 +52,7 @@ const WriteReview: React.FC<Props> = ({ product }) => {
     }
 
     try {
-      await axios.post(`/reviews/${product.id}`, {
+      const newReview = await axios.post<TReview>(`/reviews/${product.id}`, {
         rating: rating,
         title: reviewTitle,
         review: review,
@@ -54,6 +61,12 @@ const WriteReview: React.FC<Props> = ({ product }) => {
       setRating(5);
       setReviewTitle("");
       setReview("");
+      
+      if (sort === orderReviews[0]) {
+        setNext((cur: TReview[]) => [newReview.data, ...cur]);
+      } else {
+        handleSort(0);
+      }
     }
     catch (error: any) {
       const errorMsg = getAPIErrorMessage(error as AxiosError);

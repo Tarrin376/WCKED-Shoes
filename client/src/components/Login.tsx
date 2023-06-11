@@ -8,6 +8,7 @@ import { UserContext } from "../providers/UserProvider";
 import { TUser } from "../@types/TUser";
 import { TErrorMessage } from "../@types/TErrorMessage";
 import { getAPIErrorMessage } from "../utils/getAPIErrorMessage";
+import { useWindowSize } from "../hooks/useWindowSize";
 
 interface Props {
   setLoginPopUp: React.Dispatch<React.SetStateAction<boolean>>,
@@ -22,6 +23,7 @@ const Login: React.FC<Props> = (props) => {
   const [errorMessage, setErrorMessage] = useState<TErrorMessage>();
   const userContext = useContext(UserContext);
   const [rememberMe, setRememberMe] = useState(false);
+  const windowSize = useWindowSize();
 
   const loginUser = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
@@ -56,6 +58,11 @@ const Login: React.FC<Props> = (props) => {
     setRememberMe((cur) => !cur);
   }
 
+  const openSignUpPopUp = () => {
+    props.setLoginPopUp(false);
+    props.openSignUpPopUp();
+  }
+
   return (
     <PopUpWrapper setPopUp={props.setLoginPopUp}>
       <form>
@@ -73,27 +80,27 @@ const Login: React.FC<Props> = (props) => {
           value={props.password} onChange={(e) => props.setPassword(e.target.value)} 
           id="email" placeholder="Enter password" />
         </div>
-        <div className="mt-6 flex justify-between mb-6">
+        <div className={`mt-6 flex mb-6 ${windowSize <= 350 ? "flex-col gap-1" : "justify-between"}`}>
           <div>
             <input type="checkbox" id="remember-me" onChange={updateRememberMe} />
             <label htmlFor="remember-me" className="ml-2 font-semibold text-[15px]">Remember me</label>
           </div>
-          <p className="text-side-text-light dark:text-side-text-gray underline cursor-pointer text-[15px]">Forgot password?</p>
+          <p className="text-side-text-light dark:text-side-text-gray underline cursor-pointer text-[15px]">
+            Forgot password?
+          </p>
         </div>
         <button type="submit" className={`btn-primary w-full h-[45px] text-base
         ${checkEmailAndPass(props.emailAddress, props.password) ? 'disabled-btn-light dark:disabled-btn' : ''}`}
         onClick={loginUser}>
           Log in
         </button>
-        <p className="text-center mt-4 text-side-text-light dark:text-side-text-gray">
-          Don't have an account? 
-          <span className="underline font-semibold text-main-text-black dark:text-main-text-white ml-2 cursor-pointer" onClick={() => {
-            props.setLoginPopUp(false);
-            props.openSignUpPopUp();
-          }}>
+        <div className={`mt-4 flex m-auto items-center w-fit ${windowSize <= 350 ? "flex-col gap-[1px]" : "gap-1"}`}>
+          <p className="text-side-text-light dark:text-side-text-gray">Don't have an account?</p>
+          <p className="underline font-semibold text-main-text-black dark:text-main-text-white ml-2 cursor-pointer" 
+          onClick={openSignUpPopUp}>
             Sign up
-          </span>
-        </p>
+          </p>
+        </div>
       </form>
     </PopUpWrapper>
   )

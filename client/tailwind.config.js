@@ -44,7 +44,7 @@ module.exports = {
         'gray-component-shadow': '0px 0px 4px black',
         'text-box-shadow': '0px 0px 5px #595959',
         'pop-up-shadow': '0px 0px 10px #040404',
-        'light-component-shadow': '0px 0px 4px #d7dff4',
+        'light-component-shadow': '0px 0px 4px #e3e9f7',
         'pop-up-light-shadow': '0px 0px 14px 3px rgba(0, 0, 0, 0.10), 0px 8px 10px 0px rgba(0, 0, 0, 0.04)'
       }
     },

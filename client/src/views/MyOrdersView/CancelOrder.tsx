@@ -1,31 +1,32 @@
 import axios, { AxiosError } from "axios";
 import ErrorMessage from "../../components/ErrorMessage";
 import { useState } from "react";
+import Button from "../../components/Button";
+import { TErrorMessage } from "../../@types/TErrorMessage";
+import { getAPIErrorMessage } from "../../utils/getAPIErrorMessage";
+import { TOrderData } from "../../@types/TOrderData";
 
 interface Props {
-  orderID: number
+  orderID: number,
+  setNext: React.Dispatch<React.SetStateAction<TOrderData[]>>
 }
 
-const CancelOrder: React.FC<Props> = ({ orderID }) => {
-  const [errorMessage, setErrorMessage] = useState<string>("");
-  const [successMessage, setSuccessMessage] = useState<string>("");
+const CancelOrder: React.FC<Props> = ({ orderID, setNext }) => {
+  const [errorMessage, setErrorMessage] = useState<TErrorMessage>();
 
-  const cancelOrder = async () => {
+  const cancelOrder = async (): Promise<TErrorMessage | undefined> => {
     try {
-      const response = await axios.delete<string>(`/users/cancel-order/${orderID}`);
-      setSuccessMessage(response.data);
-      setErrorMessage("");
-      setTimeout(() => setSuccessMessage(""), 5000);
+      await axios.delete<string>(`/users/cancel-order/${orderID}`);
+      return undefined;
     }
     catch (error: any) {
-      if (error instanceof AxiosError) {
-        setErrorMessage(error.response!.data);
-      } else {
-        setErrorMessage(error.message);
-      }
-
-      setTimeout(() => setErrorMessage(""), 5000);
+      const errorMsg = getAPIErrorMessage(error as AxiosError);
+      return errorMsg;
     }
+  }
+
+  const filterOutOrder = () => {
+    setNext((cur: TOrderData[]) => cur.filter((order: TOrderData) => order.order_details.id !== orderID));
   }
 
   return (
@@ -37,11 +38,16 @@ const CancelOrder: React.FC<Props> = ({ orderID }) => {
       <p className="text-side-text-light dark:text-side-text-gray max-w-[330px] mb-5">
         Note: Refunds may take up to 5-7 business days to reflect on your account.
       </p>
-      <button className="danger-btn" onClick={cancelOrder}>
-        Yes, cancel my order
-      </button>
-      {errorMessage !== "" && successMessage === "" && <ErrorMessage error={errorMessage} />}
-      {successMessage !== "" && <ErrorMessage error={successMessage} styles="!bg-[#1cad21]" />}
+      <Button 
+        action={cancelOrder} 
+        completedText="Order cancelled" 
+        defaultText="Yes, cancel my order" 
+        loadingText="Cancelling order" 
+        styles="danger-btn"
+        setErrorMessage={setErrorMessage}
+        whenComplete={filterOutOrder}
+      />
+      {errorMessage && <ErrorMessage error={errorMessage.message} />}
     </div>
   )
 };

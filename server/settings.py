@@ -12,5 +12,5 @@ global limiter
 limiter = Limiter(
   get_remote_address,
   app=app,
-  default_limits=["2000 per day", "500 per hour"]
+  default_limits=["1000 per day", "100 per hour"]
 )

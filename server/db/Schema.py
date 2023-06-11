@@ -113,7 +113,7 @@ class Review(settings.db.Model):
   rating = settings.db.Column(settings.db.Integer, nullable=False)
   title = settings.db.Column(settings.db.String(50), nullable=False)
   review = settings.db.Column(settings.db.String(200), nullable=False)
-  date_posted = settings.db.Column(settings.db.DateTime, default=datetime.now(), nullable=False)
+  date_posted = settings.db.Column(settings.db.DateTime(timezone=True), default=datetime.now, nullable=False)
   helpful_count = settings.db.Column(settings.db.Integer, default=0)
   verified_purchase = settings.db.Column(settings.db.Boolean, default=False)
 
@@ -197,7 +197,7 @@ class VerificationCode(settings.db.Model):
   user_id = settings.db.Column(settings.db.Integer, settings.db.ForeignKey('user.id'))
   email = settings.db.Column(settings.db.String(120), unique=True, nullable=False)
   code = settings.db.Column(settings.db.String(4), nullable=False)
-  date_created = settings.db.Column(settings.db.DateTime, default=datetime.now(), nullable=False)
+  date_created = settings.db.Column(settings.db.DateTime(timezone=True), default=datetime.now, nullable=False)
 
 class DeliveryMethod(settings.db.Model):
   __tablename__ = 'delivery_method'

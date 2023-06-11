@@ -33,7 +33,7 @@ def get_products():
   except DBException as e:
     return Response(e.message, status=e.status_code, mimetype="text/plain")
   except ValueError:
-    return Response("'page' and 'limit' query parameters must be numbers.", status=400, mimetype="text/plain")
+    return Response("'page' and 'limit' must be numbers.", status=400, mimetype="text/plain")
 
 @products_blueprint.route("/create", methods=["POST"])
 def create_product():
@@ -46,14 +46,13 @@ def create_product():
     return Response(e.message, status=e.status_code)
 
 @products_blueprint.route("/<product_id>", methods=["GET"])
-@limiter.limit("1 per 5 seconds")
 def get_product(product_id):
   try:
     product = get_product_handler(product_id)
     return Response(json.dumps(product.product_details()), status=200, content_type="application/json")
   except DBException as e:
     return Response(e.message, status=e.status_code, mimetype="text/plain")
-  
+
 @products_blueprint.route("/<product_id>/<size>", methods=["GET"])
 def check_size_stock(product_id, size):
   try:
@@ -106,7 +105,7 @@ def recommend_customer_bought(product_id):
   except DBException as e:
     return Response(e.message, status=e.status_code, mimetype="text/plain")
   except ValueError:
-    return Response("'limit' query parameter or product id is not a number.", status=400, mimetype="text/plain")
+    return Response("'limit' or 'product id' is not a number.", status=400, mimetype="text/plain")
   
 @products_blueprint.route("/<product_id>/freq-bought-together", methods=["GET"])
 def frequently_bought_together(product_id):
@@ -121,4 +120,4 @@ def frequently_bought_together(product_id):
   except DBException as e:
     return Response(e.message, status=e.status_code, mimetype="text/plain")
   except ValueError:
-    return Response("'limit' query parameter or product id is not a number.", status=400, mimetype="text/plain")
+    return Response("'limit' or 'product id' is not a number.", status=400, mimetype="text/plain")

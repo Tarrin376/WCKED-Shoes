@@ -6,15 +6,15 @@ import { TPaginationMetaData } from "../@types/TPaginationMetaData";
 import { getAPIErrorMessage } from "../utils/getAPIErrorMessage";
 import { TErrorMessage } from "../@types/TErrorMessage";
 
-export const usePagination = <T1, T2>(order: readonly TOrderByOption<T2>[], limit: number, URL: string, 
-  initialSearch: string, initialFilter: string, email: string | undefined, searchRef?: React.RefObject<HTMLInputElement>)
+export const usePagination = <T1, T2>(orderBy: readonly TOrderByOption<T2>[], limit: number, URL: string, 
+  initialSearch: string, initialFilter: string, searchRef?: React.RefObject<HTMLInputElement>)
   : TUsePagination<T1, TOrderByOption<T2>> => {
   
   const [searchQuery, setSearchQuery] = useState<string>(initialSearch);
   const [filter, setFilter] = useState(initialFilter);
-  const [sort, setSort] = useState<TOrderByOption<T2>>(order[0]);
+  const [sort, setSort] = useState<TOrderByOption<T2>>(orderBy[0]);
   const [page, setPage] = useState<number>(1);
-  const [next, setNext] = useState<Readonly<T1[]>>([]);
+  const [next, setNext] = useState<T1[]>([]);
   const [reachedLimit, setReachedLimit] = useState<boolean>(false);
   const [totalFound, setTotalFound] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(false);
@@ -29,7 +29,7 @@ export const usePagination = <T1, T2>(order: readonly TOrderByOption<T2>[], limi
   }
 
   const handleSort = (optionIndex: number) => {
-    const option: TOrderByOption<T2> = order[optionIndex];
+    const option: TOrderByOption<T2> = orderBy[optionIndex];
     setSort(option);
     resetState();
   }
@@ -40,11 +40,8 @@ export const usePagination = <T1, T2>(order: readonly TOrderByOption<T2>[], limi
     }
 
     const query: string = searchRef.current.value.trim();
-    if (query.length > 0) {
-      searchRef.current.value = "";
-      setSearchQuery(query);
-      resetState();
-    }
+    setSearchQuery(query);
+    resetState();
   }
 
   const handleFilter = (filter: string) => {
@@ -85,7 +82,7 @@ export const usePagination = <T1, T2>(order: readonly TOrderByOption<T2>[], limi
           setLoading(false);
         }
       })()
-    }, 500);
+    }, 700);
   }, [queryURL, setLoading])
 
   const data = {
@@ -101,7 +98,8 @@ export const usePagination = <T1, T2>(order: readonly TOrderByOption<T2>[], limi
     handleSort,
     handleSearch,
     handleFilter,
-    resetState
+    resetState,
+    setNext
   }
 
   return data;
