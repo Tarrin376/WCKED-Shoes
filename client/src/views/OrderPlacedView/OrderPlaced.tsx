@@ -9,10 +9,11 @@ import AirplaneIconDark from "../../assets/airplane.png";
 import AirplaneIconLight from "../../assets/airplane-light.png";
 import { useNavigate } from "react-router-dom";
 import CardImages from "../../components/CardImages";
-import InvoiceIcon from "../../assets/invoice.png";
 import { ThemeContext } from "../../providers/ThemeProvider";
 import { TOrderData } from "../../@types/TOrderData";
 import { getShortDateFormatRange } from "../../utils/getShortDateFormatRange";
+import OrderPlacedLoading from "../../loading/OrderPlacedLoading";
+import { getAPIErrorMessage } from "../../utils/getAPIErrorMessage";
 
 const OrderPlaced = () => {
   const location = useLocation();
@@ -23,23 +24,26 @@ const OrderPlaced = () => {
   const subtotal = orderData ? orderData.items.reduce((sum, item) => sum + item.price * item.quantity, 0) : 0;
 
   useEffect(() => {
-    (async () => {
-      try {
-        const orderResponse = await axios.get<TOrderData>(location.pathname);
-        setOrderData(orderResponse.data);
-      }
-      catch (error: any) {
-        if (error instanceof AxiosError) {
-          navigate("/error", { state: { error: error!.response!.data }});
-        } else {
-          navigate("/error");
+    setTimeout(() => {
+      (async () => {
+        try {
+          const orderResponse = await axios.get<TOrderData>(location.pathname);
+          setOrderData(orderResponse.data);
         }
-      }
-    })()
+        catch (error: any) {
+          const errorMsg = getAPIErrorMessage(error as AxiosError);
+          if (error instanceof AxiosError) {
+            navigate("/error", { state: { error: errorMsg.message }});
+          } else {
+            navigate("/error");
+          }
+        }
+      })()
+    }, 700)
   }, [location.pathname, navigate]);
 
   if (!orderData) {
-    return <p>loading</p>
+    return <OrderPlacedLoading />
   }
   
   return (
@@ -63,11 +67,6 @@ const OrderPlaced = () => {
           </span>
         </p>
         <div className="flex items-center justify-between gap-7 max-md:flex-col max-md:items-start max-md:gap-3">
-          <div className="flex items-center gap-[6px] btn bg-main-text-black hover:bg-main-text-black-hover dark:bg-search-border dark:hover:bg-[#5a5a5a] 
-          px-[8px] pr-[10px] h-[30px] text-[15px] text-main-text-white cursor-pointer">
-            <img src={InvoiceIcon} className="w-[20px] h-[20px] mt-[1px]" alt="gear" />
-            <p className="mb-[1px]">Invoice</p>
-          </div>
           <div className="flex items-center gap-2">
             <img src={themeContext?.darkMode ? AirplaneIconDark : AirplaneIconLight} className="w-[16px] h-[16px]" alt="" />
             <p className="dark:text-in-stock-green-text-dark text-in-stock-green-text">
@@ -81,7 +80,7 @@ const OrderPlaced = () => {
           </div>
         </div>
       </div>
-      <div className="max-h-[600px] overflow-y-scroll pr-5">
+      <div className="max-h-[600px] overflow-y-scroll">
         {orderData.items.map((item: TOrderedItem, index) => {
           return (
             <OrderedItem 
@@ -115,7 +114,7 @@ const OrderPlaced = () => {
         </div>
         <div className="flex-grow max-lg:border-t max-lg:border-light-border max-lg:dark:border-t-main-gray-border max-lg:pt-5">
           <h3 className="text-[18px] mb-[11px] text-main-text-black dark:text-main-text-white font-semibold">Order Summary</h3>
-          <div className="flex justify-between items-center mb-3">
+          <div className="flex justify-between items-center mb-2">
             <p className="text-main-text-black dark:text-main-text-white text-[18px]">Subtotal</p>
             <p className="text-main-text-black dark:text-main-text-white text-[18px]">£{subtotal.toFixed(2)}</p>
           </div>

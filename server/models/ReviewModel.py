@@ -33,8 +33,11 @@ def get_reviews_handler(product_id, sort, search, page, limit, asc, user_id):
     raise DBException("Failed to get products.", 500)
   except KeyError:
     raise DBException("Invalid sort query parameter specified.", 400)
-  except Exception:
-    raise DBException("Resource not found.", 404)
+  except Exception as e:
+    if type(e) is not DBException:
+      raise DBException("Something went wrong. Please contact our team if this continues.", 500)
+    else:
+      raise e
   
 def delete_review_handler(id):
   try:
@@ -60,8 +63,11 @@ def delete_review_handler(id):
     settings.db.session.commit()
   except exc.SQLAlchemyError:
     raise DBException("Failed to delete review.", 500)
-  except Exception:
-    raise DBException("Something went wrong. Please contact our team if this continues.", 500)
+  except Exception as e:
+    if type(e) is not DBException:
+      raise DBException("Something went wrong. Please contact our team if this continues.", 500)
+    else:
+      raise e
 
 def add_helpful_count_handler(id, user_id):
   try:
@@ -83,8 +89,11 @@ def add_helpful_count_handler(id, user_id):
       raise DBException("You have already marked this review as helpful.", status_code=409)
   except exc.SQLAlchemyError:
     raise DBException("Failed to add helpful count.", 500)
-  except Exception:
-    raise DBException("Something went wrong. Please contact our team if this continues.", 500)
+  except Exception as e:
+    if type(e) is not DBException:
+      raise DBException("Something went wrong. Please contact our team if this continues.", 500)
+    else:
+      raise e
 
 def add_review_handler(product_id, user_id, data):
   try:
@@ -121,5 +130,8 @@ def add_review_handler(product_id, user_id, data):
     raise DBException(str(e), status_code=500)
   except KeyError:
     raise DBException("Missing required fields.", status_code=400)
-  except Exception:
-    raise DBException("Something went wrong. Please contact our team if this continues.", 500)
+  except Exception as e:
+    if type(e) is not DBException:
+      raise DBException("Something went wrong. Please contact our team if this continues.", 500)
+    else:
+      raise e

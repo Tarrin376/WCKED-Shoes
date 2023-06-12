@@ -89,7 +89,7 @@ const CartItem: React.FC<Props> = ({ cartItem, setCart }) => {
               })}
             </select>}
           </div>
-          <button className="secondary-btn h-[30px]" onClick={removeFromCart}>
+          <button className="secondary-btn h-[30px] mr-5" onClick={removeFromCart}>
             Remove
           </button>
         </div>

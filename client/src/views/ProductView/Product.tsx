@@ -125,7 +125,7 @@ const Product: React.FC<{}> = () => {
           }
         }
       })()
-    }, 1000)
+    }, 700)
   }, [location.pathname, navigate, userContext?.email]);
 
   if (!product) {

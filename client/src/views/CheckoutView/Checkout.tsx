@@ -259,7 +259,7 @@ const Checkout = () => {
             <p className="md:text-2xl max-md:text-xl text-main-text-black dark:text-main-text-white pb-3">Order Summary</p>
             <div className="light-component dark:gray-component p-5 flex flex-col justify-between flex-grow">
               {cartItems.cart ? 
-              <div className="max-h-[670px] overflow-y-scroll pr-5">
+              <div className="max-h-[670px] overflow-y-scroll">
                 {cartItems.cart.map((cartItem: TCartItem, index: number) => {
                   return (
                     <CheckoutItem

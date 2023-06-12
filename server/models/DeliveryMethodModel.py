@@ -27,8 +27,11 @@ def add_delivery_method_handler(method_data):
     raise DBException("Failed to create delivery method.", 500)
   except KeyError:
     raise DBException("Delivery method is missing required fields.", 400)
-  except Exception:
-    raise DBException("Something went wrong. Please contact our team if this continues.", 500)
+  except Exception as e:
+    if type(e) is not DBException:
+      raise DBException("Something went wrong. Please contact our team if this continues.", 500)
+    else:
+      raise e
 
 def delete_delivery_method_handler(name):
   try:
@@ -41,8 +44,11 @@ def delete_delivery_method_handler(name):
     settings.db.session.commit()
   except exc.SQLAlchemyError:
     raise DBException("Failed to delete delivery method.", 500)
-  except Exception:
-    raise DBException("Something went wrong. Please contact our team if this continues.", 500)
+  except Exception as e:
+    if type(e) is not DBException:
+      raise DBException("Something went wrong. Please contact our team if this continues.", 500)
+    else:
+      raise e
   
 def get_delivery_methods_handler():
   try:
@@ -50,5 +56,8 @@ def get_delivery_methods_handler():
     return [method.as_dict() for method in delivery_methods]
   except exc.SQLAlchemyError:
     raise DBException("Failed to load delivery methods.", 500)
-  except Exception:
-    raise DBException("Something went wrong. Please contact our team if this continues.", 500)
+  except Exception as e:
+    if type(e) is not DBException:
+      raise DBException("Something went wrong. Please contact our team if this continues.", 500)
+    else:
+      raise e

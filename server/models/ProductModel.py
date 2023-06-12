@@ -38,8 +38,11 @@ def create_product_handler(product):
     raise DBException("Failed to create product.", 500)
   except KeyError:
     raise DBException("Product is missing required fields.", 400)
-  except Exception:
-    raise DBException("Something went wrong. Please contact our team if this continues.", 500)
+  except Exception as e:
+    if type(e) is not DBException:
+      raise DBException("Something went wrong. Please contact our team if this continues.", 500)
+    else:
+      raise e
   
 def create_product_vector(product_id):
   users = settings.db.session.query(User).all()
@@ -72,8 +75,11 @@ def get_products_handler(sort, search, page, limit, asc):
     raise DBException("Failed to get products.", 500)
   except KeyError:
     raise DBException("Invalid sort query parameter specified.", 400)
-  except Exception:
-    raise DBException("Resource not found.", 404)
+  except Exception as e:
+    if type(e) is not DBException:
+      raise DBException("Something went wrong. Please contact our team if this continues.", 500)
+    else:
+      raise e
 
 def get_product_handler(product_id):
   try:
@@ -87,8 +93,11 @@ def get_product_handler(product_id):
     return product
   except exc.SQLAlchemyError:
     raise DBException("Failed to get product.", 500)
-  except Exception:
-    raise DBException("Something went wrong. Please contact our team if this continues.", 500)
+  except Exception as e:
+    if type(e) is not DBException:
+      raise DBException("Something went wrong. Please contact our team if this continues.", 500)
+    else:
+      raise e
 
 def check_size_stock_handler(product_id, size):
   try:
@@ -105,8 +114,11 @@ def check_size_stock_handler(product_id, size):
     return { "inStock": size.stock > 0 }
   except exc.SQLAlchemyError:
     raise DBException("Failed to check size stock.", 500)
-  except Exception:
-    raise DBException("Something went wrong. Please contact our team if this continues.", 500)
+  except Exception as e:
+    if type(e) is not DBException:
+      raise DBException("Something went wrong. Please contact our team if this continues.", 500)
+    else:
+      raise e
   
 def update_product_handler(product_id, product):
   pass
@@ -122,8 +134,11 @@ def delete_product_handler(product_id):
     settings.db.session.commit()
   except exc.SQLAlchemyError:
     raise DBException("Failed to delete product.", 500)
-  except Exception:
-    raise DBException("Something went wrong. Please contact our team if this continues.", 500)
+  except Exception as e:
+    if type(e) is not DBException:
+      raise DBException("Something went wrong. Please contact our team if this continues.", 500)
+    else:
+      raise e
 
 def add_product_image_handler(product_id, image_url):
   try:
@@ -136,8 +151,11 @@ def add_product_image_handler(product_id, image_url):
     settings.db.session.commit()
   except exc.SQLAlchemyError:
     raise DBException("Failed to add product image.", 500)
-  except Exception:
-    raise DBException("Something went wrong. Please contact our team if this continues.", 500)
+  except Exception as e:
+    if type(e) is not DBException:
+      raise DBException("Something went wrong. Please contact our team if this continues.", 500)
+    else:
+      raise e
 
 def update_product_thumbnail_handler(product_id, thumbnail_url):
   try:
@@ -150,8 +168,11 @@ def update_product_thumbnail_handler(product_id, thumbnail_url):
     settings.db.session.commit()
   except exc.SQLAlchemyError:
     raise DBException("Failed to update product thumbnail.", 500)
-  except Exception:
-    raise DBException("Something went wrong. Please contact our team if this continues.", 500)
+  except Exception as e:
+    if type(e) is not DBException:
+      raise DBException("Something went wrong. Please contact our team if this continues.", 500)
+    else:
+      raise e
   
 def recommend_customer_bought_handler(product_id, limit):
   try:
@@ -175,8 +196,11 @@ def recommend_customer_bought_handler(product_id, limit):
     return [product.card_details() for _, product in list(filter(lambda x: x[0] < 90, products[:min(len(products), limit)]))]
   except exc.SQLAlchemyError:
     raise DBException("Failed to load product.", 500)
-  except Exception:
-    raise DBException("Something went wrong. Please contact our team if this continues.", 500)
+  except Exception as e:
+    if type(e) is not DBException:
+      raise DBException("Something went wrong. Please contact our team if this continues.", 500)
+    else:
+      raise e
 
 def get_vector_angle(u, v):
   u_norm = np.linalg.norm(u)
@@ -202,8 +226,11 @@ def get_product_vector(product_id, N):
     return vector
   except exc.SQLAlchemyError:
     raise DBException("Failed to load product.", 500)
-  except Exception:
-    raise DBException("Something went wrong. Please contact our team if this continues.", 500)
+  except Exception as e:
+    if type(e) is not DBException:
+      raise DBException("Something went wrong. Please contact our team if this continues.", 500)
+    else:
+      raise e
 
 def frequently_bought_together_handler(product_id, limit):
   try:
@@ -225,5 +252,8 @@ def frequently_bought_together_handler(product_id, limit):
     return res
   except exc.SQLAlchemyError:
     raise DBException("Failed to load product.", 500)
-  except Exception:
-    raise DBException("Something went wrong. Please contact our team if this continues.", 500)
+  except Exception as e:
+    if type(e) is not DBException:
+      raise DBException("Something went wrong. Please contact our team if this continues.", 500)
+    else:
+      raise e

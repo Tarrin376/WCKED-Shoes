@@ -13,8 +13,11 @@ def delete_discount_code_handler(code_name):
     settings.db.session.commit()
   except exc.SQLAlchemyError:
     raise DBException("Failed to delete discount code.", 500)
-  except Exception:
-    raise DBException("Something went wrong. Please contact our team if this continues.", 500)
+  except Exception as e:
+    if type(e) is not DBException:
+      raise DBException("Something went wrong. Please contact our team if this continues.", 500)
+    else:
+      raise e
 
 def create_discount_code_handler(code_name, percent_off):
   try:
@@ -31,5 +34,8 @@ def create_discount_code_handler(code_name, percent_off):
     settings.db.session.commit()
   except exc.SQLAlchemyError:
     raise DBException("Failed to create discount code.", 500)
-  except Exception:
-    raise DBException("Something went wrong. Please contact our team if this continues.", 500)
+  except Exception as e:
+    if type(e) is not DBException:
+      raise DBException("Something went wrong. Please contact our team if this continues.", 500)
+    else:
+      raise e

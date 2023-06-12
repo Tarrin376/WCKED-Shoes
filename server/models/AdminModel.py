@@ -19,8 +19,11 @@ def login_handler(email, password):
     return (auth_token, admin_data)
   except exc.SQLAlchemyError:
     raise DBException("Failed to check login credentials. Try again.", 500)
-  except Exception:
-    raise DBException("Something went wrong. Please contact our team if this continues.", 500)
+  except Exception as e:
+    if type(e) is not DBException:
+      raise DBException("Something went wrong. Please contact our team if this continues.", 500)
+    else:
+      raise e
   
 def create_admin_handler(email, password):
   try:
@@ -30,5 +33,8 @@ def create_admin_handler(email, password):
     settings.db.session.commit()
   except exc.SQLAlchemyError:
     raise DBException("Failed to create admin account. Try again.", 500)
-  except Exception:
-    raise DBException("Something went wrong. Please contact our team if this continues.", 500)
+  except Exception as e:
+    if type(e) is not DBException:
+      raise DBException("Something went wrong. Please contact our team if this continues.", 500)
+    else:
+      raise e

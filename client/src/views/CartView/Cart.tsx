@@ -22,7 +22,7 @@ const Cart: React.FC<{}> = () => {
       <h1 className="text-2xl max-sm:text-[22px] text-main-text-black dark:text-main-text-white pb-5">
         {`You have ${cartItems.cart.length} ${cartItems.cart.length !== 1 ? "items" : "item"} in your bag`}
       </h1>
-      <div className="overflow-y-scroll max-h-[600px] pr-5">
+      <div className="overflow-y-scroll max-h-[600px]">
         {cartItems.cart.map((cartItem: TCartItem, index: number) => {
           return (
             <CartItem 

@@ -11,7 +11,7 @@ def authenticate_user(func):
       auth_token = request.cookies.get("auth_token")
       if auth_token is None:
         resp = Response("You are not logged in.", status=401, mimetype="application/json")
-        resp.set_cookie("auth_token", "", expires=0)
+        resp.set_cookie("auth_token", "", expires=0, samesite="Lax")
         return resp
       
       token = jwt.decode(auth_token, os.environ.get("USER_JWT_SECRET_KEY"), algorithms=["HS256"])
@@ -21,7 +21,7 @@ def authenticate_user(func):
       return Response("Session expired. Please log back in.", status=403, mimetype="application/json")
     except jwt.InvalidTokenError:
       resp = Response("Authorization denied.", status=401, mimetype="application/json")
-      resp.set_cookie("auth_token", "", expires=0) # Set samesite attribute to True when app is using https.
+      resp.set_cookie("auth_token", "", expires=0, samesite="Lax") # Set samesite attribute to True when app is using https.
       return resp
 
   return get_auth_token
@@ -33,7 +33,7 @@ def authenticate_admin(func):
       auth_token = request.cookies.get("auth_token")
       if auth_token is None:
         resp = Response("You are not logged in.", status=401, mimetype="application/json")
-        resp.set_cookie("auth_token", "", expires=0)
+        resp.set_cookie("auth_token", "", expires=0, samesite="Lax")
         return resp
       
       token = jwt.decode(auth_token, os.environ.get("ADMIN_JWT_SECRET_KEY"), algorithms=["HS256"])
@@ -43,7 +43,7 @@ def authenticate_admin(func):
       return Response("Session expired. Please log back in.", status=403, mimetype="application/json")
     except jwt.InvalidTokenError:
       resp = Response("Authorization denied.", status=401, mimetype="application/json")
-      resp.set_cookie("auth_token", "", expires=0) # Set samesite attribute to True when app is using https.
+      resp.set_cookie("auth_token", "", expires=0, samesite="Lax") # Set samesite attribute to True when app is using https.
       return resp
   
   return get_auth_token

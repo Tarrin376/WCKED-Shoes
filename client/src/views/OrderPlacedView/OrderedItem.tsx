@@ -41,7 +41,7 @@ const OrderedItem: React.FC<Props> = ({ item, isFirst, noBorder, styles, buyAgai
           Qty.
           <span className="text-main-text-black dark:text-main-text-white ml-2">{item.quantity}</span>
         </p>
-        <p className="text-main-text-black dark:text-main-text-white text-[17px] font-semibold">
+        <p className="text-main-text-black dark:text-main-text-white text-[17px] font-semibold mr-5">
           £{(item.price * item.quantity).toFixed(2)}
         </p>
       </div>

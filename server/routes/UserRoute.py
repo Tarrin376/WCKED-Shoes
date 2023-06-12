@@ -36,7 +36,7 @@ def login():
   try:
     result = login_handler(email, password)
     resp = Response(json.dumps(result[1]), status=200, mimetype="application/json")
-    resp.set_cookie(key="auth_token", value=result[0], expires=datetime.datetime.utcnow() + datetime.timedelta(hours=cookie_expires), httponly=True)
+    resp.set_cookie(key="auth_token", value=result[0], expires=datetime.datetime.utcnow() + datetime.timedelta(hours=cookie_expires), httponly=True, samesite="Lax")
     return resp
   except DBException as e:
     return Response(e.message, status=e.status_code, mimetype="text/plain")
@@ -63,7 +63,7 @@ def register():
 def logout():
   try:
     resp = Response("Logged out successfully.", status=200, mimetype="text/plain")
-    resp.set_cookie("auth_token", "", expires=0)
+    resp.set_cookie("auth_token", "", expires=0, samesite="Lax")
     return resp
   except DBException as e:
     return Response(e.message, status=e.status_code, mimetype="text/plain")
