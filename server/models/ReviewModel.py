@@ -34,7 +34,7 @@ def get_reviews_handler(product_id, sort, search, page, limit, asc, user_id):
   except KeyError:
     raise DBException("Invalid sort query parameter specified.", 400)
   except Exception:
-    raise DBException("Resource not found. This could be due to specifying an out of range page number or a product that doesn't exist.", 404)
+    raise DBException("Resource not found.", 404)
   
 def delete_review_handler(id):
   try:
@@ -60,6 +60,8 @@ def delete_review_handler(id):
     settings.db.session.commit()
   except exc.SQLAlchemyError:
     raise DBException("Failed to delete review.", 500)
+  except Exception:
+    raise DBException("Something went wrong. Please contact our team if this continues.", 500)
 
 def add_helpful_count_handler(id, user_id):
   try:
@@ -81,6 +83,8 @@ def add_helpful_count_handler(id, user_id):
       raise DBException("You have already marked this review as helpful.", status_code=409)
   except exc.SQLAlchemyError:
     raise DBException("Failed to add helpful count.", 500)
+  except Exception:
+    raise DBException("Something went wrong. Please contact our team if this continues.", 500)
 
 def add_review_handler(product_id, user_id, data):
   try:
@@ -117,3 +121,5 @@ def add_review_handler(product_id, user_id, data):
     raise DBException(str(e), status_code=500)
   except KeyError:
     raise DBException("Missing required fields.", status_code=400)
+  except Exception:
+    raise DBException("Something went wrong. Please contact our team if this continues.", 500)

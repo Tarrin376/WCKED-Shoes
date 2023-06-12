@@ -14,6 +14,9 @@ import CheckoutItemsLoading from "../../loading/CheckoutItemsLoading";
 import { useDeliveryMethods } from "../../hooks/useDeliveryMethods";
 import { TDeliveryMethod } from "../../@types/TDeliveryMethod";
 import { TDiscount } from "../../@types/TDiscount";
+import BackButton from "../../components/BackButton";
+import { getAPIErrorMessage } from "../../utils/getAPIErrorMessage";
+import { TErrorMessage } from "../../@types/TErrorMessage";
 
 interface ShippingMethodProps {
   index: number,
@@ -24,14 +27,14 @@ interface ShippingMethodProps {
 const Checkout = () => {
   const cartItems = useGetCart();
   const formRef = useRef<HTMLFormElement>(null);
-  const [errorMessage, setErrorMessage] = useState("");
+  const [errorMessage, setErrorMessage] = useState<TErrorMessage>();
   const [notEnoughStockItems, setNotEnoughStockItems] = useState<number[]>([]);
   const [selectedCountry, setSelectedCountry] = useState<string>("United Kingdom 🇬🇧");
   const navigate = useNavigate();
   const deliveryMethods = useDeliveryMethods();
   const [discount, setDiscount] = useState<TDiscount>({ name: "", percent_off: 0 });
   const [discountText, setDiscountText] = useState<string>("");
-  const [discountError, setDiscountError] = useState<string>("");
+  const [discountError, setDiscountError] = useState<TErrorMessage>();
   const [selectedMethod, setSelectedMethod] = useState<TDeliveryMethod>();
 
   const isValidForm = () => {
@@ -75,28 +78,24 @@ const Checkout = () => {
 
     if (code.length === 0) {
       setDiscountText("");
-      setDiscountError("Please enter a valid code");
+      setDiscountError({ message: "Please enter a valid code", status: 400 });
       return;
     }
 
     try {
-      const response = await axios.get<TDiscount>(`/discount-codes/${code}`);
+      const response = await axios.get<TDiscount>(`users/apply-discount/${code}`);
       setDiscount(response.data);
       setDiscountText(`You saved ${response.data.percent_off * 100}% off your order!`);
-      setDiscountError("");
+      setDiscountError(undefined);
     }
     catch (error: any) {
       setDiscountText("");
-      if (error instanceof AxiosError) {
-        setDiscountError(error!.response!.data);
-      } else {
-        setDiscountError(error.message);
-      }
+      const errorMsg = getAPIErrorMessage(error as AxiosError);
+      setDiscountError(errorMsg);
     }
   }
 
-  const handlePayment = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+  const handlePayment = async () => {
     const validForm = isValidForm();
 
     if (!formRef || !formRef.current) {
@@ -104,12 +103,12 @@ const Checkout = () => {
     }
 
     if (!validForm) {
-      setErrorMessage("One or more required fields are empty or invalid.");
+      setErrorMessage({ message: "One or more required fields are empty or invalid.", status: 400 });
       return;
     }
 
     if (!selectedMethod) {
-      setErrorMessage("Please select a delivery method.");
+      setErrorMessage({ message: "Please select a delivery method.", status: 400 });
       return;
     }
 
@@ -139,24 +138,27 @@ const Checkout = () => {
       navigate(`/orders/${orderResponse.data.id}`);
     }
     catch (error: any) {
-      if (error instanceof AxiosError) {
-        const data = error!.response!.data;
-        if (typeof data === "string") {
-          setErrorMessage(data);
-        } else {
-          setErrorMessage(`Sorry, but some of your items do not have enough stock to satisfy your order. 
-          Please reduce their quantities or remove them from your cart.`);
-          setNotEnoughStockItems(data);
-        }
+      const err = error as AxiosError;
+      const data = err.response!.data;
+      
+      if (typeof data === "string") {
+        setErrorMessage({ message: data, status: err.response!.status });
       } else {
-        setErrorMessage(error.message);
+        setErrorMessage({ message: `Sorry, but some of your items do not have enough stock to satisfy your order. 
+        Please reduce their quantities or remove them from your cart.`, status: err.response!.status });
+        setNotEnoughStockItems(data as number[]);
       }
     }
   }
 
+  const backToCart = () => {
+    navigate(`/cart`);
+  }
+
   return (
     <div className="max-w-screen-xl m-auto pb-1">
-      <form className="flex max-xl:gap-7 gap-16 max-xl:flex-col-reverse h-fit" onSubmit={handlePayment} ref={formRef}>
+      <BackButton backAction={backToCart} styles="mb-[50px]" />
+      <form className="flex max-xl:gap-7 gap-16 max-xl:flex-col-reverse h-fit" ref={formRef}>
         <div className="xl:w-1/2 flex flex-col gap-7">
           <div>
             <p className="md:text-2xl max-md:text-xl text-main-text-black dark:text-main-text-white pb-3">Delivery Information</p>
@@ -212,13 +214,12 @@ const Checkout = () => {
                   styles="w-full" 
                   optionalText={"No more than 1 per checkout"} 
                   discountText={discountText}
-                  discountError={discountError}
+                  discountError={discountError ? discountError.message : ""}
                   maxLength={50}
                 />
-                {discount.name.length === 0 && 
-                <button type="button" className="secondary-btn h-[35px] mt-1" onClick={applyDiscountCode}>
+                <button type="button" className="secondary-btn h-[35px] mt-1 w-fit" onClick={applyDiscountCode}>
                   Apply discount
-                </button>}
+                </button>
               </div>
               <div>
                 {cartItems.cart ? 
@@ -229,8 +230,9 @@ const Checkout = () => {
                   styles="pt-6"
                 /> : 
                 <CartPriceSummaryLoading />}
-                {errorMessage.length > 0 && <ErrorMessage error={errorMessage} styles="!mt-4" />}
-                <button className={`btn-primary w-full mt-6 h-[45px] text-base ${!cartItems.cart ? "disabled-btn-light dark:disabled-btn" : ""}`} type="submit">
+                {errorMessage && <ErrorMessage error={errorMessage.message} styles="!mt-4" />}
+                <button className={`btn-primary w-full mt-6 h-[45px] text-base ${!cartItems.cart ? "disabled-btn-light dark:disabled-btn" : ""}`} 
+                type="button" onClick={handlePayment}>
                   Make Payment
                 </button>
               </div>

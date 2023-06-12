@@ -84,7 +84,7 @@ const ProductCard: React.FC<Props> = ({ product, styles, setTotalPrice, smallSiz
           </select>
         </div>}
         {dropdown === false && 
-        <p className="popular text-main-text-white absolute bottom-2 right-2 py-[1px]">
+        <p className="popular text-main-text-white absolute bottom-2 right-2">
           Your Item
         </p>}
       </div>

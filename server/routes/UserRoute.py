@@ -8,16 +8,17 @@ from models.UserModel import \
   add_to_cart_handler,\
   get_cart_handler,\
   update_item_quantity_handler,\
-  checkout_cart_handler,\
+  checkout_handler,\
   remove_discount_handler,\
   cancel_order_handler,\
-  buy_it_again_handler
+  buy_it_again_handler,\
+  apply_discount_handler
 
 import datetime
 from random import randint
 import json
 from CustomExceptions.DBException import DBException
-from middleware.Authentication import authenticate_user
+from middleware.Authentication import authenticate_user, authenticate_admin
 from settings import limiter
 
 user_blueprint = Blueprint("users", __name__)
@@ -72,8 +73,8 @@ def find_user():
   email = request.json.get("email")
 
   try:
-    user_data = find_user_handler(email)
-    return Response(json.dumps(user_data), status=200, mimetype="application/json")
+    user_found = find_user_handler(email)
+    return Response(user_found, status=200, mimetype="application/json")
   except DBException as e:
     return Response(e.message, status=e.status_code, mimetype="text/plain")
 
@@ -117,8 +118,7 @@ def add_to_cart(product_id, size, quantity):
   try:
     token = g.token
     result = add_to_cart_handler(token["sub"]["id"], product_id, size, (int)(quantity))
-    resp = Response(json.dumps(result["user_data"]), status=200, mimetype="application/json")
-    resp.set_cookie(key="auth_token", value=result["token"], expires=datetime.datetime.utcnow() + datetime.timedelta(hours=DONT_REMEMBER_DURATION), httponly=True)
+    resp = Response(json.dumps(result), status=200, mimetype="application/json")
     return resp
   except DBException as e:
     return Response(e.message, status=e.status_code, mimetype="text/plain")
@@ -131,8 +131,7 @@ def update_item_quantity(product_id, size, quantity):
   try:
     token = g.token
     updated_cart = update_item_quantity_handler(token["sub"]["id"], product_id, size, int(quantity))
-    resp = Response(json.dumps({"cart": updated_cart["cart"], "user_data": updated_cart["user_data"]}), status=200 if updated_cart["valid"] else 400, mimetype="application/json")
-    resp.set_cookie(key="auth_token", value=updated_cart["token"], expires=datetime.datetime.utcnow() + datetime.timedelta(hours=DONT_REMEMBER_DURATION), httponly=True)
+    resp = Response(json.dumps(updated_cart), status=200, mimetype="application/json")
     return resp
   except DBException as e:
     return Response(e.message, status=e.status_code, mimetype="text/plain")
@@ -141,13 +140,12 @@ def update_item_quantity(product_id, size, quantity):
   
 @user_blueprint.route("/cart/checkout", methods=["POST"])
 @authenticate_user
-def checkout_cart():
+def checkout():
   try:
     order_details = request.get_json()
     token = g.token
-    details = checkout_cart_handler(token["sub"]["id"], order_details)
-    resp = Response(json.dumps({"id": details["id"]}), status=201, mimetype="application/json")
-    resp.set_cookie(key="auth_token", value=details["token"], expires=datetime.datetime.utcnow() + datetime.timedelta(hours=DONT_REMEMBER_DURATION), httponly=True)
+    order_id = checkout_handler(token["sub"]["id"], order_details)
+    resp = Response(json.dumps({"id": order_id}), status=201, mimetype="application/json")
     return resp
   except DBException as e:
     if e.data is not None: return Response(json.dumps(e.data), status=e.status_code, mimetype="application/json")
@@ -189,3 +187,13 @@ def buy_it_again():
     return Response(e.message, status=e.status_code, mimetype="text/plain")
   except ValueError:
     return Response("'limit' is not a number.", status=400, mimetype="text/plain")
+  
+@user_blueprint.route("/apply-discount/<code_name>", methods=["GET"])
+@authenticate_user
+def apply_discount(code_name):
+  try:
+    token = g.token
+    discount = apply_discount_handler(code_name, token["sub"]["id"])
+    return Response(json.dumps(discount), status=200, mimetype="application/json")
+  except DBException as e:
+    return Response(e.message, e.status_code, mimetype="text/plain")

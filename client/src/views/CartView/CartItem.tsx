@@ -17,6 +17,7 @@ export const quantityLimit = 10;
 const CartItem: React.FC<Props> = ({ cartItem, setCart }) => {
   const [changingQuantity, setChangingQuantity] = useState(false);
   const removeURL = `/users/cart/${cartItem.product_id}/${cartItem.curSize.size}/${-cartItem.quantity}`;
+  const updateURL = `/users/cart/${cartItem.product_id}/${cartItem.curSize.size}/`;
   const [errorMessage, setErrorMessage] = useState<TErrorMessage>();
 
   const removeFromCart = async () => {
@@ -34,7 +35,7 @@ const CartItem: React.FC<Props> = ({ cartItem, setCart }) => {
     try {
       setChangingQuantity(true);
       const change = parseInt(e.target.value) - cartItem.quantity;
-      const updateResponse = await axios.put<{user_data: TUser, cart: TCartItem[]}>(`/users/cart/${cartItem.product_id}/${cartItem.curSize.size}/${change}`);
+      const updateResponse = await axios.put<{ user_data: TUser, cart: TCartItem[], valid: boolean }>(updateURL + change);
       setCart(updateResponse.data.cart);
       setErrorMessage(undefined);
     }
@@ -45,6 +46,12 @@ const CartItem: React.FC<Props> = ({ cartItem, setCart }) => {
     finally {
       setChangingQuantity(false);
     }
+  }
+
+  const getQuantityExceededMessage = () => {
+    if (cartItem.curSize.stock > 1) return `Sorry, there are only ${cartItem.curSize.stock} available in this size.`;
+    else if (cartItem.curSize.stock === 1) return `Sorry, there is only ${cartItem.curSize.stock} available in this size.`;
+    else return 'Sorry, this item is now out of stock';
   }
 
   return (
@@ -88,11 +95,7 @@ const CartItem: React.FC<Props> = ({ cartItem, setCart }) => {
         </div>
         {(errorMessage || cartItem.curSize.stock < cartItem.quantity) && 
         <ErrorMessage 
-          error={!errorMessage ? 
-          cartItem.curSize.stock > 0 ? 
-          `Only ${cartItem.curSize.stock} available` 
-          : "Out of stock" 
-          : errorMessage.message} 
+          error={!errorMessage ? getQuantityExceededMessage() : errorMessage.message} 
           styles={"py-1 text-[15px] mt-[14px]"} 
         />}
       </div>

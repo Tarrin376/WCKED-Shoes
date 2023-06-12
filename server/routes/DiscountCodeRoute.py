@@ -1,22 +1,12 @@
 from flask import Blueprint, Response, g, request
-from models.DiscountCodeModel import get_discount_handler, delete_discount_code_handler, create_discount_code_handler
+from models.DiscountCodeModel import delete_discount_code_handler, create_discount_code_handler
 from CustomExceptions.DBException import DBException 
-import json
-from middleware.Authentication import authenticate_user
+from middleware.Authentication import authenticate_admin
 
 discount_code_blueprint = Blueprint("discount_code", __name__)
 
-@discount_code_blueprint.route("/<code_name>", methods=["GET"])
-@authenticate_user
-def apply_discount(code_name):
-  try:
-    token = g.token
-    discount = get_discount_handler(code_name, token["sub"]["id"])
-    return Response(json.dumps(discount), status=200, mimetype="application/json")
-  except DBException as e:
-    return Response(e.message, e.status_code, mimetype="text/plain")
-
 @discount_code_blueprint.route("/<code_name>", methods=["DELETE"])
+@authenticate_admin
 def delete_discount_code(code_name):
   try:
     delete_discount_code_handler(code_name)
@@ -25,6 +15,7 @@ def delete_discount_code(code_name):
     return Response(e.message, e.status_code, mimetype="text/plain")
 
 @discount_code_blueprint.route("/create", methods=["POST"])
+@authenticate_admin
 def create_discount_code():
   try:
     code_name = request.json.get("code_name")

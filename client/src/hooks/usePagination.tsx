@@ -30,8 +30,10 @@ export const usePagination = <T1, T2>(orderBy: readonly TOrderByOption<T2>[], li
 
   const handleSort = (optionIndex: number) => {
     const option: TOrderByOption<T2> = orderBy[optionIndex];
-    setSort(option);
-    resetState();
+    if (option !== sort) {
+      setSort(option);
+      resetState();
+    }
   }
 
   const handleSearch = () => {
@@ -40,14 +42,16 @@ export const usePagination = <T1, T2>(orderBy: readonly TOrderByOption<T2>[], li
     }
 
     const query: string = searchRef.current.value.trim();
-    setSearchQuery(query);
-    resetState();
+    if (query !== searchQuery) {
+      setSearchQuery(query);
+      resetState();
+    }
   }
 
-  const handleFilter = (filter: string) => {
-    if (!loading) {
+  const handleFilter = (nextFilter: string) => {
+    if (!loading && nextFilter !== filter) {
       setSearchQuery("");
-      setFilter(filter);
+      setFilter(nextFilter);
       resetState();
     }
   }

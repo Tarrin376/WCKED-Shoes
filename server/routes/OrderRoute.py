@@ -1,7 +1,7 @@
 from flask import Blueprint, Response, g, request
 from models.OrderModel import get_order_handler, get_orders_handler, update_order_status_handler
 from CustomExceptions.DBException import DBException
-from middleware.Authentication import authenticate_user
+from middleware.Authentication import authenticate_user, authenticate_admin
 import json
 
 orders_blueprint = Blueprint("orders", __name__)
@@ -33,6 +33,7 @@ def get_order(id):
     return Response(e.message, status=e.status_code, mimetype="text/plain")
 
 @orders_blueprint.route("/<id>/update-status", methods=["PUT"])
+@authenticate_admin
 def update_order_status(id):
   status = request.json.get("status")
   if status != "Order Created" and status != "Processing" and status != "Shipped" and status != "Delivered":

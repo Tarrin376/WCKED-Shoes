@@ -5,7 +5,6 @@ import { isOkPassword, isMediumPassword, isStrongPassword } from "../utils/check
 import { checkEmailAddress, checkPassword, checkEmailAndPass } from "../utils/checkEmailAndPass";
 import axios, { AxiosError } from "axios";
 import ErrorMessage from "./ErrorMessage";
-import { TUser } from "../@types/TUser";
 import { TErrorMessage } from "../@types/TErrorMessage";
 import { getAPIErrorMessage } from "../utils/getAPIErrorMessage";
 
@@ -37,7 +36,7 @@ const SignUp: React.FC<Props> = (props) => {
     e.preventDefault();
 
     try {
-      await axios.post<TUser | string>("/users/find", { email: props.emailAddress });
+      await axios.post<string>("/users/find", { email: props.emailAddress });
       setErrorMessage({ message: "User with this email address already exists.", status: 400 });
     }
     catch (error: any) {

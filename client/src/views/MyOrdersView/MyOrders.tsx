@@ -71,8 +71,8 @@ const MyOrders = () => {
           </button>
         </div>
       </div>
-      <div className="flex gap-[40px] mt-[40px] max-2xl:flex-col pb-1 relative 2xl:min-h-[100vh]">
-        <div className={`flex gap-[25px] flex-col max-2xl:w-full ${scrollPosition.top >= 345 && windowSize >= 1518 ? 
+      <div className="flex gap-[40px] justify-between mt-[40px] max-2xl:flex-col pb-1 relative 2xl:min-h-[100vh]">
+        <div className={`flex gap-[25px] flex-col max-2xl:w-full ${scrollPosition.top >= 345 && windowSize >= 1518 && getOrders.next.length > 0 ? 
           "w-[calc(100%-320px-40px)]" : "flex-grow"}`}>
           {getOrders.next.map((order: TOrderData) => {
             return (

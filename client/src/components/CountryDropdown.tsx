@@ -26,11 +26,10 @@ const CountryDropdown: React.FC<Props> = ({ selectedCountry, setSelectedCountry 
     <>
       {!countries.errorMessage ?
       <select className="block h-[42px] text-box-light dark:text-box shadow-none w-full cursor-pointer" name="country/region"
-      onChange={(e) => updateCountry(e.target.value)} ref={selectRef}>
+      onChange={(e) => updateCountry(e.target.value)} ref={selectRef} value={selectedCountry}>
         {countries.allCountries && countries.allCountries.map((country: TCountry) => {
           return (
-            <option key={country.name.common} value={`${country.name.common} ${country.flag}`} 
-            selected={`${country.name.common} ${country.flag}` === selectedCountry}>
+            <option key={country.name.common} value={`${country.name.common} ${country.flag}`}>
               {country.flag} {country.name.common}
             </option>
           )

@@ -37,6 +37,8 @@ def get_order_handler(id, user_id):
     }
   except exc.SQLAlchemyError:
     raise DBException("Unable to check order number. Try again.", 500)
+  except Exception:
+    raise DBException("Something went wrong. Please contact our team if this continues.", 500)
   
 def get_orders_handler(user_id, search, page, limit, filter):
   if filter not in filter_options:
@@ -76,7 +78,7 @@ def get_orders_handler(user_id, search, page, limit, filter):
   except KeyError:
     raise DBException("Invalid sort query parameter specified.", 400)
   except Exception:
-    raise DBException("Resource not found. This could be due to specifying an out of range page number or a product that doesn't exist.", 404)
+    raise DBException("Resource not found.", 404)
   
 def update_order_status_handler(id, status):
   try:
@@ -114,3 +116,5 @@ def update_order_status_handler(id, status):
     settings.db.session.commit()
   except exc.SQLAlchemyError:
     raise DBException("Unable to update order status. Try again.", 500)
+  except Exception:
+    raise DBException("Something went wrong. Please contact our team if this continues.", 500)

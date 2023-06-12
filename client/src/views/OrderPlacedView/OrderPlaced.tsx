@@ -91,28 +91,29 @@ const OrderPlaced = () => {
           );
         })}
       </div>
-      <div className="mt-5 flex max-lg:flex-wrap justify-between gap-4 bg-[#f9f9fa] dark:bg-[#161616] p-5 rounded-[8px]">
-        <div className="lg:w-1/3 max-lg:w-[50%]">
-          <h3 className="text-[18px] text-main-text-black dark:text-main-text-white font-semibold mb-3">Payment</h3>
-          <div className="text-side-text-light dark:text-side-text-gray text-[15px]">
-            Credit card ending with
-            <span className="text-bg-primary-btn-hover">{` ${orderData.order_details.card_end}`}</span>
+      <div className="mt-5 flex max-lg:flex-col justify-between gap-10 max-lg:gap-4 bg-[#f9f9fa] dark:bg-[#161616] p-5 rounded-[8px]">
+        <div className="flex lg:w-[55%] max-lg:w-full gap-10 max-lg:gap-4 max-md:flex-col">
+          <div className="w-fit max-lg:w-full">
+            <h3 className="text-[18px] text-main-text-black dark:text-main-text-white font-semibold mb-3">Payment</h3>
+            <div className="text-side-text-light dark:text-side-text-gray text-[15px] whitespace-nowrap">
+              Credit card ending with
+              <span className="text-bg-primary-btn-hover">{` ${orderData.order_details.card_end}`}</span>
+            </div>
+            <CardImages styles={"w-[37px] h-[37px]"} />
           </div>
-          <CardImages styles={"w-[37px] h-[37px]"} />
+          <div className="flex-grow max-lg:w-full max-lg:pb-[6px] max-lg:text-right max-md:!text-left">
+            <h3 className="text-[18px] mb-3 text-main-text-black dark:text-main-text-white font-semibold">Delivery</h3>
+            <p className="text-[15px] text-side-text-light dark:text-side-text-gray mb-[4px]">Address</p>
+            <p className="text-main-text-black dark:text-main-text-white">
+              {`${orderData.order_details.address_line1}${orderData.order_details.address_line2.length > 0 ? `, ${orderData.order_details.address_line2}` : ""}`}
+            </p>
+            <p className="text-main-text-black dark:text-main-text-white">{orderData.order_details.town_or_city}</p>
+            <p className="text-main-text-black dark:text-main-text-white">{orderData.order_details.country}</p>
+            <p className="text-[15px] text-side-text-light dark:text-side-text-gray mt-3 mb-[4px]">Phone number</p>
+            <p className="text-bg-primary-btn-hover">{orderData.order_details.mobile_number}</p>
+          </div>
         </div>
-        <div className="lg:w-1/3 max-lg:w-[40%] max-lg:pb-[6px]">
-          <h3 className="text-[18px] mb-3 text-main-text-black dark:text-main-text-white font-semibold">Delivery</h3>
-          <p className="text-[15px] text-side-text-light dark:text-side-text-gray mb-[4px]">Address</p>
-          <p className="text-main-text-black dark:text-main-text-white">
-            {`${orderData.order_details.address_line1} 
-            ${orderData.order_details.address_line2.length > 0 ? `| ${orderData.order_details.address_line2}` : ""}`}
-          </p>
-          <p className="text-main-text-black dark:text-main-text-white">{orderData.order_details.town_or_city}</p>
-          <p className="text-main-text-black dark:text-main-text-white">{orderData.order_details.country}</p>
-          <p className="text-[15px] text-side-text-light dark:text-side-text-gray mt-3 mb-[4px]">Phone number</p>
-          <p className="text-bg-primary-btn-hover">{orderData.order_details.mobile_number}</p>
-        </div>
-        <div className="lg:w-1/3 max-lg:w-full max-lg:border-t max-lg:border-light-border max-lg:dark:border-t-main-gray-border max-lg:pt-5">
+        <div className="flex-grow max-lg:border-t max-lg:border-light-border max-lg:dark:border-t-main-gray-border max-lg:pt-5">
           <h3 className="text-[18px] mb-[11px] text-main-text-black dark:text-main-text-white font-semibold">Order Summary</h3>
           <div className="flex justify-between items-center mb-3">
             <p className="text-main-text-black dark:text-main-text-white text-[18px]">Subtotal</p>

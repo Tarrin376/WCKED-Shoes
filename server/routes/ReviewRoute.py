@@ -1,7 +1,7 @@
 from flask import Blueprint, request, Response, g
 from models.ReviewModel import add_review_handler, get_reviews_handler, add_helpful_count_handler, delete_review_handler
 from CustomExceptions.DBException import DBException
-from middleware.Authentication import authenticate_user
+from middleware.Authentication import authenticate_user, authenticate_admin
 import json
 
 reviews_blueprint = Blueprint("reviews", __name__)
@@ -25,6 +25,7 @@ def get_reviews(product_id):
     return Response("'page' and 'limit' query parameters must be numbers.", status=400, mimetype="text/plain")
   
 @reviews_blueprint.route("/<id>", methods=["DELETE"])
+@authenticate_user
 def delete_review(id):
   try:
     delete_review_handler(id)

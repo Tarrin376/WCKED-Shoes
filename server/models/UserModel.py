@@ -1,3 +1,4 @@
+from utils.HashPassword import hash_password
 import bcrypt
 import settings
 from db.Schema import User,\
@@ -28,10 +29,12 @@ def login_handler(email, password):
       raise DBException("Invalid email or password", 401)
     
     user_data = user.as_dict()
-    auth_token = generate_auth_token(user_data)
+    auth_token = generate_auth_token(user_data, "USER_JWT_SECRET_KEY")
     return (auth_token, user_data)
   except exc.SQLAlchemyError:
-    raise DBException("Unable to check login credentials. Try again.", 500)
+    raise DBException("Failed to check login credentials. Try again.", 500)
+  except Exception:
+    raise DBException("Something went wrong. Please contact our team if this continues.", 500)
 
 def register_handler(email, password):
   try:
@@ -46,13 +49,9 @@ def register_handler(email, password):
       settings.db.session.add(unit_v)
       settings.db.session.commit()
   except exc.SQLAlchemyError:
-    raise DBException("Unable to create user. Try again.", 500)
-
-def hash_password(password):
-  bytes = password.encode('utf-8')
-  salt = bcrypt.gensalt()
-  hash = bcrypt.hashpw(bytes, salt)
-  return hash
+    raise DBException("Failed to create user account. Try again.", 500)
+  except Exception:
+    raise DBException("Something went wrong. Please contact our team if this continues.", 500)
 
 def find_user_handler(email):
   try:
@@ -61,15 +60,15 @@ def find_user_handler(email):
     if user is None: 
       raise DBException("User not found", 404)
     
-    user_data = user.as_dict()
-    return {"email": user_data["email"]}
+    return "User found"
   except exc.SQLAlchemyError:
     raise DBException("There was a problem signing you up. Try again.", 500)
+  except Exception:
+    raise DBException("Something went wrong. Please contact our team if this continues.", 500)
   
 def send_code_handler(email, code):
-  send_email(email, code)
-
   try:
+    send_email(email, code)
     verification_code: VerificationCode = VerificationCode.query.filter_by(email=email).first()
 
     if verification_code is None:
@@ -81,6 +80,8 @@ def send_code_handler(email, code):
     settings.db.session.commit()
   except exc.SQLAlchemyError:
     raise DBException("Unable to create verification code. Try again.", 500)
+  except Exception:
+    raise DBException("Something went wrong. Please contact our team if this continues.", 500)
 
 def send_email(email, code):
   pass
@@ -99,6 +100,8 @@ def verify_email_handler(email, code):
       raise DBException("Wrong code. Try again.", 401)
   except exc.SQLAlchemyError:
     raise DBException("Unable to verify email address. Try again.", 500)
+  except Exception:
+    raise DBException("Something went wrong. Please contact our team if this continues.", 500)
 
 def add_to_cart_handler(user_id, product_id, size_chosen, quantity):
   try:
@@ -130,10 +133,11 @@ def add_to_cart_handler(user_id, product_id, size_chosen, quantity):
       settings.db.session.commit()
     
     user_data = user.as_dict()
-    auth_token = generate_auth_token(user_data)
-    return {"token": auth_token, "user_data": user_data}
+    return user_data
   except exc.SQLAlchemyError:
     raise DBException("Unable to add product to cart. Try again.", 500)
+  except Exception:
+    raise DBException("Something went wrong. Please contact our team if this continues.", 500)
   
 def update_item_quantity_handler(user_id, product_id, size_chosen, new_quantity):
   try:
@@ -150,15 +154,16 @@ def update_item_quantity_handler(user_id, product_id, size_chosen, new_quantity)
     cart_item.quantity += new_quantity
     settings.db.session.commit()
 
-    if cart_item.quantity <= 0:
+    user_data = user.as_dict()
+    if cart_item.quantity == 0:
       settings.db.session.delete(cart_item)
       settings.db.session.commit()
 
-    user_data = user.as_dict()
-    auth_token = generate_auth_token(user_data)
-    return {"token": auth_token, "user_data": user_data, "cart": get_cart_handler(user_id), "valid": cart_item.quantity <= size.stock}
+    return {"user_data": user_data, "cart": get_cart_handler(user_id), "valid": cart_item.quantity <= size.stock}
   except exc.SQLAlchemyError:
     raise DBException("Unable to remove product from cart. Try again.", 500)
+  except Exception:
+    raise DBException("Something went wrong. Please contact our team if this continues.", 500)
 
 def get_cart_handler(user_id):
   try:
@@ -191,6 +196,8 @@ def get_cart_handler(user_id):
     return response
   except exc.SQLAlchemyError:
     raise DBException("Unable to get cart. Try again.", 500)
+  except Exception:
+    raise DBException("Something went wrong. Please contact our team if this continues.", 500)
   
 def create_order(order_details, user_id, percent_off, shipping):
   total = order_details["subtotal"] - (order_details["subtotal"] * percent_off) + shipping
@@ -273,7 +280,7 @@ def add_order_items(cart_items, order, user, out_of_stock_items):
           bought_with.frequency += 1
           settings.db.session.commit()
   
-def checkout_cart_handler(user_id, order_details):
+def checkout_handler(user_id, order_details):
   try:
     user: User = User.query.filter_by(id=user_id).first()
     discount_code: DiscountCode = settings.db.session.query(DiscountCode).filter_by(name=order_details["discount"]).first()
@@ -302,19 +309,21 @@ def checkout_cart_handler(user_id, order_details):
     if len(out_of_stock_items) > 0:
       settings.db.session.delete(order)
       settings.db.session.commit()
-      raise DBException(f"Sorry, but some of your items are now out of stock. Please refresh and try again.", 400, data=out_of_stock_items)
+      raise DBException(f"""Sorry, but some of your items do not have enough stock to satisfy your order. 
+        Please reduce their quantities or remove them from your cart.""", 400, data=out_of_stock_items)
     
     if order.discount != "":
       discount_used: DiscountJunction = DiscountJunction(user_id=user_id, discount_name=order.discount)
       settings.db.session.add(discount_used)
       settings.db.session.commit()
 
-    token = generate_auth_token(user.as_dict())
-    return {"token": token, "id" : order.id}
+    return order.id
   except exc.SQLAlchemyError:
     raise DBException("Unable to checkout. Try again.", 500)
   except KeyError:
     raise DBException("Required information missing from order details.", 400)
+  except Exception:
+    raise DBException("Something went wrong. Please contact our team if this continues.", 500)
 
 def remove_discount_handler(user_id):
   try:
@@ -326,6 +335,8 @@ def remove_discount_handler(user_id):
     settings.db.session.commit()
   except exc.SQLAlchemyError:
     raise DBException("Unable to remove discount. Try again.", 500)
+  except Exception:
+    raise DBException("Something went wrong. Please contact our team if this continues.", 500)
     
 def cancel_order_handler(id, user_id):
   try:
@@ -384,6 +395,8 @@ def cancel_order_handler(id, user_id):
           settings.db.session.commit()
   except exc.SQLAlchemyError:
     raise DBException("Unable to update order status. Try again.", 500)
+  except Exception:
+    raise DBException("Something went wrong. Please contact our team if this continues.", 500)
   
 def buy_it_again_handler(user_id, limit):
   try:
@@ -400,3 +413,21 @@ def buy_it_again_handler(user_id, limit):
     return recommended
   except exc.SQLAlchemyError:
     raise DBException("Failed to load product.", 500)
+  except Exception:
+    raise DBException("Something went wrong. Please contact our team if this continues.", 500)
+
+def apply_discount_handler(code_name, user_id):
+  try:
+    discount_code: DiscountCode = DiscountCode.query.filter_by(name=code_name).first()
+    discount_used: DiscountJunction = DiscountJunction.query.filter_by(user_id=user_id, discount_name=code_name).first()
+
+    if discount_code is None: raise DBException("Discount code does not exist.", 404)
+    if discount_used is not None: raise DBException("You have already used this discount code in a different order.", 400)
+    return discount_code.as_dict()
+  except exc.SQLAlchemyError:
+    raise DBException("Failed to get discount code.", 500)
+  except Exception as e:
+    if type(e) is not DBException:
+      raise DBException("Something went wrong. Please contact our team if this continues.", 500)
+    else:
+      raise e

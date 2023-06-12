@@ -1,7 +1,7 @@
 from flask import Blueprint, request, Response
 from CustomExceptions.DBException import DBException
+from middleware.Authentication import authenticate_admin
 import json
-from settings import limiter
 from models.ProductModel import \
   create_product_handler,\
   get_products_handler,\
@@ -36,6 +36,7 @@ def get_products():
     return Response("'page' and 'limit' must be numbers.", status=400, mimetype="text/plain")
 
 @products_blueprint.route("/create", methods=["POST"])
+@authenticate_admin
 def create_product():
   product = request.get_json()
 
@@ -62,11 +63,13 @@ def check_size_stock(product_id, size):
     return Response(e.message, status=e.status_code, mimetype="text/plain")
 
 @products_blueprint.route("/<product_id>", methods=["PUT"])
+@authenticate_admin
 def update_product(product_id):
   product = request.get_json()
   update_product_handler(product_id, product)
 
 @products_blueprint.route("/<product_id>", methods=["DELETE"])
+@authenticate_admin
 def delete_product(product_id):
   try:
     delete_product_handler(product_id)
@@ -75,6 +78,7 @@ def delete_product(product_id):
     return Response(e.message, status=e.status_code, mimetype="text/plain")
 
 @products_blueprint.route("/<product_id>/add-image", methods=["POST"])
+@authenticate_admin
 def add_product_image(product_id):
   image_url = request.json.get("image_url")
 
@@ -85,6 +89,7 @@ def add_product_image(product_id):
     return Response(e.message, status=e.status_code, mimetype="text/plain")
 
 @products_blueprint.route("/<product_id>/update-thumbnail", methods=["PUT"])
+@authenticate_admin
 def update_product_thumbnail(product_id):
   try:
     thumbnail_url = request.json.get("thumbnail_url")
