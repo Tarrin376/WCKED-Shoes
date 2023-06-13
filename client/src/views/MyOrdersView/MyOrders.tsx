@@ -27,8 +27,11 @@ const MyOrders = () => {
   const recommended = useGetRecommended(buyItAgainURL);
 
   useEffect(() => {
-    if ((getOrders.errorMessage && getOrders.errorMessage.status === 401) || !userContext?.email) {
+    if (!userContext?.email) {
       navigate("/");
+    } else if (getOrders.errorMessage) {
+      if (getOrders.errorMessage.status === 429) navigate("/error", { state: { error: getOrders.errorMessage.message } });
+      if (getOrders.errorMessage.status === 401) navigate("/");
     }
   }, [getOrders.errorMessage, navigate, userContext?.email])
 

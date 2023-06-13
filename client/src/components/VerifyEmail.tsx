@@ -4,6 +4,7 @@ import axios, { AxiosError } from "axios";
 import ErrorMessage from "./ErrorMessage";
 import { TErrorMessage } from "../@types/TErrorMessage";
 import { getAPIErrorMessage } from "../utils/getAPIErrorMessage";
+import Button from "./Button";
 
 interface Props {
   setVerifyEmailPopUp: React.Dispatch<React.SetStateAction<boolean>>,
@@ -34,7 +35,7 @@ const VerifyEmail: React.FC<Props> = ({ setVerifyEmailPopUp, setSignUpPopUp, ema
     sendVerificationCode();
   }, [sendVerificationCode]);
 
-  const checkVerificationCode = async ()  => {
+  const checkVerificationCode = async (): Promise<TErrorMessage | undefined> => {
     const codeInput = code.join('');
 
     try {
@@ -43,32 +44,48 @@ const VerifyEmail: React.FC<Props> = ({ setVerifyEmailPopUp, setSignUpPopUp, ema
         email: emailAddress 
       });
       
-      createAccount();
+      return createAccount();
     }
     catch (error: any) {
       const errorMsg = getAPIErrorMessage(error as AxiosError);
-      setErrorMessage(errorMsg);
+      return errorMsg;
     }
   }
 
-  const createAccount = async () => {
+  const createAccount = async (): Promise<TErrorMessage | undefined> => {
     try {
       await axios.post<string>("/users/register", {
         email: emailAddress,
         password: password
       });
   
-      setVerifyEmailPopUp(false);
       setErrorMessage(undefined);
     }
     catch (error: any) {
       const errorMsg = getAPIErrorMessage(error as AxiosError);
-      setErrorMessage(errorMsg);
+      return errorMsg;
     }
   }
 
   const toggleSecretCodeHandler = () => {
     setToggleSecretCode((cur) => !cur);
+  }
+
+  const backToSignUp = () => {
+    setVerifyEmailPopUp(false);
+    setSignUpPopUp(true);
+  }
+
+  const closeVerifyEmailPopUp = () => {
+    setVerifyEmailPopUp(false);
+  }
+
+  const updateCode = (e: React.ChangeEvent<HTMLInputElement>, index: number) => {
+    const val = e.target.value;
+    const num = val !== "" ? parseInt(val) : 0;
+    if (!isNaN(num) || val === "") {
+      setCode([...code.slice(0, index), val, ...code.slice(index + 1)]);
+    }
   }
 
   return (
@@ -97,13 +114,8 @@ const VerifyEmail: React.FC<Props> = ({ setVerifyEmailPopUp, setSignUpPopUp, ema
         {code.map((item, index) => {
           return (
             <input type="text" key={index} value={item} maxLength={1} 
-            className="w-[85px] h-[85px] text-[45px] text-center text-box-light dark:text-box" onChange={(e) => {
-              const val = e.target.value;
-              const num = val !== "" ? parseInt(val) : 0;
-              if (!isNaN(num) || val === "") {
-                setCode([...code.slice(0, index), val, ...code.slice(index + 1)]);
-              }
-            }} />
+            className="w-[85px] h-[85px] text-[45px] text-center text-box-light dark:text-box" 
+            onChange={(e) => updateCode(e, index)} />
           )
         })}
       </div>
@@ -116,15 +128,18 @@ const VerifyEmail: React.FC<Props> = ({ setVerifyEmailPopUp, setSignUpPopUp, ema
       </p>
       {errorMessage && <ErrorMessage error={errorMessage.message} />}
       <div className="flex gap-4 mt-7">
-        <button className="btn text-main-text-black dark:text-main-text-white border border-main-text-black 
-          dark:border-search-border bg-transparent w-1/2 h-[47px]
-          dark:hover:bg-[#2B2B2B] hover:bg-main-text-black hover:text-main-text-white text-[15px]" onClick={() => {
-            setVerifyEmailPopUp(false);
-            setSignUpPopUp(true);
-          }}>Cancel</button>
-        <button className="btn-primary w-1/2 h-[47px] text-base" onClick={checkVerificationCode}>
-          Verify
+        <button className="login-btn w-1/2" onClick={backToSignUp}>
+          Back
         </button>
+        <Button
+          action={checkVerificationCode}
+          completedText="Account created"
+          defaultText="Verify"
+          loadingText="Verifying email"
+          styles="btn-primary w-1/2 h-[47px] text-base"
+          setErrorMessage={setErrorMessage}
+          whenComplete={closeVerifyEmailPopUp}
+        />
       </div>
     </PopUpWrapper>
   )

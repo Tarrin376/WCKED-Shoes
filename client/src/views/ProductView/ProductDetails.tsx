@@ -20,7 +20,7 @@ const ProductDetails: React.FC<Props> = ({ product }) => {
       <p className="text-side-text-light dark:text-side-text-gray mb-5">{product.description}</p>
       <h4 className="text-main-text-black dark:text-main-text-white text-[21px] mb-[14px] font-semibold">Shipping options</h4>
       <div className="flex flex-wrap mb-[34px]">
-        {deliveryMethods.methods.map((method: TDeliveryMethod, index: number) => {
+        {deliveryMethods.methods && deliveryMethods.methods.map((method: TDeliveryMethod, index: number) => {
           return (
             <div className="px-6 py-[6px] border-l border-light-border dark:border-main-gray-border relative" key={index}>
               <p className="text-main-text-black dark:text-main-text-white font-semibold mb-1">

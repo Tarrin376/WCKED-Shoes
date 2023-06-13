@@ -4,10 +4,12 @@ import { useNavigate } from "react-router-dom";
 import useGetCart from "../../hooks/useGetCart";
 import CartPriceSummary from "../../components/CartPriceSummary";
 import CartLoading from "../../loading/CartLoading";
+import { useState } from "react";
 
 const Cart: React.FC<{}> = () => {
   const navigate = useNavigate();
   const cartItems = useGetCart();
+  const [disabled, setDisabled] = useState<boolean>(false);
 
   const goToCheckout = () => {
     navigate("/checkout");
@@ -29,13 +31,15 @@ const Cart: React.FC<{}> = () => {
               key={index} 
               cartItem={cartItem} 
               setCart={cartItems.setCart} 
+              disabled={disabled}
+              setDisabled={setDisabled}
             />
           )
         })}
       </div>
       <CartPriceSummary subtotal={cartItems.subtotal} discount={0} styles="pt-6" />
       <button className={`btn-primary block mt-6 h-[45px] w-[180px] text-base mb-[70px] 
-      ${cartItems.cart.length === 0 || cartItems.cart.some((cartItem: TCartItem) => cartItem.curSize.stock < cartItem.quantity) ? 
+      ${cartItems.cart.length === 0 || cartItems.cart.some((cartItem: TCartItem) => cartItem.curSize.stock < cartItem.quantity || disabled) ? 
       "disabled-btn-light dark:disabled-btn" : ""}`} onClick={goToCheckout}>
         Go to checkout
       </button>

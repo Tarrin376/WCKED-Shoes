@@ -26,7 +26,7 @@ const Button: React.FC<Props> = ({ action, completedText, defaultText, loadingTe
           setBtnText(completedText);
         } else {
           setErrorMessage(error);
-          setTimeout(() => setErrorMessage(undefined), 5000);
+          setTimeout(() => setErrorMessage(undefined), 3500);
           setBtnText(defaultText);
         }
       })()
@@ -47,7 +47,7 @@ const Button: React.FC<Props> = ({ action, completedText, defaultText, loadingTe
           whenComplete();
         }
       }
-    }, 2500);
+    }, 1500);
   }, [btnText, completedText, defaultText, whenComplete])
 
   useEffect(() => {

@@ -14,14 +14,17 @@ import { TOrderData } from "../../@types/TOrderData";
 import { getShortDateFormatRange } from "../../utils/getShortDateFormatRange";
 import OrderPlacedLoading from "../../loading/OrderPlacedLoading";
 import { getAPIErrorMessage } from "../../utils/getAPIErrorMessage";
+import { useWindowSize } from "../../hooks/useWindowSize";
 
 const OrderPlaced = () => {
   const location = useLocation();
   const userContext = useContext(UserContext);
   const themeContext = useContext(ThemeContext);
   const [orderData, setOrderData] = useState<TOrderData>();
-  const navigate = useNavigate();
   const subtotal = orderData ? orderData.items.reduce((sum, item) => sum + item.price * item.quantity, 0) : 0;
+
+  const navigate = useNavigate();
+  const windowSize = useWindowSize();
 
   useEffect(() => {
     setTimeout(() => {
@@ -32,11 +35,7 @@ const OrderPlaced = () => {
         }
         catch (error: any) {
           const errorMsg = getAPIErrorMessage(error as AxiosError);
-          if (error instanceof AxiosError) {
-            navigate("/error", { state: { error: errorMsg.message }});
-          } else {
-            navigate("/error");
-          }
+          navigate("/error", { state: { error: errorMsg.message } });
         }
       })()
     }, 700)
@@ -49,7 +48,7 @@ const OrderPlaced = () => {
   return (
     <div className="max-w-screen-xl m-auto">
       <h1 className="text-[30px] text-main-text-black dark:text-main-text-white w-fit text-center m-auto">Your order has been placed!</h1>
-      <p className="w-fit m-auto mt-3 text-side-text-light dark:text-side-text-gray max-w-[700px] text-center mb-[70px]">
+      <p className="w-fit m-auto mt-5 text-side-text-light dark:text-side-text-gray max-w-[700px] text-center mb-[70px]">
         Hi <span className="font-semibold">{userContext?.email}</span> we have recieved your order and are getting it ready to be shipped. 
         We will notify you when it's on its way!
       </p>
@@ -59,7 +58,7 @@ const OrderPlaced = () => {
           {`#${orderData.order_details.id}`}
         </span>
       </h2>
-      <div className="flex max-lg:flex-col gap-2 justify-between pb-3 border-b border-b-light-border dark:border-b-main-gray-border">
+      <div className="flex max-lg:flex-col gap-2 justify-between pb-4 border-b border-b-light-border dark:border-b-main-gray-border">
         <p className="text-side-text-light dark:text-side-text-gray">
           Order Date:
           <span className="ml-2 text-main-text-black dark:text-main-text-white">
@@ -67,10 +66,10 @@ const OrderPlaced = () => {
           </span>
         </p>
         <div className="flex items-center justify-between gap-7 max-md:flex-col max-md:items-start max-md:gap-3">
-          <div className="flex items-center gap-2">
+          <div className={`flex items-center ${windowSize > 370 ? "gap-2" : "gap-0"}`}>
             <img src={themeContext?.darkMode ? AirplaneIconDark : AirplaneIconLight} className="w-[16px] h-[16px]" alt="" />
             <p className="dark:text-in-stock-green-text-dark text-in-stock-green-text">
-              Estimated delivery:
+              {windowSize > 370 && <span>Estimated delivery:</span>}
               <span className="ml-2">
                 {getShortDateFormatRange(
                   orderData.order_details.delivery_method.estimated_lower_days, 
@@ -90,7 +89,7 @@ const OrderPlaced = () => {
           );
         })}
       </div>
-      <div className="mt-5 flex max-lg:flex-col justify-between gap-10 max-lg:gap-4 bg-[#f9f9fa] dark:bg-[#161616] p-5 rounded-[8px]">
+      <div className="mt-6 flex max-lg:flex-col justify-between gap-10 max-lg:gap-4 bg-[#f9f9fa] dark:bg-[#161616] p-5 rounded-[8px]">
         <div className="flex lg:w-[55%] max-lg:w-full gap-10 max-lg:gap-4 max-md:flex-col">
           <div className="w-fit max-lg:w-full">
             <h3 className="text-[18px] text-main-text-black dark:text-main-text-white font-semibold mb-3">Payment</h3>

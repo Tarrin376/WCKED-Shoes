@@ -324,6 +324,9 @@ def checkout_handler(user_id, order_details):
       .add_columns(Size.product_id, Size.stock)\
       .join(Product, Size.product_id == Product.id).all()
     
+    if len(cart_items) == 0:
+      raise DBException("You must have at least one item in your bag to checkout.", 400)
+    
     out_of_stock_items = []
     order = create_order(order_details, user_id, discount_code.percent_off if discount_code else 0, shipping.price)
     settings.db.session.add(order)
@@ -419,10 +422,11 @@ def cancel_order_handler(id, user_id):
             .first()
           
           bought_with.frequency -= 1
+          settings.db.session.commit()
+
           if bought_with.frequency == 0:
             settings.db.session.delete(bought_with)
-          
-          settings.db.session.commit()
+            settings.db.session.commit()
   except exc.SQLAlchemyError:
     raise DBException("Unable to update order status. Try again.", 500)
   except Exception as e:

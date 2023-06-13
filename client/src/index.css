@@ -16,7 +16,7 @@
     @apply bg-nav-light rounded-[10px] border border-light-border text-main-text-black shadow-light-component-shadow;
   }
   .popular {
-    @apply bg-[#9610ef] text-main-text-white px-3 rounded-md text-sm h-[21px] w-fit;
+    @apply bg-[#9610ef] text-main-text-white px-3 rounded-[4px] text-sm h-[21px] w-fit;
   }
   .loading-dark {
     @apply animate-pulse bg-loading-gray rounded-[8px];
@@ -69,10 +69,10 @@
   }
   .login-btn {
     @apply btn text-main-text-black dark:text-main-text-white border border-main-text-black 
-    dark:border-search-border bg-transparent py-2 px-4 w-[100px] rounded-md 
+    dark:border-search-border bg-transparent py-2 px-4 min-w-[100px] rounded-md 
     dark:hover:bg-[#2B2B2B] hover:bg-main-text-black hover:text-main-text-white;
   }
   .signup-btn {
-    @apply py-2 px-4 w-[100px] btn-primary border border-bg-primary-btn;
+    @apply py-2 px-4 min-w-[100px] btn-primary border border-bg-primary-btn;
   }
 }

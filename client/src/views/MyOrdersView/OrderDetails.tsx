@@ -14,7 +14,7 @@ interface OrderInfoProps {
 
 const OrderDetails: React.FC<Props> = ({ order }) => {
   return (
-    <div className="p-3 mt-3 mb-3 pb-0 flex max-lg:flex-col gap-6 max-md:gap-4 items-center">
+    <div className="p-2 mt-3 mb-1 pb-0 flex max-lg:flex-col gap-6 max-md:gap-4 items-center">
       <div className="flex lg:gap-6 max-md:gap-4 items-center w-2/3 max-lg:w-full max-md:flex-col">
         <div className="w-1/2 max-md:w-full pb-1 md:border-r md:pr-6 md:border-light-border dark:md:border-main-gray-border">
           <h4 className="text-[19px] mb-2 font-semibold max-xl:text-center">Customer Info</h4>

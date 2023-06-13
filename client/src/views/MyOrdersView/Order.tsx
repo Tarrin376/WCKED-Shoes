@@ -125,7 +125,7 @@ const Order: React.FC<Props> = ({ orderData, setNext }) => {
               {orderData.order_details.delivery_instructions}
             </p>}
           </div>
-          <div className="flex-grow overflow-y-scroll bg-[#f9f9fa] dark:bg-[#181818] p-3 max-lg:py-0 rounded-[8px] max-h-[400px]">
+          <div className="flex-grow overflow-y-scroll bg-[#f9f9fa] dark:bg-[#181818] p-3 pr-0 max-lg:py-0 rounded-[8px] max-h-[400px]">
             {orderData.items.map((item, index) => {
               return (
                 <OrderedItem 

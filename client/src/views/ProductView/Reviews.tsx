@@ -11,6 +11,7 @@ import { UserContext } from "../../providers/UserProvider";
 import Review from "./Review";
 import ErrorMessage from "../../components/ErrorMessage";
 import WriteReview from "./WriteReview";
+import { useWindowSize } from "../../hooks/useWindowSize";
 
 interface Props {
   product: TProduct;
@@ -21,16 +22,17 @@ const reviewsLimit = 4;
 const Reviews: React.FC<Props> = ({ product }) => {
   const userContext = useContext(UserContext);
   const getReviews = usePagination<TReview, TReviewOptions>(orderReviews, reviewsLimit, `/reviews/${product.id}`, "", "");
+  const windowSize = useWindowSize();
 
   return (
     <div className="flex max-xl:flex-col gap-6 max-xl:h-fit max-2xl:h-[630px] pb-2 mt-[40px]">
       <div className="light-component dark:gray-component p-5 pt-3 2xl:w-[65%] max-2xl:w-[60%] max-xl:w-full relative">
         <h4 className="text-[21px] mb-3 font-semibold">Rating & Reviews</h4>
-        <div className="flex items-center gap-4 mb-4">
+        <div className={`flex mb-5 ${windowSize <= 315 ? "flex-col gap-1" : "items-center gap-4"}`}>
           <p className="text-side-text-light dark:text-side-text-gray mb-[3px]">{`Reviews (${product.num_reviews})`}</p>
           {userContext?.email !== "" && <Rating rating={product.rating} />}
         </div>
-        <select className={`px-4 !rounded-md light-component dark:gray-component w-[190px] cursor-pointer h-[40px] !shadow-none`}
+        <select className={`px-4 !rounded-md light-component dark:gray-component sm:w-[190px] cursor-pointer h-[40px] !shadow-none max-sm:w-full`}
         onChange={(e) => getReviews.handleSort(e.currentTarget.selectedIndex)} value={getReviews.sort.label}>
           <OrderByOptions options={orderReviews} />
         </select>

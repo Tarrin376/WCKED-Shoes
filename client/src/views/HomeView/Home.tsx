@@ -6,12 +6,15 @@ import { TProductOptions } from "../../@types/TProductOptions";
 import OrderByOptions from "../../components/OrderByOptions";
 import { usePagination } from "../../hooks/usePagination";
 import { TProductCard } from "../../@types/TProductCard";
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 const productsLimit = 10;
 
 const Home: React.FC<{}> = () => {
   const location = useLocation();
   const searchRef = useRef<HTMLInputElement>(null);
+  const navigate = useNavigate();
   const getProducts = usePagination<TProductCard, TProductOptions>(
     orderProducts, 
     productsLimit, 
@@ -20,6 +23,12 @@ const Home: React.FC<{}> = () => {
     "", 
     searchRef
   );
+
+  useEffect(() => {
+    if (getProducts.errorMessage) {
+      navigate("/error", { state: { error: getProducts.errorMessage.message } });
+    }
+  }, [getProducts.errorMessage, navigate])
 
   return (
     <>

@@ -79,7 +79,7 @@ def find_user():
     return Response(e.message, status=e.status_code, mimetype="text/plain")
 
 @user_blueprint.route("/send-code", methods=["POST"])
-@limiter.limit("500 per 5 minutes")
+@limiter.limit("3 per minute")
 def send_code():
   email = request.json.get("email")
   code = "".join([str(randint(1, 9)) for _ in range(4)])

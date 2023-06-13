@@ -1,4 +1,5 @@
 import CartPriceSummaryLoading from "./CartPriceSummaryLoading";
+import { useWindowSize } from "../hooks/useWindowSize";
 
 export const CartLoading = () => {
   return (
@@ -14,6 +15,7 @@ export const CartLoading = () => {
 };
 
 const CartItemLoading = () => {
+  const windowSize = useWindowSize();
   const cartSize = 4;
 
   return (
@@ -23,7 +25,7 @@ const CartItemLoading = () => {
         <div className="py-5 border-b border-b-light-border dark:border-b-main-gray-border flex gap-7 items-center" key={index}>
           <div className="w-[160px] h-[160px] max-md:hidden loading-light dark:loading-dark rounded-[8px]">
           </div>
-          <div className="flex-grow pt-1">
+          <div className="flex-grow">
             <div className={`h-[23px] loading-light dark:loading-dark max-w-[500px]`}></div>
             <div className="mt-[14px] h-[15px] loading-light dark:loading-dark max-w-[170px]"></div>
             <div className="mt-[8px] h-[15px] loading-light dark:loading-dark max-w-[190px]"></div>
@@ -35,9 +37,13 @@ const CartItemLoading = () => {
                 <div className="loading-light dark:loading-dark rounded-md w-[75px] px-2 h-[30px] cursor-pointer text-main-white">
                 </div>
               </div>
+              {windowSize > 360 &&
               <div className="w-[80px] h-[30px] loading-light dark:loading-dark rounded-md">
-              </div>
+              </div>}
             </div>
+            {windowSize <= 360 &&
+            <div className="w-[80px] h-[30px] mt-[14px] loading-light dark:loading-dark rounded-md">
+            </div>}
           </div>
         </div>
       )

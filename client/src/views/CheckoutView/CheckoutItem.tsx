@@ -8,7 +8,8 @@ interface Props {
 
 export const CheckoutItem: React.FC<Props> = ({ item, notEnoughStock, isFirst }) => {
   return (
-    <div className={`md:pb-5 max-md:pb-[8px] ${isFirst ? "" : "pt-5"} border-b border-b-light-border dark:border-b-main-gray-border flex gap-7 items-center`}>
+    <div className={`pb-5 ${isFirst ? "" : "pt-5"} border-b border-b-light-border dark:border-b-main-gray-border 
+    flex gap-7 items-center`}>
       <div item-quantity={item.quantity} 
       className="w-[110px] h-[110px] max-md:hidden bg-cover bg-center rounded-[8px] border border-light-border dark:border-search-border"
       style={{backgroundImage: `url(${item.thumbnail})`}}>

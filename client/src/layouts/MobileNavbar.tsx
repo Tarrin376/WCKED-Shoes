@@ -13,34 +13,23 @@ import DarkOrdersIcon from "../assets/orders-icon-dark.png";
 import { useNavigate } from "react-router-dom";
 import DarkClose from "../assets/close-dark.png";
 import LightClose from "../assets/close-light.png";
-import { TErrorMessage } from "../@types/TErrorMessage";
-
-interface Props {
-  searchQuery: string,
-  openLoginPopUp: () => void,
-  openSignUpPopUp: () => void,
-  openVerifyEmailPopUp: () => void,
-  updateSearchQuery: (e: React.ChangeEvent<HTMLInputElement>) => void,
-  searchHandler: (e: React.FormEvent<HTMLFormElement>) => void,
-  logout: () => Promise<void>,
-  openCartPage: () => void,
-  errorMessage: TErrorMessage | undefined
-}
+import { NavbarProps } from "./Layout";
+import { LoggedInProps } from "./Layout";
+import Button from "../components/Button";
+import ErrorMessage from "../components/ErrorMessage";
+import { defaultUserData } from "../providers/UserProvider";
 
 interface NavSidebarProps {
-  props: Props, 
+  props: NavbarProps, 
   navSidebar: boolean, 
   toggleNavSidebar: () => void
 }
 
-interface LoggedInProps {
-  logout: () => Promise<void>, 
-  openCartPage: () => void, 
-  closeSidebar: (next: () => void) => void,
-  errorMessage: TErrorMessage | undefined
+interface LoggedInMobileProps extends LoggedInProps {
+  closeSidebar: (next: () => void) => void
 }
 
-const MobileNavbar: React.FC<Props> = (props) => {
+const MobileNavbar: React.FC<NavbarProps> = (props) => {
   const [navSidebar, setNavSidebar] = useState(false);
 
   const toggleNavSidebar = () => {
@@ -106,7 +95,8 @@ const NavSidebar: React.FC<NavSidebarProps> = ({ props, navSidebar, toggleNavSid
               logout={props.logout} 
               openCartPage={props.openCartPage} 
               closeSidebar={closeSidebar}
-              errorMessage={props.errorMessage} 
+              errorMessage={props.errorMessage}
+              setErrorMessage={props.setErrorMessage} 
             /> : 
             <div className="flex flex-col justify-end h-full">
               <button className="login-btn !w-full mb-3" onClick={() => closeSidebar(props.openLoginPopUp)}>Log in</button>
@@ -128,7 +118,7 @@ const NavSidebar: React.FC<NavSidebarProps> = ({ props, navSidebar, toggleNavSid
   )
 }
 
-const LoggedIn: React.FC<LoggedInProps> = (props) => {
+const LoggedIn: React.FC<LoggedInMobileProps> = (props) => {
   const userContext = useContext(UserContext);
   const themeContext = useContext(ThemeContext);
   const navigate = useNavigate();
@@ -159,10 +149,20 @@ const LoggedIn: React.FC<LoggedInProps> = (props) => {
           Logged in as:
           <span className="font-semibold ml-2">{userContext?.email}</span>
         </p>
-        <button className={`signup-btn !w-full ${props.errorMessage && props.errorMessage.message ? "!bg-main-red !border-main-red" : ""}`} 
-        onClick={props.logout}>
-          {!props.errorMessage || !props.errorMessage.message ? "Log out" : props.errorMessage.message}
-        </button>
+        {!props.errorMessage ? 
+        <Button 
+          action={props.logout} 
+          completedText="Logged out" 
+          defaultText="Log out" 
+          loadingText="Logging out" 
+          styles="signup-btn !w-full"
+          setErrorMessage={props.setErrorMessage}
+          whenComplete={() => userContext?.setUserData(defaultUserData)}
+        /> : 
+        <ErrorMessage 
+          error={props.errorMessage.message}
+          styles="!mt-0"
+        />}
         <div className="mt-4 flex items-center justify-between">
           <p className="text-sm text-center text-side-text-light dark:text-side-text-gray">Copyright &copy; 2023</p>
           {themeContext && (themeContext?.darkMode ? 

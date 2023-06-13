@@ -15,8 +15,8 @@ export const CartPriceSummaryLoading: React.FC<Props> = ({ styles }) => {
         <div className="h-[18px] w-[70px] loading-light dark:loading-dark"></div>
       </div>
       <div className="mt-7 flex justify-between">
+        <div className="text-[21px] h-[23px] w-[100px] loading-light dark:loading-dark"></div>
         <div className="text-[21px] h-[23px] w-[120px] loading-light dark:loading-dark"></div>
-        <div className="text-[21px] h-[23px] w-[150px] loading-light dark:loading-dark"></div>
       </div>
     </div>
   )

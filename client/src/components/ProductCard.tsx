@@ -71,9 +71,9 @@ const ProductCard: React.FC<Props> = ({ product, styles, setTotalPrice, smallSiz
         {dropdown && product && 
         <div className="absolute right-2 bottom-2 flex items-center gap-2">
           <input type="checkbox" checked={checked} onChange={toggleChecked} className="w-[15px] h-[15px]" />
-          <select className={`popular bg-no-reviews-bg ${!checked ? "opacity-50" : ""}`} 
-          onChange={updateSize} defaultValue={""}>
-            <option value={""}>Select Size</option>
+          <select className={`popular bg-no-reviews-bg ${!checked ? "opacity-50 pointer-events-none" : ""}`} 
+          onChange={updateSize} defaultValue="">
+            <option value="">Select Size</option>
             {product.sizes.filter((size: TSize) => size.stock > 0).map((size: TSize, index: number) => {
               return (
                 <option value={size.size} key={index}>

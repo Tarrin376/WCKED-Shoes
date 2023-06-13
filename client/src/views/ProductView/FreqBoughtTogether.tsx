@@ -24,12 +24,17 @@ interface Props {
 const FreqBoughtTogether: React.FC<Props> = ({ product, curSize, addToCart, styles }) => {
   const recommended = useGetRecommended(`/products/${product.id}/freq-bought-together?limit=${2}`);
   const [totalPrice, setTotalPrice] = useState<number>(product.price);
-  const [checkedItems, setCheckedItems] = useState<Readonly<TCheckedItem[]>>([{ productId: product.id, size: curSize }]);
+  const [checkedItems, setCheckedItems] = useState<Readonly<TCheckedItem[]>>([]);
   const themeContext = useContext(ThemeContext);
   const [errorMessage, setErrorMessage] = useState<TErrorMessage>();
-  
+
   const addItemsToCart = async (): Promise<TErrorMessage | undefined> => {
     try {
+      const addProductResponse = await addToCart(product.id, curSize);
+      if (addProductResponse) {
+        return addProductResponse;
+      }
+
       for (let item of checkedItems) {
         if (item.size !== "") {
           const response = await addToCart(item.productId, item.size);
@@ -86,7 +91,7 @@ const FreqBoughtTogether: React.FC<Props> = ({ product, curSize, addToCart, styl
           <Button 
             action={addItemsToCart} 
             completedText="Items added to bag" 
-            defaultText={`Add ${checkedItems.length === 1 ? "" : checkedItems.length === 2 ? "both" : "all three"} to bag`}
+            defaultText={`Add ${checkedItems.length + 1 === 1 ? "" : checkedItems.length + 1 === 2 ? "both" : "all three"} to bag`}
             loadingText={"Adding items to bag"} 
             styles={"btn-primary text-base w-[250px] h-[35px]"}
             setErrorMessage={setErrorMessage}

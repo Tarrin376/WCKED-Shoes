@@ -68,14 +68,12 @@ export const usePagination = <T1, T2>(orderBy: readonly TOrderByOption<T2>[], li
       (async () => {
         try {
           const response = await axios.get<{ meta: TPaginationMetaData, next: T1[] }>(queryURL);
-          if (response.status === 200) {
-            setNext((state) => [...state, ...response.data.next]);
-            setTotalFound(response.data.meta.total_count);
-            setErrorMessage(undefined);
-            
-            if (!response.data.meta.has_next) {
-              setReachedLimit(true);
-            }
+          setNext((state) => [...state, ...response.data.next]);
+          setTotalFound(response.data.meta.total_count);
+          setErrorMessage(undefined);
+          
+          if (!response.data.meta.has_next) {
+            setReachedLimit(true);
           }
         }
         catch (error: any) {
@@ -86,7 +84,7 @@ export const usePagination = <T1, T2>(orderBy: readonly TOrderByOption<T2>[], li
           setLoading(false);
         }
       })()
-    }, 700);
+    }, 300);
   }, [queryURL, setLoading])
 
   const data = {

@@ -6,22 +6,26 @@ import { Link } from "react-router-dom";
 import ErrorMessage from "../../components/ErrorMessage";
 import { getAPIErrorMessage } from "../../utils/getAPIErrorMessage";
 import { TErrorMessage } from "../../@types/TErrorMessage";
+import { useWindowSize } from "../../hooks/useWindowSize";
 
 interface Props {
   cartItem: TCartItem,
-  setCart: React.Dispatch<React.SetStateAction<TCartItem[] | undefined>>
+  setCart: React.Dispatch<React.SetStateAction<TCartItem[] | undefined>>,
+  disabled: boolean,
+  setDisabled: React.Dispatch<React.SetStateAction<boolean>>
 }
 
 export const quantityLimit = 10;
 
-const CartItem: React.FC<Props> = ({ cartItem, setCart }) => {
-  const [changingQuantity, setChangingQuantity] = useState(false);
+const CartItem: React.FC<Props> = ({ cartItem, setCart, disabled, setDisabled }) => {
   const removeURL = `/users/cart/${cartItem.product_id}/${cartItem.curSize.size}/${-cartItem.quantity}`;
   const updateURL = `/users/cart/${cartItem.product_id}/${cartItem.curSize.size}/`;
   const [errorMessage, setErrorMessage] = useState<TErrorMessage>();
+  const windowSize = useWindowSize();
 
   const removeFromCart = async () => {
     try {
+      setDisabled(true);
       const removeResponse = await axios.delete<{user_data: TUser, cart: TCartItem[]}>(removeURL);
       setCart(removeResponse.data.cart);
     }
@@ -29,11 +33,14 @@ const CartItem: React.FC<Props> = ({ cartItem, setCart }) => {
       const errorMsg = getAPIErrorMessage(error as AxiosError);
       setErrorMessage(errorMsg);
     }
+    finally {
+      setDisabled(false);
+    }
   }
 
   const updateQuantity = async (e: React.ChangeEvent<HTMLSelectElement>) => {
     try {
-      setChangingQuantity(true);
+      setDisabled(true);
       const change = parseInt(e.target.value) - cartItem.quantity;
       const updateResponse = await axios.put<{ user_data: TUser, cart: TCartItem[], valid: boolean }>(updateURL + change);
       setCart(updateResponse.data.cart);
@@ -44,7 +51,7 @@ const CartItem: React.FC<Props> = ({ cartItem, setCart }) => {
       setErrorMessage(errorMsg);
     }
     finally {
-      setChangingQuantity(false);
+      setDisabled(false);
     }
   }
 
@@ -59,7 +66,7 @@ const CartItem: React.FC<Props> = ({ cartItem, setCart }) => {
       <div className="w-[160px] h-[160px] max-md:hidden bg-cover bg-center rounded-[8px] border border-light-border dark:border-search-border" 
       style={{backgroundImage: `url(${cartItem.thumbnail})`}}>
       </div>
-      <div className="flex-grow pt-1 pb-3">
+      <div className="flex-grow">
         <Link to={`/products/${cartItem.product_id}`}>
           <h2 className="text-main-text-black dark:text-main-text-white text-[21px] 
           cursor-pointer hover:!text-bg-primary-btn-hover btn max-sm:text-[19px] w-fit">
@@ -78,8 +85,9 @@ const CartItem: React.FC<Props> = ({ cartItem, setCart }) => {
               </p>
             </div>
             {cartItem.curSize.stock > 0 &&
-            <select className="light-component dark:gray-component !rounded-md px-2 h-[30px] cursor-pointer text-main-white" 
-            disabled={changingQuantity} onChange={updateQuantity} defaultValue={cartItem.quantity}>
+            <select className={`light-component dark:gray-component !rounded-md px-2 h-[30px] cursor-pointer text-main-white
+            ${disabled ? "disabled-btn-light dark:disabled-btn" : ""}`}
+            onChange={updateQuantity} defaultValue={cartItem.quantity}>
               {new Array(quantityLimit).fill(0).map((_, index) => {
                 return (
                   <option key={index} value={index + 1}>
@@ -89,10 +97,17 @@ const CartItem: React.FC<Props> = ({ cartItem, setCart }) => {
               })}
             </select>}
           </div>
-          <button className="secondary-btn h-[30px] mr-5" onClick={removeFromCart}>
+          {windowSize > 360 && 
+          <button className={`secondary-btn h-[30px] mr-5 ${disabled ? "disabled-btn-light dark:disabled-btn" : ""}`} 
+          onClick={removeFromCart}>
             Remove
-          </button>
+          </button>}
         </div>
+        {windowSize <= 360 && 
+        <button className={`secondary-btn mt-[14px] h-[30px] mr-5 ${disabled ? "disabled-btn-light dark:disabled-btn" : ""}`} 
+        onClick={removeFromCart}>
+          Remove
+        </button>}
         {(errorMessage || cartItem.curSize.stock < cartItem.quantity) && 
         <ErrorMessage 
           error={!errorMessage ? getQuantityExceededMessage() : errorMessage.message} 

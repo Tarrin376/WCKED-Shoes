@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { checkoutInputChecks } from "../../utils/checkoutInputChecks";
 import CardImages from "../../components/CardImages";
+import { useWindowSize } from "../../hooks/useWindowSize";
 
 interface Props {
   label: string, 
@@ -17,6 +18,7 @@ interface Props {
 const FormInput: React.FC<Props> = ({ label, styles, type, placeholder, optionalText, showCardIcons, discountText, discountError, maxLength }) => {
   const [value, setValue] = useState("");
   const [errorMessage, setErrorMessage] = useState<string | undefined>("");
+  const windowSize = useWindowSize();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
@@ -39,7 +41,7 @@ const FormInput: React.FC<Props> = ({ label, styles, type, placeholder, optional
 
   return (
     <div className={styles}>
-      <div className="flex items-center gap-1">
+      <div className={`flex ${windowSize <= 360 ? "flex-col" : "items-center gap-3"}`}>
         <label className="block text-main-text-black dark:text-main-text-white mr-[2px]" htmlFor={label}>
           {`${label} `}
           {optionalText && <span className="text-side-text-light dark:text-side-text-gray italic">*{optionalText}</span>}

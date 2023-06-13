@@ -9,7 +9,7 @@ interface Props {
 
 const OrderActivity: React.FC<Props> = ({ dates, estDelivery }) => {
   return (
-    <div className="p-3 mt-3 pb-0">
+    <div className="p-2 mt-3 pb-0">
       <h4 className="text-[19px] mb-7 font-semibold">Order Activity</h4>
       <div className="flex flex-col">
         {dates.map((activity, index) => {
@@ -29,12 +29,12 @@ const OrderActivity: React.FC<Props> = ({ dates, estDelivery }) => {
 
 const Status: React.FC<{ activity: TOrderActivty, isLast: boolean, estDelivery: string }> = ({ activity, isLast, estDelivery }) => {
   return (
-    <div className={`pl-6 ml-2 ${!isLast ? "border-l border-light-border dark:border-main-gray-border" : ""} h-[60px] relative`}>
+    <div className={`pl-[21px] ml-2 ${!isLast ? "border-l border-light-border dark:border-main-gray-border h-[60px]" : "h-[40px]"} relative`}>
       <div className="absolute top-[-16px]">
         <h5 className="text-main-text-black dark:text-main-text-white">{activity.label}</h5>
         <p className="text-[15px] text-side-text-light dark:text-side-text-gray">
           {activity.date !== "None" ? convertDate(activity.date, true) 
-          : activity.label === "Processing" ? "Awaiting order confirmation" : estDelivery}
+          : activity.label === "Processing" ? "Processing order" : estDelivery}
         </p>
       </div>
       <Check date={activity.date} />
