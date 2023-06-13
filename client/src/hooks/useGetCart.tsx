@@ -30,7 +30,7 @@ const useGetCart = (): TUseGetCart => {
           }
         }
       })()
-    }, 5000)
+    }, 700)
     
   }, [setCart, navigate, userContext]);
 

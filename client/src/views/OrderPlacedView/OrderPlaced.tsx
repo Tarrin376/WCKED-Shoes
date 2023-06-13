@@ -97,7 +97,7 @@ const OrderPlaced = () => {
               Credit card ending with
               <span className="text-bg-primary-btn-hover">{` ${orderData.order_details.card_end}`}</span>
             </div>
-            <CardImages styles={"w-[37px] h-[37px]"} />
+            <CardImages styles={"w-[25px] h-[25px]"} />
           </div>
           <div className="flex-grow max-lg:w-full max-lg:pb-[6px] max-lg:text-right max-md:!text-left">
             <h3 className="text-[18px] mb-3 text-main-text-black dark:text-main-text-white font-semibold">Delivery</h3>

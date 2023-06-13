@@ -42,11 +42,11 @@ const FormInput: React.FC<Props> = ({ label, styles, type, placeholder, optional
   return (
     <div className={styles}>
       <div className={`flex ${windowSize <= 360 ? "flex-col" : "items-center gap-3"}`}>
-        <label className="block text-main-text-black dark:text-main-text-white mr-[2px]" htmlFor={label}>
+        <label className="block text-main-text-black dark:text-main-text-white" htmlFor={label}>
           {`${label} `}
           {optionalText && <span className="text-side-text-light dark:text-side-text-gray italic">*{optionalText}</span>}
         </label>
-        {showCardIcons && <CardImages styles="w-[37px] h-[37px]" />}
+        {showCardIcons && <CardImages styles="w-[25px] h-[25px]" />}
       </div>
       {errorMessage && errorMessage.length > 0 && <p className="text-sm mb-[-5px] text-side-text-red">{errorMessage}</p>}
       {discountText && discountText.length > 0 && <p className="text-sm mb-[-5px] text-green-light dark:text-green-dark">{discountText}</p>}

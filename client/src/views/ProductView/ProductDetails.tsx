@@ -16,13 +16,13 @@ const ProductDetails: React.FC<Props> = ({ product }) => {
 
   return (
     <>
-      <h4 className="text-main-text-black dark:text-main-text-white text-[21px] mb-2 font-semibold">Description</h4>
-      <p className="text-side-text-light dark:text-side-text-gray mb-5">{product.description}</p>
-      <h4 className="text-main-text-black dark:text-main-text-white text-[21px] mb-[14px] font-semibold">Shipping options</h4>
-      <div className="flex flex-wrap mb-[34px]">
-        {deliveryMethods.methods && deliveryMethods.methods.map((method: TDeliveryMethod, index: number) => {
+      <h4 className="text-main-text-black dark:text-main-text-white text-[21px] mb-5 font-semibold">Description</h4>
+      <p className="text-side-text-light dark:text-side-text-gray mb-7">{product.description}</p>
+      <h4 className="text-main-text-black dark:text-main-text-white text-[21px] mb-5 font-semibold">Shipping options</h4>
+      <div className="flex flex-wrap mb-[34px] gap-6">
+        {deliveryMethods.methods ? deliveryMethods.methods.map((method: TDeliveryMethod, index: number) => {
           return (
-            <div className="px-6 py-[6px] border-l border-light-border dark:border-main-gray-border relative" key={index}>
+            <div className="pl-6 py-[6px] border-l border-light-border dark:border-main-gray-border relative" key={index}>
               <p className="text-main-text-black dark:text-main-text-white font-semibold mb-1">
                 {method.name}
               </p>
@@ -38,8 +38,33 @@ const ProductDetails: React.FC<Props> = ({ product }) => {
               alt="" />
             </div>
           )
-        })}
+        }) : <ShippingOptionsLoading />}
       </div>
+    </>
+  )
+};
+
+const ShippingOptionsLoading = () => {
+  const shippingOptionsLimit = 3;
+  const themeContext = useContext(ThemeContext);
+
+  return (
+    <>
+      {new Array(shippingOptionsLimit).fill(0).map((_, index: number) => {
+        return (
+          <div className="pl-6 py-[6px] border-l border-light-border dark:border-main-gray-border relative" key={index}>
+            <div className="mb-3 loading-light dark:loading-dark h-[18px] w-[160px]">
+            </div>
+            <div className="loading-light dark:loading-dark h-[18px] w-[140px] mb-3">
+            </div>
+            <div className="loading-light dark:loading-dark h-[18px] w-[60px]">
+            </div>
+            <img src={themeContext?.darkMode ? DPDDarkIcon : DPDLightIcon} 
+            className="w-[25px] h-[25px] absolute top-[7px] left-[-13px] bg-bg-light dark:bg-bg-dark p-[4px]" 
+            alt="" />
+          </div>
+        )
+      })}
     </>
   )
 };

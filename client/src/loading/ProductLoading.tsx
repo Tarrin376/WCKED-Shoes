@@ -51,13 +51,15 @@ const ProductSizesLoading = () => {
 };
 
 const ProductImagesLoading = () => {
-  const images = 3;
+  const images = 5;
 
   return (
-    <div className="max-2xl:whitespace-nowrap max-2xl:w-full 2xl:pr-6 2xl:py-6 2xl:h-[540px] max-2xl:h-fit max-2xl:hidden">
+    <div className="max-2xl:whitespace-nowrap max-2xl:w-full 2xl:h-[540px] 2xl:w-[205px] 
+    max-2xl:h-fit max-2xl:pb-4 2xl:overflow-y-scroll max-2xl:overflow-x-scroll max-2xl:overflow-y-hidden max-lg:hidden">
       {new Array(images).fill(0).map((_, index) => {
         return (
-          <div className={`w-[147px] h-[147px] rounded-[8px] m-auto block loading-light dark:loading-dark ${index > 0 ? "mt-6" : ""}`} 
+          <div className={`w-[127px] h-[127px] rounded-[8px] bg-center bg-cover max-2xl:inline-block loading-light dark:loading-dark
+          ${index > 0 ? "2xl:mt-6" : ""} ${index < images - 1 ? "max-2xl:mr-6" : ""}`} 
           key={index}>
           </div>
         )

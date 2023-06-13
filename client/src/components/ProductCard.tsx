@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { TSize } from "../@types/TSize";
 import { TCheckedItem } from "../@types/TCheckedItem";
+import ErrorMessage from "./ErrorMessage";
 
 interface Props {
   product: Readonly<TProductCard>,
@@ -14,11 +15,12 @@ interface Props {
   smallSize?: boolean,
   setCheckedItems?: React.Dispatch<React.SetStateAction<Readonly<TCheckedItem[]>>>,
   dropdown?: boolean,
+  outOfStockItems?: number[]
 }
 
 export const popularSoldCount = 2;
 
-const ProductCard: React.FC<Props> = ({ product, styles, setTotalPrice, smallSize, setCheckedItems, dropdown }) => {
+const ProductCard: React.FC<Props> = ({ product, styles, setTotalPrice, smallSize, setCheckedItems, dropdown, outOfStockItems }) => {
   const navigate = useNavigate();
   const stockText = getStockText(product.stock);
   const carbonFootprintColour = getCarbonFootprintColour(product.carbon_footprint);
@@ -66,6 +68,11 @@ const ProductCard: React.FC<Props> = ({ product, styles, setTotalPrice, smallSiz
       <div className={`w-full rounded-[8px] relative bg-center bg-cover border dark:border-search-border dark:shadow-none 
       shadow-light-component-shadow border-light-border ${smallSize ? "h-[200px]" : "h-[265px]"}`} 
       style={{backgroundImage: `url(${product.thumbnail})`}}>
+        {outOfStockItems && outOfStockItems.includes(product.id) && 
+        <ErrorMessage 
+          error="Size is out of stock."
+          styles="absolute top-0 w-full !mt-0 !rounded-b-[0px] z-10"
+        />}
         <Rating rating={product.rating} styles={"absolute right-2 top-2 !bg-no-reviews-bg"} />
         {product.num_sold >= popularSoldCount && !smallSize && <p className="popular absolute top-2 left-2">Popular</p>}
         {dropdown && product && 

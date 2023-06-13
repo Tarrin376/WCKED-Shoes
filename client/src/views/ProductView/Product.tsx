@@ -64,18 +64,13 @@ const Product: React.FC<{}> = () => {
     setQuantity((cur) => Math.max(1, Math.min(cur + value, quantityLimit)));
   }
 
-  const addToCart = async (productId: number, size: string | undefined): Promise<TErrorMessage | undefined> => {
+  const addToCart = async (productId: number, size: string | undefined, qty: number): Promise<TErrorMessage | undefined> => {
     if (size === undefined) {
       return { message: "Please select a size", status: 400 };
     }
 
-    const checkStock = await checkItemStock(size);
-    if (checkStock !== "") {
-      return { message: checkStock, status: 400 };
-    }
-
     try {
-      const response = await axios.post<TUser>(`/users/cart/${productId}/${size}/${quantity}`);
+      const response = await axios.post<TUser>(`/users/cart/${productId}/${size}/${qty}`);
       userContext?.setUserData((cur) => {
         return {
           ...cur,
@@ -92,38 +87,25 @@ const Product: React.FC<{}> = () => {
     }
   }
 
-  const checkItemStock = async (size: string): Promise<string> => {
-    try {
-      const stockResponse = await axios.get<{ inStock: boolean }>(`/products/${product!.id}/${size}`);
-      return stockResponse.data.inStock ? "" : "Out of stock";
-    }
-    catch (error: any) {
-      const errorMsg = getAPIErrorMessage(error as AxiosError);
-      return errorMsg.message;
-    }
-  }
-
   useEffect(() => {
     setQuantity(1);
     setProduct(null);
     
-    setTimeout(() => {
-      (async () => {
-        try {
-          const productResponse = await axios.get<TProduct>(location.pathname);
-          if (productResponse.status === 200) {
-            const size = productResponse.data.sizes.find((cur: TSize) => cur.stock > 0);
-            setProduct({...productResponse.data, images: [productResponse.data.thumbnail, ...productResponse.data.images] });
-            setCurSize(size);
-            setSelectedImage(0);
-          }
+    (async () => {
+      try {
+        const productResponse = await axios.get<TProduct>(location.pathname);
+        if (productResponse.status === 200) {
+          const size = productResponse.data.sizes.find((cur: TSize) => cur.stock > 0);
+          setProduct({...productResponse.data, images: [productResponse.data.thumbnail, ...productResponse.data.images] });
+          setCurSize(size);
+          setSelectedImage(0);
         }
-        catch (error: any) {
-          const errorMsg = getAPIErrorMessage(error as AxiosError);
-          navigate("/error", { state: { error: errorMsg.message } });
-        }
-      })()
-    }, 4000)
+      }
+      catch (error: any) {
+        const errorMsg = getAPIErrorMessage(error as AxiosError);
+        navigate("/error", { state: { error: errorMsg.message } });
+      }
+    })()
   }, [location.pathname, navigate, userContext?.email]);
 
   if (!product) {
@@ -140,7 +122,7 @@ const Product: React.FC<{}> = () => {
       </h4>
       <div className="flex max-xl:flex-col w-full gap-7 mb-[62px]">
         <div className="flex max-2xl:flex-col-reverse items-center xl:w-2/3 max-xl:w-full gap-6">
-          <div className="max-2xl:whitespace-nowrap max-2xl:w-full 2xl:pr-12 2xl:py-6 2xl:h-[540px] 
+          <div className="max-2xl:whitespace-nowrap max-2xl:w-full 2xl:h-[540px] 2xl:w-[205px] 
           max-2xl:h-fit max-2xl:pb-4 2xl:overflow-y-scroll max-2xl:overflow-x-scroll max-2xl:overflow-y-hidden max-lg:hidden">
             <ProductImages 
               images={product.images}
@@ -188,7 +170,7 @@ const Product: React.FC<{}> = () => {
           {errorMessage && <ErrorMessage error={errorMessage.message} styles="w-fit px-3" />}
           <div className={`mt-7 flex ${windowSize <= 344 ? "flex-col-reverse gap-4" : "gap-5"}`}>
             <Button 
-              action={() => addToCart(product!.id, !curSize ? curSize : curSize.size)} 
+              action={() => addToCart(product!.id, !curSize ? curSize : curSize.size, quantity)} 
               completedText={completedText} 
               defaultText={defaultText} 
               loadingText={loadingText} 

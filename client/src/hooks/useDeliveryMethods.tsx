@@ -27,7 +27,7 @@ export const useDeliveryMethods = (): {
           }
         }
       })()
-    }, 5000)
+    }, 700)
   }, []);
 
   return {

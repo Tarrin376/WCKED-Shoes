@@ -111,7 +111,7 @@ const CartItem: React.FC<Props> = ({ cartItem, setCart, disabled, setDisabled })
         {(errorMessage || cartItem.curSize.stock < cartItem.quantity) && 
         <ErrorMessage 
           error={!errorMessage ? getQuantityExceededMessage() : errorMessage.message} 
-          styles={"py-1 text-[15px] mt-[14px]"} 
+          styles={"py-1 text-[15px] mt-[14px] mr-5"} 
         />}
       </div>
     </div>

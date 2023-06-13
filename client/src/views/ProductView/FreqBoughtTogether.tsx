@@ -17,7 +17,7 @@ import { TErrorMessage } from "../../@types/TErrorMessage";
 interface Props {
   product: TProduct,
   curSize: string,
-  addToCart: (productId: number, size: string | undefined) => Promise<TErrorMessage | undefined>,
+  addToCart: (productId: number, size: string | undefined, qty: number) => Promise<TErrorMessage | undefined>,
   styles?: string,
 }
 
@@ -27,20 +27,24 @@ const FreqBoughtTogether: React.FC<Props> = ({ product, curSize, addToCart, styl
   const [checkedItems, setCheckedItems] = useState<Readonly<TCheckedItem[]>>([]);
   const themeContext = useContext(ThemeContext);
   const [errorMessage, setErrorMessage] = useState<TErrorMessage>();
+  const [outOfStockItems, setOutOfStockItems] = useState<number[]>([]);
 
   const addItemsToCart = async (): Promise<TErrorMessage | undefined> => {
     try {
-      const addProductResponse = await addToCart(product.id, curSize);
+      const addProductResponse = await addToCart(product.id, curSize, 1);
       if (addProductResponse) {
-        return addProductResponse;
+        setOutOfStockItems((cur) => [...cur, product.id]);
+      } else {
+        setOutOfStockItems((cur) => cur.filter((id) => id !== product.id));
       }
 
       for (let item of checkedItems) {
         if (item.size !== "") {
-          const response = await addToCart(item.productId, item.size);
-          if (response) {
-            return response;
-          }
+          const response = await addToCart(item.productId, item.size, 1);
+          if (response) setOutOfStockItems((cur) => [...cur, item.productId]);
+          else setOutOfStockItems((cur) => cur.filter((id) => id !== item.productId));
+        } else {
+          setOutOfStockItems((cur) => cur.filter((id) => id !== item.productId));
         }
       }
     }
@@ -48,6 +52,10 @@ const FreqBoughtTogether: React.FC<Props> = ({ product, curSize, addToCart, styl
       const errorMsg = getAPIErrorMessage(error as AxiosError);
       return errorMsg;
     }
+  }
+
+  const getDefaultBtnText = () => {
+    return `Add ${checkedItems.length + 1 === 1 ? "" : checkedItems.length + 1 === 2 ? "both" : "all three"} to bag`;
   }
 
   if (recommended.products && recommended.products.length === 0) {
@@ -69,6 +77,7 @@ const FreqBoughtTogether: React.FC<Props> = ({ product, curSize, addToCart, styl
                     smallSize={true}
                     setCheckedItems={setCheckedItems}
                     dropdown={index > 0}
+                    outOfStockItems={outOfStockItems}
                   /> :
                   <ProductCardLoading 
                     smallSize={true} 
@@ -90,10 +99,11 @@ const FreqBoughtTogether: React.FC<Props> = ({ product, curSize, addToCart, styl
           </p>
           <Button 
             action={addItemsToCart} 
-            completedText="Items added to bag" 
-            defaultText={`Add ${checkedItems.length + 1 === 1 ? "" : checkedItems.length + 1 === 2 ? "both" : "all three"} to bag`}
+            completedText={recommended.products && outOfStockItems.length === recommended.products.length ? getDefaultBtnText() : "Items added to bag"}
+            defaultText={getDefaultBtnText()}
             loadingText={"Adding items to bag"} 
-            styles={"btn-primary text-base w-[250px] h-[35px]"}
+            styles={`btn-primary text-base w-[250px] h-[35px] 
+            ${recommended.products && outOfStockItems.length === recommended.products.length ? "!bg-bg-primary-btn" : ""} `}
             setErrorMessage={setErrorMessage}
           />
           {errorMessage && <ErrorMessage error={errorMessage.message} styles="mt-[7px] w-[250px]" />}

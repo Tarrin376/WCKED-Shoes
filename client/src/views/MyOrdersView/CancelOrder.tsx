@@ -30,7 +30,7 @@ const CancelOrder: React.FC<Props> = ({ orderID, setNext }) => {
   }
 
   return (
-    <div className="p-3 mt-3 mb-3 pb-0">
+    <div className="p-2 mt-3 mb-3 pb-0">
       <h4 className="text-[19px] mb-3 font-semibold">Cancel Order</h4>
       <p className="text-main-text-black dark:text-main-text-white mb-2">
         Do you wish to cancel your order?
