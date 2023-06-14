@@ -2,7 +2,6 @@ import { TCartItem } from "../@types/TCartItem";
 import { useEffect, useState, useContext } from "react";
 import axios, { AxiosError } from "axios";
 import { useNavigate } from "react-router-dom";
-import { defaultUserData } from "../providers/UserProvider";
 import { UserContext } from "../providers/UserProvider";
 import { TUseGetCart } from "../@types/TUseGetCart";
 import { getAPIErrorMessage } from "../utils/getAPIErrorMessage";
@@ -17,16 +16,15 @@ const useGetCart = (): TUseGetCart => {
     setTimeout(() => {
       (async () => {
         try {
-          const cartResponse = await axios.get<TCartItem[]>("/users/cart");
+          const cartResponse = await axios.get<TCartItem[]>("/api/users/cart");
           setCart(cartResponse.data);
         }
         catch (error: any) {
           const errorMsg = getAPIErrorMessage(error as AxiosError);
-          if (errorMsg.status === 401) {
-            userContext?.setUserData(defaultUserData);
+          if (!userContext?.email) {
             navigate("/");
-          } else if (errorMsg.status === 429) {
-            navigate("/error", { state: { error: errorMsg.message } })
+          } else {
+            navigate("/error", { state: { error: errorMsg.message } });
           }
         }
       })()

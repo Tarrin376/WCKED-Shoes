@@ -63,7 +63,7 @@ const OrderDetails: React.FC<Props> = ({ order }) => {
           stylesInner={"text-main-text-black dark:text-main-text-white"} 
         />
         <OrderInfo 
-          info={`${order.address_line1} ${order.address_line2.length > 0 ? `| ${order.address_line2}` : ""}`} 
+          info={`${order.address_line1}${order.address_line2.length > 0 ? `, ${order.address_line2}` : ""}`} 
           title={"Address"} 
           stylesOuter={"mb-1 flex-col max-xl:text-center xl:!items-start"} 
           stylesInner={"text-main-text-black dark:text-main-text-white"} 

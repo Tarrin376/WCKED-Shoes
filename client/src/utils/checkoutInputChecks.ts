@@ -43,8 +43,11 @@ export const checkoutInputChecks: {
     return { valid: true };
   },
   "Expiry date": (expiryDate: string): TCheckoutInputReturn => {
-    if (!validator.isDate(expiryDate)) return { valid: false, "message": "Invalid expiry date" };
-    return { valid: true };
+    if (!validator.isDate(expiryDate) || new Date(expiryDate) < new Date()) {
+      return { valid: false, "message": "Invalid expiry date" };
+    } else {
+      return { valid: true };
+    }
   },
   "CVV": (CVV: string): TCheckoutInputReturn => {
     if (CVV.length === 0) return { valid: false, "message": "CVV must not be empty" }

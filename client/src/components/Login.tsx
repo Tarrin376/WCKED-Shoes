@@ -29,7 +29,7 @@ const Login: React.FC<Props> = (props) => {
 
   const loginUser = async (): Promise<TErrorMessage | undefined> => {
     try {
-      const loginResponse = await axios.post<TUser>("/users/login", {
+      const loginResponse = await axios.post<TUser>("/api/users/login", {
         email: props.emailAddress,
         password: props.password,
         remember_me: rememberMe

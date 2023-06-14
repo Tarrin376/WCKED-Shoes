@@ -74,7 +74,7 @@ const Layout: React.FC<{}> = () => {
 
   const logout = async (): Promise<TErrorMessage | undefined> => {
     try {
-      await axios.get<string>("/users/logout");
+      await axios.get<string>("/api/users/logout");
       return undefined;
     }
     catch (error: any) {

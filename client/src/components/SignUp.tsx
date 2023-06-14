@@ -35,7 +35,7 @@ const SignUp: React.FC<Props> = (props) => {
 
   const createAccount = async (): Promise<TErrorMessage | undefined> => {
     try {
-      await axios.post<string>("/users/find", { email: props.emailAddress });
+      await axios.post<string>("/api/users/find", { email: props.emailAddress });
       return { message: "User with this email address already exists.", status: 400 };
     }
     catch (error: any) {

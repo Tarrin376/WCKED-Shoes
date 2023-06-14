@@ -15,7 +15,7 @@ export const useDeliveryMethods = (): {
     setTimeout(() => {
       (async () => {
         try {
-          const response = await axios.get<TDeliveryMethod[]>("/delivery-methods");
+          const response = await axios.get<TDeliveryMethod[]>("/api/delivery-methods");
           setMethods(response.data);
         }
         catch (error: any) {

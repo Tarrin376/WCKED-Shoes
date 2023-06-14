@@ -16,7 +16,7 @@ const CancelOrder: React.FC<Props> = ({ orderID, setNext }) => {
 
   const cancelOrder = async (): Promise<TErrorMessage | undefined> => {
     try {
-      await axios.delete<string>(`/users/cancel-order/${orderID}`);
+      await axios.delete<string>(`/api/users/cancel-order/${orderID}`);
       return undefined;
     }
     catch (error: any) {

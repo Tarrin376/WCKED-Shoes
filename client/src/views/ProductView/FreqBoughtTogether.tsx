@@ -22,7 +22,7 @@ interface Props {
 }
 
 const FreqBoughtTogether: React.FC<Props> = ({ product, curSize, addToCart, styles }) => {
-  const recommended = useGetRecommended(`/products/${product.id}/freq-bought-together?limit=${2}`);
+  const recommended = useGetRecommended(`/api/products/${product.id}/freq-bought-together?limit=${2}`);
   const [totalPrice, setTotalPrice] = useState<number>(product.price);
   const [checkedItems, setCheckedItems] = useState<Readonly<TCheckedItem[]>>([]);
   const themeContext = useContext(ThemeContext);
@@ -99,14 +99,20 @@ const FreqBoughtTogether: React.FC<Props> = ({ product, curSize, addToCart, styl
           </p>
           <Button 
             action={addItemsToCart} 
-            completedText={recommended.products && outOfStockItems.length === recommended.products.length ? getDefaultBtnText() : "Items added to bag"}
+            completedText={recommended.products && outOfStockItems.length === recommended.products.length ? 
+            getDefaultBtnText() : "Items added to bag"}
             defaultText={getDefaultBtnText()}
             loadingText={"Adding items to bag"} 
             styles={`btn-primary text-base w-[250px] h-[35px] 
-            ${recommended.products && outOfStockItems.length === recommended.products.length ? "!bg-bg-primary-btn" : ""} `}
+            ${recommended.products && outOfStockItems.length === recommended.products.length ? 
+            "!bg-bg-primary-btn" : ""} `}
             setErrorMessage={setErrorMessage}
           />
-          {errorMessage && <ErrorMessage error={errorMessage.message} styles="mt-[7px] w-[250px]" />}
+          {errorMessage && 
+          <ErrorMessage 
+            error={errorMessage.message} 
+            styles="mt-[7px] w-[250px]" 
+          />}
         </div>}
       </div>
     </RecommendedWrapper>

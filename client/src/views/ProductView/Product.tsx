@@ -48,7 +48,7 @@ const Product: React.FC<{}> = () => {
   const navigate = useNavigate();
   const windowSize = useWindowSize();
 
-  const customerBoughtEndpoint = `/products/${product?.id}/recommend-customer-bought?limit=${20}`
+  const customerBoughtEndpoint = `/api/products/${product?.id}/recommend-customer-bought?limit=${20}`
 
   const updateShoeSize = (size?: TSize) => {
     if (size) {
@@ -70,7 +70,7 @@ const Product: React.FC<{}> = () => {
     }
 
     try {
-      const response = await axios.post<TUser>(`/users/cart/${productId}/${size}/${qty}`);
+      const response = await axios.post<TUser>(`/api/users/cart/${productId}/${size}/${qty}`);
       userContext?.setUserData((cur) => {
         return {
           ...cur,
@@ -93,7 +93,7 @@ const Product: React.FC<{}> = () => {
     
     (async () => {
       try {
-        const productResponse = await axios.get<TProduct>(location.pathname);
+        const productResponse = await axios.get<TProduct>(`/api${location.pathname}`);
         if (productResponse.status === 200) {
           const size = productResponse.data.sizes.find((cur: TSize) => cur.stock > 0);
           setProduct({...productResponse.data, images: [productResponse.data.thumbnail, ...productResponse.data.images] });

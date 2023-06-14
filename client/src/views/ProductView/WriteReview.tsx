@@ -52,7 +52,7 @@ const WriteReview: React.FC<Props> = ({ product, setNext, sort, handleSort }) =>
     }
 
     try {
-      const newReview = await axios.post<TReview>(`/reviews/${product.id}`, {
+      const newReview = await axios.post<TReview>(`/api/reviews/${product.id}`, {
         rating: rating,
         title: reviewTitle,
         review: review,

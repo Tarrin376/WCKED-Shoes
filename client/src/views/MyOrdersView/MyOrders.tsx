@@ -17,21 +17,20 @@ import { useGetRecommended } from "../../hooks/useGetRecommended";
 
 const MyOrders = () => {
   const searchRef = useRef<HTMLInputElement>(null);
-  const getOrders = usePagination<TOrderData, TOrderOptions>(orderOrders, 3, "/orders", "", "active", searchRef);
+  const getOrders = usePagination<TOrderData, TOrderOptions>(orderOrders, 3, "/api/orders", "", "active", searchRef);
   const windowSize = useWindowSize();
   const scrollPosition = useScrollPosition();
   const pageSize = getPageSize(windowSize);
   const navigate = useNavigate();
   const userContext = useContext(UserContext);
-  const buyItAgainURL = `/users/buy-it-again?limit=${20}`;
+  const buyItAgainURL = `/api/users/buy-it-again?limit=${20}`;
   const recommended = useGetRecommended(buyItAgainURL);
 
   useEffect(() => {
     if (!userContext?.email) {
       navigate("/");
     } else if (getOrders.errorMessage) {
-      if (getOrders.errorMessage.status === 429) navigate("/error", { state: { error: getOrders.errorMessage.message } });
-      if (getOrders.errorMessage.status === 401) navigate("/");
+      navigate("/error", { state: { error: getOrders.errorMessage.message } });
     }
   }, [getOrders.errorMessage, navigate, userContext?.email])
 

@@ -71,7 +71,7 @@ const PaymentInfo: React.FC<Props> = ({ formRef, selectedMethod, cartItems, sele
       const fieldValues = Object.fromEntries(formData.entries());
       const cardNum = fieldValues["Credit card number"] as string;
 
-      const orderResponse = await axios.post<{ id: string }>("/users/cart/checkout", {
+      const orderResponse = await axios.post<{ id: string }>("/api/users/cart/checkout", {
         mobile_number: fieldValues["Mobile number"] as string,
         delivery_instructions: fieldValues["Delivery instructions"] as string,
         address_line1: fieldValues["Address line 1"] as string,
@@ -121,7 +121,7 @@ const PaymentInfo: React.FC<Props> = ({ formRef, selectedMethod, cartItems, sele
     }
 
     try {
-      const response = await axios.get<TDiscount>(`users/apply-discount/${code}`);
+      const response = await axios.get<TDiscount>(`/api/users/apply-discount/${code}`);
       setDiscount(response.data);
       setDiscountText(`You saved ${response.data.percent_off * 100}% off your order!`);
       setDiscountError(undefined);

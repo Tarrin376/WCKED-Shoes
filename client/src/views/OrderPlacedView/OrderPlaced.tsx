@@ -30,7 +30,7 @@ const OrderPlaced = () => {
     setTimeout(() => {
       (async () => {
         try {
-          const orderResponse = await axios.get<TOrderData>(location.pathname);
+          const orderResponse = await axios.get<TOrderData>(`/api${location.pathname}`);
           setOrderData(orderResponse.data);
         }
         catch (error: any) {

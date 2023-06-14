@@ -31,7 +31,7 @@ const ShippingMethods: React.FC<Props> = ({ setSelectedMethod }) => {
         {deliveryMethods.methods ? deliveryMethods.methods.map((method: TDeliveryMethod, index: number) => {
           return (
             <div className={`${index < deliveryMethods.methods!.length - 1 ? "border-b border-light-border dark:border-main-gray-border" : ""} 
-            p-5 flex justify-between items-center`}>
+            p-5 flex justify-between items-center`} key={index}>
               <div className="flex gap-5 items-center">
                 <input type="radio" value={method.name} name="deliveryMethod" />
                 <div>
