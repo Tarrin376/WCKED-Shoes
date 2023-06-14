@@ -3,14 +3,13 @@ from models.OrderModel import get_order_handler, get_orders_handler, update_orde
 from CustomExceptions.DBException import DBException
 from middleware.Authentication import authenticate_user, authenticate_admin
 import json
-from utils.Redis import rate_limit
-import uuid
+from settings import limiter
 
 orders_blueprint = Blueprint("orders", __name__)
 
 @orders_blueprint.route("", methods=["GET"])
 @authenticate_user
-@rate_limit(1, 1, uuid.uuid4())
+@limiter.limit("2 per second")
 def get_orders():
   try:
     user_id = g.token["sub"]["id"]
@@ -27,7 +26,7 @@ def get_orders():
 
 @orders_blueprint.route("/<id>", methods=["GET"])
 @authenticate_user
-@rate_limit(1, 1, uuid.uuid4())
+@limiter.limit("2 per second")
 def get_order(id):
   try:
     user_id = g.token["sub"]["id"]
@@ -38,7 +37,7 @@ def get_order(id):
 
 @orders_blueprint.route("/<id>/update-status", methods=["PUT"])
 @authenticate_admin
-@rate_limit(1, 5, uuid.uuid4())
+@limiter.limit("2 per second")
 def update_order_status(id):
   status = request.json.get("status")
   if status != "Order Created" and status != "Processing" and status != "Shipped" and status != "Delivered":

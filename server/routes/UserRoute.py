@@ -19,8 +19,7 @@ from random import randint
 import json
 from CustomExceptions.DBException import DBException
 from middleware.Authentication import authenticate_user
-from utils.Redis import rate_limit
-import uuid
+from settings import limiter
 
 user_blueprint = Blueprint("users", __name__)
 
@@ -28,7 +27,7 @@ REMEMBER_DURATION = 24
 DONT_REMEMBER_DURATION = 3
 
 @user_blueprint.route("/login", methods=["POST"])
-@rate_limit(1, 5, uuid.uuid4())
+@limiter.limit("2 per second")
 def login():
   email = request.json.get("email")
   password = request.json.get("password")
@@ -46,13 +45,13 @@ def login():
 
 @user_blueprint.route("/jwt-login", methods=["GET"])
 @authenticate_user
-@rate_limit(1, 5, uuid.uuid4())
+@limiter.limit("2 per second")
 def jwt_login():
   token = g.token
   return Response(json.dumps(token["sub"]), status=200, mimetype="application/json")
 
 @user_blueprint.route("/register", methods=["POST"])
-@rate_limit(1, 5, uuid.uuid4())
+@limiter.limit("2 per second")
 def register():
   email = request.json.get("email")
   password = request.json.get("password")
@@ -65,7 +64,7 @@ def register():
 
 @user_blueprint.route("/logout", methods=["GET"])
 @authenticate_user
-@rate_limit(1, 5, uuid.uuid4())
+@limiter.limit("2 per second")
 def logout():
   try:
     resp = Response("Logged out successfully.", status=200, mimetype="text/plain")
@@ -75,7 +74,7 @@ def logout():
     return Response(e.message, status=e.status_code, mimetype="text/plain")
 
 @user_blueprint.route("/find", methods=["POST"])
-@rate_limit(1, 5, uuid.uuid4())
+@limiter.limit("2 per second")
 def find_user():
   email = request.json.get("email")
 
@@ -86,7 +85,7 @@ def find_user():
     return Response(e.message, status=e.status_code, mimetype="text/plain")
 
 @user_blueprint.route("/send-code", methods=["POST"])
-@rate_limit(3, 60, uuid.uuid4())
+@limiter.limit("3 per 60 seconds")
 def send_code():
   email = request.json.get("email")
   code = "".join([str(randint(1, 9)) for _ in range(4)])
@@ -98,7 +97,7 @@ def send_code():
     return Response(e.message, status=e.status_code, mimetype="text/plain")
 
 @user_blueprint.route("/verify-email", methods=["POST"])
-@rate_limit(3, 60, uuid.uuid4())
+@limiter.limit("3 per 60 seconds")
 def verify_email():
   code = request.json.get("code")
   email = request.json.get("email")
@@ -111,7 +110,7 @@ def verify_email():
   
 @user_blueprint.route("/cart", methods=["GET"])
 @authenticate_user
-@rate_limit(1, 1, uuid.uuid4())
+@limiter.limit("2 per second")
 def get_cart():
   try:
     token = g.token
@@ -122,7 +121,7 @@ def get_cart():
 
 @user_blueprint.route("/cart/<product_id>/<size>/<quantity>", methods=["POST"])
 @authenticate_user
-@rate_limit(1, 1, uuid.uuid4())
+@limiter.limit("2 per second")
 def add_to_cart(product_id, size, quantity):
   try:
     token = g.token
@@ -136,7 +135,7 @@ def add_to_cart(product_id, size, quantity):
   
 @user_blueprint.route("/cart/<product_id>/<size>/<quantity>", methods=["PUT", "DELETE"])
 @authenticate_user
-@rate_limit(1, 1, uuid.uuid4())
+@limiter.limit("2 per second")
 def update_item_quantity(product_id, size, quantity):
   try:
     token = g.token
@@ -150,7 +149,7 @@ def update_item_quantity(product_id, size, quantity):
   
 @user_blueprint.route("/cart/checkout", methods=["POST"])
 @authenticate_user
-@rate_limit(1, 5, uuid.uuid4())
+@limiter.limit("2 per second")
 def checkout():
   try:
     order_details = request.get_json()
@@ -164,7 +163,7 @@ def checkout():
 
 @user_blueprint.route("/discount/<code_name>", methods=["DELETE"])
 @authenticate_user
-@rate_limit(1, 1, uuid.uuid4())
+@limiter.limit("2 per second")
 def remove_discount():
   try:
     token = g.token
@@ -175,7 +174,7 @@ def remove_discount():
 
 @user_blueprint.route("/cancel-order/<order_id>", methods=["DELETE"])
 @authenticate_user
-@rate_limit(1, 3, uuid.uuid4())
+@limiter.limit("2 per second")
 def cancel_order(order_id):
   try:
     token = g.token
@@ -186,7 +185,7 @@ def cancel_order(order_id):
   
 @user_blueprint.route("/buy-it-again", methods=["GET"])
 @authenticate_user
-@rate_limit(1, 1, uuid.uuid4())
+@limiter.limit("2 per second")
 def buy_it_again():
   limit = request.args.get("limit", "", str)
 
@@ -204,7 +203,7 @@ def buy_it_again():
   
 @user_blueprint.route("/apply-discount/<code_name>", methods=["GET"])
 @authenticate_user
-@rate_limit(1, 1, uuid.uuid4())
+@limiter.limit("2 per second")
 def apply_discount(code_name):
   try:
     token = g.token

@@ -3,14 +3,13 @@ from models.DeliveryMethodModel import add_delivery_method_handler, delete_deliv
 from CustomExceptions.DBException import DBException 
 from middleware.Authentication import authenticate_admin
 import json
-from utils.Redis import rate_limit
-import uuid
+from settings import limiter
 
 delivery_method_blueprint = Blueprint("delivery_method", __name__)
 
 @delivery_method_blueprint.route("/add-delivery-method", methods=["POST"])
 @authenticate_admin
-@rate_limit(1, 5, uuid.uuid4())
+@limiter.limit("2 per second")
 def add_delivery_method():
   method_json = request.get_json()
   try:
@@ -21,7 +20,7 @@ def add_delivery_method():
 
 @delivery_method_blueprint.route("/delete-delivery-method/<name>", methods=["DELETE"])
 @authenticate_admin
-@rate_limit(1, 5, uuid.uuid4())
+@limiter.limit("2 per second")
 def delete_delivery_method(name):
   try:
     delete_delivery_method_handler(name)
@@ -30,7 +29,7 @@ def delete_delivery_method(name):
     return Response(e.message, e.status_code, mimetype="text/plain")
 
 @delivery_method_blueprint.route("", methods=["GET"])
-@rate_limit(1, 1, uuid.uuid4())
+@limiter.limit("2 per second")
 def get_delivery_methods():
   try:
     delivery_methods = get_delivery_methods_handler()

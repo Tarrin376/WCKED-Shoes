@@ -1,19 +1,23 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
-import redis
 import os
 from dotenv import load_dotenv
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
 
 load_dotenv()
 
-global app
 app = Flask(__name__)
-global db
-db = SQLAlchemy()
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['SQLALCHEMY_DATABASE_URI']
+app.config['SECRET_KEY'] = os.environ['APP_SECRET_KEY']
 
-global redis_client
-redis_client = redis.Redis(
-  host=os.environ['REDIS_HOST'],
-  port=os.environ['REDIS_PORT'],
-  password=os.environ['REDIS_PASSWORD']
+db = SQLAlchemy()
+db.init_app(app)
+
+limiter = Limiter(
+  get_remote_address,
+  app=app,
+  storage_uri=os.environ['REDIS_STORAGE_URI'],
+  storage_options={"socket_connect_timeout": 30},
+  strategy="fixed-window"
 )

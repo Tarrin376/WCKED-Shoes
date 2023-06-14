@@ -3,13 +3,12 @@ from flask import Blueprint, request, Response
 from models.AdminModel import login_handler, create_admin_handler
 import json
 import datetime
-from utils.Redis import rate_limit
-import uuid
+from settings import limiter
 
 admin_blueprint = Blueprint("admin", __name__)
 
 @admin_blueprint.route('/login', methods=["POST"])
-@rate_limit(1, 1, uuid.uuid4())
+@limiter.limit("2 per second")
 def login():
   email = request.json.get("email")
   password = request.json.get("password")
