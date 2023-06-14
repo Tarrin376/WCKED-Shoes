@@ -13,23 +13,20 @@ const useGetCart = (): TUseGetCart => {
   const userContext = useContext(UserContext);
 
   useEffect(() => {
-    setTimeout(() => {
-      (async () => {
-        try {
-          const cartResponse = await axios.get<TCartItem[]>("/api/users/cart");
-          setCart(cartResponse.data);
+    (async () => {
+      try {
+        const cartResponse = await axios.get<TCartItem[]>("/api/users/cart");
+        setCart(cartResponse.data);
+      }
+      catch (error: any) {
+        const errorMsg = getAPIErrorMessage(error as AxiosError);
+        if (!userContext?.email) {
+          navigate("/");
+        } else {
+          navigate("/error", { state: { error: errorMsg.message } });
         }
-        catch (error: any) {
-          const errorMsg = getAPIErrorMessage(error as AxiosError);
-          if (!userContext?.email) {
-            navigate("/");
-          } else {
-            navigate("/error", { state: { error: errorMsg.message } });
-          }
-        }
-      })()
-    }, 700)
-    
+      }
+    })()
   }, [setCart, navigate, userContext]);
 
   return { 

@@ -12,18 +12,16 @@ export const useGetRecommended = (URL: string): {
   const [errorMessage, setErrorMessage] = useState<TErrorMessage>();
 
   useEffect(() => {
-    setTimeout(() => {
-      (async () => {
-        try {
-          const response = await axios.get<TProductCard[]>(URL);
-          setProducts(response.data);
-        }
-        catch (error: any) {
-          const errorMsg = getAPIErrorMessage(error as AxiosError);
-          setErrorMessage(errorMsg);
-        }
-      })()
-    }, 700)
+    (async () => {
+      try {
+        const response = await axios.get<TProductCard[]>(URL);
+        setProducts(response.data);
+      }
+      catch (error: any) {
+        const errorMsg = getAPIErrorMessage(error as AxiosError);
+        setErrorMessage(errorMsg);
+      }
+    })()
   }, [URL]);
 
   return {

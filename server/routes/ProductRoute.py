@@ -3,6 +3,8 @@ from CustomExceptions.DBException import DBException
 from middleware.Authentication import authenticate_admin
 import json
 import requests
+from utils.Redis import rate_limit
+import uuid
 from models.ProductModel import \
   create_product_handler,\
   get_products_handler,\
@@ -18,6 +20,7 @@ from models.ProductModel import \
 products_blueprint = Blueprint("products", __name__)
 
 @products_blueprint.route("", methods=["GET"])
+@rate_limit(1, 1, uuid.uuid4())
 def get_products():
   sort = request.args.get("sort", "price", str)
   search = request.args.get("search", "", str)
@@ -40,6 +43,7 @@ def get_products():
 
 @products_blueprint.route("/create", methods=["POST"])
 @authenticate_admin
+@rate_limit(5, 30, uuid.uuid4())
 def create_product():
   product = request.get_json()
 
@@ -50,6 +54,7 @@ def create_product():
     return Response(e.message, status=e.status_code)
 
 @products_blueprint.route("/<product_id>", methods=["GET"])
+@rate_limit(1, 1, uuid.uuid4())
 def get_product(product_id):
   try:
     product = get_product_handler(product_id)
@@ -58,6 +63,7 @@ def get_product(product_id):
     return Response(e.message, status=e.status_code, mimetype="text/plain")
 
 @products_blueprint.route("/<product_id>/<size>", methods=["GET"])
+@rate_limit(1, 1, uuid.uuid4())
 def check_size_stock(product_id, size):
   try:
     in_stock = check_size_stock_handler(product_id, size)
@@ -67,12 +73,14 @@ def check_size_stock(product_id, size):
 
 @products_blueprint.route("/<product_id>", methods=["PUT"])
 @authenticate_admin
+@rate_limit(1, 10, uuid.uuid4())
 def update_product(product_id):
   product = request.get_json()
   update_product_handler(product_id, product)
 
 @products_blueprint.route("/<product_id>", methods=["DELETE"])
 @authenticate_admin
+@rate_limit(1, 10, uuid.uuid4())
 def delete_product(product_id):
   try:
     delete_product_handler(product_id)
@@ -82,6 +90,7 @@ def delete_product(product_id):
 
 @products_blueprint.route("/<product_id>/add-image", methods=["POST"])
 @authenticate_admin
+@rate_limit(1, 1, uuid.uuid4())
 def add_product_image(product_id):
   image_url = request.json.get("image_url")
 
@@ -93,6 +102,7 @@ def add_product_image(product_id):
 
 @products_blueprint.route("/<product_id>/update-thumbnail", methods=["PUT"])
 @authenticate_admin
+@rate_limit(1, 1, uuid.uuid4())
 def update_product_thumbnail(product_id):
   try:
     thumbnail_url = request.json.get("thumbnail_url")
@@ -104,6 +114,7 @@ def update_product_thumbnail(product_id):
     return Response("Insufficient data supplied. Unable to perform requested action.", status=400, mimetype="text/plain")
   
 @products_blueprint.route("/<product_id>/recommend-customer-bought", methods=["GET"])
+@rate_limit(1, 1, uuid.uuid4())
 def recommend_customer_bought(product_id):
   limit = request.args.get("limit", "20", str)
 
@@ -116,6 +127,7 @@ def recommend_customer_bought(product_id):
     return Response("'limit' or 'product id' is not a number.", status=400, mimetype="text/plain")
   
 @products_blueprint.route("/<product_id>/freq-bought-together", methods=["GET"])
+@rate_limit(1, 1, uuid.uuid4())
 def frequently_bought_together(product_id):
   limit = request.args.get("limit", "", str)
 

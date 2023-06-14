@@ -18,8 +18,9 @@ import datetime
 from random import randint
 import json
 from CustomExceptions.DBException import DBException
-from middleware.Authentication import authenticate_user, authenticate_admin
-from settings import limiter
+from middleware.Authentication import authenticate_user
+from utils.Redis import rate_limit
+import uuid
 
 user_blueprint = Blueprint("users", __name__)
 
@@ -27,6 +28,7 @@ REMEMBER_DURATION = 24
 DONT_REMEMBER_DURATION = 3
 
 @user_blueprint.route("/login", methods=["POST"])
+@rate_limit(1, 5, uuid.uuid4())
 def login():
   email = request.json.get("email")
   password = request.json.get("password")
@@ -36,18 +38,21 @@ def login():
   try:
     result = login_handler(email, password)
     resp = Response(json.dumps(result[1]), status=200, mimetype="application/json")
-    resp.set_cookie(key="auth_token", value=result[0], expires=datetime.datetime.utcnow() + datetime.timedelta(hours=cookie_expires), httponly=True, samesite="Lax")
+    resp.set_cookie(key="auth_token", value=result[0], expires=datetime.datetime.utcnow() + datetime.timedelta(hours=cookie_expires), 
+      httponly=True, samesite="Lax")
     return resp
   except DBException as e:
     return Response(e.message, status=e.status_code, mimetype="text/plain")
 
 @user_blueprint.route("/jwt-login", methods=["GET"])
 @authenticate_user
+@rate_limit(1, 5, uuid.uuid4())
 def jwt_login():
   token = g.token
   return Response(json.dumps(token["sub"]), status=200, mimetype="application/json")
 
 @user_blueprint.route("/register", methods=["POST"])
+@rate_limit(1, 5, uuid.uuid4())
 def register():
   email = request.json.get("email")
   password = request.json.get("password")
@@ -60,6 +65,7 @@ def register():
 
 @user_blueprint.route("/logout", methods=["GET"])
 @authenticate_user
+@rate_limit(1, 5, uuid.uuid4())
 def logout():
   try:
     resp = Response("Logged out successfully.", status=200, mimetype="text/plain")
@@ -69,6 +75,7 @@ def logout():
     return Response(e.message, status=e.status_code, mimetype="text/plain")
 
 @user_blueprint.route("/find", methods=["POST"])
+@rate_limit(1, 5, uuid.uuid4())
 def find_user():
   email = request.json.get("email")
 
@@ -79,7 +86,7 @@ def find_user():
     return Response(e.message, status=e.status_code, mimetype="text/plain")
 
 @user_blueprint.route("/send-code", methods=["POST"])
-@limiter.limit("3 per minute")
+@rate_limit(3, 60, uuid.uuid4())
 def send_code():
   email = request.json.get("email")
   code = "".join([str(randint(1, 9)) for _ in range(4)])
@@ -87,11 +94,11 @@ def send_code():
   try:
     send_code_handler(email, code)
     return Response(code, status=201, mimetype="text/plain")
-    # return Response("Code sent.", status=201, mimetype="application/json") Will be used when email sending works
   except DBException as e:
     return Response(e.message, status=e.status_code, mimetype="text/plain")
 
 @user_blueprint.route("/verify-email", methods=["POST"])
+@rate_limit(3, 60, uuid.uuid4())
 def verify_email():
   code = request.json.get("code")
   email = request.json.get("email")
@@ -104,6 +111,7 @@ def verify_email():
   
 @user_blueprint.route("/cart", methods=["GET"])
 @authenticate_user
+@rate_limit(1, 1, uuid.uuid4())
 def get_cart():
   try:
     token = g.token
@@ -114,6 +122,7 @@ def get_cart():
 
 @user_blueprint.route("/cart/<product_id>/<size>/<quantity>", methods=["POST"])
 @authenticate_user
+@rate_limit(1, 1, uuid.uuid4())
 def add_to_cart(product_id, size, quantity):
   try:
     token = g.token
@@ -127,6 +136,7 @@ def add_to_cart(product_id, size, quantity):
   
 @user_blueprint.route("/cart/<product_id>/<size>/<quantity>", methods=["PUT", "DELETE"])
 @authenticate_user
+@rate_limit(1, 1, uuid.uuid4())
 def update_item_quantity(product_id, size, quantity):
   try:
     token = g.token
@@ -140,6 +150,7 @@ def update_item_quantity(product_id, size, quantity):
   
 @user_blueprint.route("/cart/checkout", methods=["POST"])
 @authenticate_user
+@rate_limit(1, 5, uuid.uuid4())
 def checkout():
   try:
     order_details = request.get_json()
@@ -153,6 +164,7 @@ def checkout():
 
 @user_blueprint.route("/discount/<code_name>", methods=["DELETE"])
 @authenticate_user
+@rate_limit(1, 1, uuid.uuid4())
 def remove_discount():
   try:
     token = g.token
@@ -163,6 +175,7 @@ def remove_discount():
 
 @user_blueprint.route("/cancel-order/<order_id>", methods=["DELETE"])
 @authenticate_user
+@rate_limit(1, 3, uuid.uuid4())
 def cancel_order(order_id):
   try:
     token = g.token
@@ -173,6 +186,7 @@ def cancel_order(order_id):
   
 @user_blueprint.route("/buy-it-again", methods=["GET"])
 @authenticate_user
+@rate_limit(1, 1, uuid.uuid4())
 def buy_it_again():
   limit = request.args.get("limit", "", str)
 
@@ -190,6 +204,7 @@ def buy_it_again():
   
 @user_blueprint.route("/apply-discount/<code_name>", methods=["GET"])
 @authenticate_user
+@rate_limit(1, 1, uuid.uuid4())
 def apply_discount(code_name):
   try:
     token = g.token

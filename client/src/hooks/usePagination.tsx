@@ -64,27 +64,25 @@ export const usePagination = <T1, T2>(orderBy: readonly TOrderByOption<T2>[], li
 
   useEffect(() => {
     setLoading(true);
-    setTimeout(() => {
-      (async () => {
-        try {
-          const response = await axios.get<{ meta: TPaginationMetaData, next: T1[] }>(queryURL);
-          setNext((state) => [...state, ...response.data.next]);
-          setTotalFound(response.data.meta.total_count);
-          setErrorMessage(undefined);
-          
-          if (!response.data.meta.has_next) {
-            setReachedLimit(true);
-          }
+    (async () => {
+      try {
+        const response = await axios.get<{ meta: TPaginationMetaData, next: T1[] }>(queryURL);
+        setNext((state) => [...state, ...response.data.next]);
+        setTotalFound(response.data.meta.total_count);
+        setErrorMessage(undefined);
+        
+        if (!response.data.meta.has_next) {
+          setReachedLimit(true);
         }
-        catch (error: any) {
-          const errorMsg = getAPIErrorMessage(error as AxiosError);
-          setErrorMessage(errorMsg);
-        }
-        finally {
-          setLoading(false);
-        }
-      })()
-    }, 300);
+      }
+      catch (error: any) {
+        const errorMsg = getAPIErrorMessage(error as AxiosError);
+        setErrorMessage(errorMsg);
+      }
+      finally {
+        setLoading(false);
+      }
+    })()
   }, [queryURL, setLoading])
 
   const data = {

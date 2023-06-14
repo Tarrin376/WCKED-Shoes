@@ -27,18 +27,16 @@ const OrderPlaced = () => {
   const windowSize = useWindowSize();
 
   useEffect(() => {
-    setTimeout(() => {
-      (async () => {
-        try {
-          const orderResponse = await axios.get<TOrderData>(`/api${location.pathname}`);
-          setOrderData(orderResponse.data);
-        }
-        catch (error: any) {
-          const errorMsg = getAPIErrorMessage(error as AxiosError);
-          navigate("/error", { state: { error: errorMsg.message } });
-        }
-      })()
-    }, 700)
+    (async () => {
+      try {
+        const orderResponse = await axios.get<TOrderData>(`/api${location.pathname}`);
+        setOrderData(orderResponse.data);
+      }
+      catch (error: any) {
+        const errorMsg = getAPIErrorMessage(error as AxiosError);
+        navigate("/error", { state: { error: errorMsg.message } });
+      }
+    })()
   }, [location.pathname, navigate]);
 
   if (!orderData) {

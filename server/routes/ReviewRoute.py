@@ -1,13 +1,16 @@
 from flask import Blueprint, request, Response, g
 from models.ReviewModel import add_review_handler, get_reviews_handler, add_helpful_count_handler, delete_review_handler
 from CustomExceptions.DBException import DBException
-from middleware.Authentication import authenticate_user, authenticate_admin
+from middleware.Authentication import authenticate_user
 import json
+from utils.Redis import rate_limit
+import uuid
 
 reviews_blueprint = Blueprint("reviews", __name__)
 
 @reviews_blueprint.route("/<product_id>", methods=["GET"])
 @authenticate_user
+@rate_limit(1, 1, uuid.uuid4())
 def get_reviews(product_id):
   sort = request.args.get("sort", "date-posted", str)
   search = request.args.get("search", "", str)
@@ -26,6 +29,7 @@ def get_reviews(product_id):
   
 @reviews_blueprint.route("/<id>", methods=["DELETE"])
 @authenticate_user
+@rate_limit(1, 5, uuid.uuid4())
 def delete_review(id):
   try:
     delete_review_handler(id)
@@ -35,6 +39,7 @@ def delete_review(id):
 
 @reviews_blueprint.route("/<id>/helpful", methods=["PUT"])
 @authenticate_user
+@rate_limit(1, 1, uuid.uuid4())
 def add_helpful_count(id):
   try:
     user_id = g.token["sub"]["id"]
@@ -47,6 +52,7 @@ def add_helpful_count(id):
 
 @reviews_blueprint.route("/<product_id>", methods=["POST"])
 @authenticate_user
+@rate_limit(1, 5, uuid.uuid4())
 def add_review(product_id):
   data = request.get_json()
   token = g.token

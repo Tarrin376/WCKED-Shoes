@@ -3,7 +3,7 @@ import settings
 from server import server_blueprint
 
 def run_app():
-  settings.app.config['SECRET_KEY'] = os.environ.get('APP_SECRET_KEY')
+  settings.app.config['SECRET_KEY'] = os.environ['APP_SECRET_KEY']
   DB_NAME = "database.db"
 
   settings.app.config['SQLALCHEMY_DATABASE_URI'] = f"sqlite:///{DB_NAME}"
@@ -14,7 +14,7 @@ def run_app():
   #   settings.db.drop_all()
   #   settings.db.create_all()
   
-  settings.app.run(debug=True, port=os.environ.get('PORT') or 8080)
+  settings.app.run(debug=True, port=os.environ['PORT'])
 
 if __name__ == "__main__":
   run_app()

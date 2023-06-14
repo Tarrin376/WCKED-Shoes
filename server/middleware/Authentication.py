@@ -14,16 +14,17 @@ def authenticate_user(func):
         resp.set_cookie("auth_token", "", expires=0, samesite="Lax")
         return resp
       
-      token = jwt.decode(auth_token, os.environ.get("USER_JWT_SECRET_KEY"), algorithms=["HS256"])
+      token = jwt.decode(auth_token, os.environ['USER_JWT_SECRET_KEY'], algorithms=["HS256"])
       g.token = token
       return func(*args, **kwargs)
     except jwt.ExpiredSignatureError:
       return Response("Session expired. Please log back in.", status=403, mimetype="application/json")
     except jwt.InvalidTokenError:
-      resp = Response("Authorization denied.", status=401, mimetype="application/json")
+      resp = Response("Your session token is invalid. Please log back in.", status=401, mimetype="application/json")
       resp.set_cookie("auth_token", "", expires=0, samesite="Lax") # Set samesite attribute to True when app is using https.
       return resp
 
+  get_auth_token.__name__ = func.__name__
   return get_auth_token
 
 def authenticate_admin(func):
@@ -36,16 +37,17 @@ def authenticate_admin(func):
         resp.set_cookie("auth_token", "", expires=0, samesite="Lax")
         return resp
       
-      token = jwt.decode(auth_token, os.environ.get("ADMIN_JWT_SECRET_KEY"), algorithms=["HS256"])
+      token = jwt.decode(auth_token, os.environ['ADMIN_JWT_SECRET_KEY'], algorithms=["HS256"])
       g.token = token
       return func(*args, **kwargs)
     except jwt.ExpiredSignatureError:
       return Response("Session expired. Please log back in.", status=403, mimetype="application/json")
     except jwt.InvalidTokenError:
-      resp = Response("Authorization denied.", status=401, mimetype="application/json")
+      resp = Response("Your session token is invalid. Please log back in.", status=401, mimetype="application/json")
       resp.set_cookie("auth_token", "", expires=0, samesite="Lax") # Set samesite attribute to True when app is using https.
       return resp
   
+  get_auth_token.__name__ = func.__name__
   return get_auth_token
     
 def generate_auth_token(user_data, secret_key):
@@ -55,5 +57,5 @@ def generate_auth_token(user_data, secret_key):
     "sub": user_data
   }
 
-  auth_token = jwt.encode(payload, os.environ.get(secret_key), algorithm="HS256")
+  auth_token = jwt.encode(payload, os.environ[secret_key], algorithm="HS256")
   return auth_token

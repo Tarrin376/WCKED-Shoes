@@ -1,12 +1,15 @@
-from flask import Blueprint, Response, g, request
+from flask import Blueprint, Response, request
 from models.DiscountCodeModel import delete_discount_code_handler, create_discount_code_handler
 from CustomExceptions.DBException import DBException 
 from middleware.Authentication import authenticate_admin
+from utils.Redis import rate_limit
+import uuid
 
 discount_code_blueprint = Blueprint("discount_code", __name__)
 
 @discount_code_blueprint.route("/<code_name>", methods=["DELETE"])
 @authenticate_admin
+@rate_limit(1, 5, uuid.uuid4())
 def delete_discount_code(code_name):
   try:
     delete_discount_code_handler(code_name)
@@ -16,6 +19,7 @@ def delete_discount_code(code_name):
 
 @discount_code_blueprint.route("/create", methods=["POST"])
 @authenticate_admin
+@rate_limit(1, 5, uuid.uuid4())
 def create_discount_code():
   try:
     code_name = request.json.get("code_name")

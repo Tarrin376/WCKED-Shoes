@@ -1,16 +1,19 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
-from flask_limiter import Limiter
-from flask_limiter.util import get_remote_address
+import redis
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 global app
 app = Flask(__name__)
 global db
 db = SQLAlchemy()
 
-global limiter
-limiter = Limiter(
-  get_remote_address,
-  app=app,
-  default_limits=["1000 per day", "1000 per hour"]
+global redis_client
+redis_client = redis.Redis(
+  host=os.environ['REDIS_HOST'],
+  port=os.environ['REDIS_PORT'],
+  password=os.environ['REDIS_PASSWORD']
 )

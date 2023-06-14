@@ -12,22 +12,20 @@ export const useDeliveryMethods = (): {
   const [errorMessage, setErrorMessage] = useState<TErrorMessage>();
 
   useEffect(() => {
-    setTimeout(() => {
-      (async () => {
-        try {
-          const response = await axios.get<TDeliveryMethod[]>("/api/delivery-methods");
-          setMethods(response.data);
+    (async () => {
+      try {
+        const response = await axios.get<TDeliveryMethod[]>("/api/delivery-methods");
+        setMethods(response.data);
+      }
+      catch (error: any) {
+        const err = error as AxiosError;
+        if (err.response!.status === 429) {
+          setErrorMessage(getAPIErrorMessage(err));
+        } else {
+          setErrorMessage({ message: "Unable to get delivery methods", status: 500 });
         }
-        catch (error: any) {
-          const err = error as AxiosError;
-          if (err.response!.status === 429) {
-            setErrorMessage(getAPIErrorMessage(err));
-          } else {
-            setErrorMessage({ message: "Unable to get delivery methods", status: 500 });
-          }
-        }
-      })()
-    }, 700)
+      }
+    })()
   }, []);
 
   return {

@@ -19,18 +19,16 @@ const Button: React.FC<Props> = ({ action, completedText, defaultText, loadingTe
 
   const handleAction = async () => {
     setBtnText(loadingText);
-    setTimeout(() => {
-      (async () => {
-        const error = await action();
-        if (!error) {
-          setBtnText(completedText);
-        } else {
-          setErrorMessage(error);
-          setTimeout(() => setErrorMessage(undefined), 3500);
-          setBtnText(defaultText);
-        }
-      })()
-    }, 500)
+    (async () => {
+      const error = await action();
+      if (!error) {
+        setBtnText(completedText);
+      } else {
+        setErrorMessage(error);
+        setTimeout(() => setErrorMessage(undefined), 3500);
+        setBtnText(defaultText);
+      }
+    })()
   }
 
   useEffect(() => {
