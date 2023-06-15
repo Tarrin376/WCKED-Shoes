@@ -8,7 +8,6 @@ from models.ProductModel import \
   create_product_handler,\
   get_products_handler,\
   get_product_handler,\
-  update_product_handler,\
   delete_product_handler,\
   add_product_image_handler,\
   update_product_thumbnail_handler,\
@@ -57,7 +56,7 @@ def create_product():
 def get_product(product_id):
   try:
     product = get_product_handler(product_id)
-    return Response(json.dumps(product.product_details()), status=200, content_type="application/json")
+    return Response(json.dumps(product), status=200, content_type="application/json")
   except DBException as e:
     return Response(e.message, status=e.status_code, mimetype="text/plain")
 
@@ -69,13 +68,6 @@ def check_size_stock(product_id, size):
     return Response(json.dumps(in_stock), status=200, content_type="application/json")
   except DBException as e:
     return Response(e.message, status=e.status_code, mimetype="text/plain")
-
-@products_blueprint.route("/<product_id>", methods=["PUT"])
-@authenticate_admin
-@limiter.limit("2 per second")
-def update_product(product_id):
-  product = request.get_json()
-  update_product_handler(product_id, product)
 
 @products_blueprint.route("/<product_id>", methods=["DELETE"])
 @authenticate_admin

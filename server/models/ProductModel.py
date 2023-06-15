@@ -34,7 +34,8 @@ def create_product_handler(product):
 
     settings.db.session.commit()
     create_product_vector(new_product.id)
-  except exc.SQLAlchemyError:
+  except exc.SQLAlchemyError as e:
+    print(e)
     raise DBException("Failed to create product.", 500)
   except KeyError:
     raise DBException("Product is missing required fields.", 400)
@@ -90,7 +91,7 @@ def get_product_handler(product_id):
     if product is None:
       raise DBException("Product not found.", 404)
     
-    return product
+    return product.product_details()
   except exc.SQLAlchemyError:
     raise DBException("Failed to get product.", 500)
   except Exception as e:
@@ -119,9 +120,6 @@ def check_size_stock_handler(product_id, size):
       raise DBException("Something went wrong. Please contact our team if this continues.", 500)
     else:
       raise e
-  
-def update_product_handler(product_id, product):
-  pass
 
 def delete_product_handler(product_id):
   try:
@@ -132,7 +130,8 @@ def delete_product_handler(product_id):
     
     settings.db.session.delete(product)
     settings.db.session.commit()
-  except exc.SQLAlchemyError:
+  except exc.SQLAlchemyError as e:
+    print(e)
     raise DBException("Failed to delete product.", 500)
   except Exception as e:
     if type(e) is not DBException:

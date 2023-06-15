@@ -4,6 +4,7 @@ import os
 from dotenv import load_dotenv
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
+from flask_migrate import Migrate
 
 load_dotenv()
 
@@ -12,6 +13,7 @@ app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['SQLALCHEMY_DATABASE_URI']
 app.config['SECRET_KEY'] = os.environ['APP_SECRET_KEY']
 
 db = SQLAlchemy()
+migrate = Migrate(app, db)
 db.init_app(app)
 
 limiter = Limiter(

@@ -7,7 +7,7 @@ import functools
 class User(settings.db.Model):
   id = settings.db.Column(settings.db.Integer, primary_key=True)
   email = settings.db.Column(settings.db.String(120), unique=True, nullable=False)
-  hash = settings.db.Column(settings.db.String(60), nullable=False)
+  hash = settings.db.Column(settings.db.TEXT, nullable=False)
   reviews = settings.db.relationship('Review', backref='user', lazy=True, cascade="all, delete")
   orders = settings.db.relationship('Order', backref='user', lazy=True)
   cart = settings.db.relationship('CartItem', backref='user', lazy=True, cascade="all, delete")
@@ -23,7 +23,7 @@ class User(settings.db.Model):
 class Admin(settings.db.Model):
   id = settings.db.Column(settings.db.Integer, primary_key=True)
   email = settings.db.Column(settings.db.String(120), unique=True, nullable=False)
-  hash = settings.db.Column(settings.db.String(60), nullable=False)
+  hash = settings.db.Column(settings.db.TEXT, nullable=False)
 
   def as_dict(self):
     return {
@@ -67,10 +67,10 @@ class Product(settings.db.Model):
   num_sold = settings.db.Column(settings.db.Integer, default=0)
   ratings = settings.db.Column(settings.db.Integer, default=0)
   rating = settings.db.Column(settings.db.Float, default=0)
-  description = settings.db.Column(settings.db.String(300), nullable=False)
+  description = settings.db.Column(settings.db.String(500), nullable=False)
   price = settings.db.Column(settings.db.Float, nullable=False)
   images = settings.db.relationship('ProductImage', backref='product', lazy=True, cascade="all, delete")
-  thumbnail = settings.db.Column(settings.db.String(200), nullable=False)
+  thumbnail = settings.db.Column(settings.db.TEXT, nullable=False)
   carbon_footprint = settings.db.Column(settings.db.Float, nullable=False)
   sizes = settings.db.relationship('Size', backref='product', lazy=True, cascade="all, delete")
 
@@ -115,7 +115,7 @@ class ProductImage(settings.db.Model):
   __tablename__ = 'product_image'
   id = settings.db.Column(settings.db.Integer, primary_key=True)
   product_id = settings.db.Column(settings.db.Integer, settings.db.ForeignKey('product.id'), nullable=False)
-  image_url = settings.db.Column(settings.db.String(200), nullable=False)
+  image_url = settings.db.Column(settings.db.TEXT, nullable=False)
 
 class Review(settings.db.Model):
   id = settings.db.Column(settings.db.Integer, unique=True, nullable=False, primary_key=True)
@@ -157,7 +157,7 @@ class Order(settings.db.Model):
   processing_date = settings.db.Column(settings.db.DateTime)
   shipped_date = settings.db.Column(settings.db.DateTime)
   delivered_date = settings.db.Column(settings.db.DateTime)
-  order_status = settings.db.Column(settings.db.String(10), nullable=False)
+  order_status = settings.db.Column(settings.db.String(100), nullable=False)
   total_cost = settings.db.Column(settings.db.Float, nullable=False)
   address_line1 = settings.db.Column(settings.db.String(100), nullable=False)
   address_line2 = settings.db.Column(settings.db.String(100), nullable=True)
@@ -167,7 +167,7 @@ class Order(settings.db.Model):
   card_end = settings.db.Column(settings.db.String(4), nullable=False)
   country = settings.db.Column(settings.db.String(100), nullable=False)
   delivery_method = settings.db.Column(settings.db.String(100), settings.db.ForeignKey('delivery_method.name'), nullable=False)
-  discount = settings.db.Column(settings.db.String(50), settings.db.ForeignKey('discount_code.name'), nullable=False)
+  discount = settings.db.Column(settings.db.String(50), settings.db.ForeignKey('discount_code.name'))
   cancelled = settings.db.Column(settings.db.Boolean, default=False)
   delivery_instructions = settings.db.Column(settings.db.String(100), nullable=False)
 
@@ -190,7 +190,7 @@ class Order(settings.db.Model):
       "delivery_method": DeliveryMethod.query.filter_by(name=self.delivery_method).first().as_dict(),
       "cancelled": self.cancelled,
       "delivery_instructions": self.delivery_instructions,
-      "discount": DiscountCode.query.filter_by(name=self.discount).first().as_dict() if self.discount != "" else {
+      "discount": DiscountCode.query.filter_by(name=self.discount).first().as_dict() if self.discount else {
         "name": "N/A",
         "percent_off": 0
       }

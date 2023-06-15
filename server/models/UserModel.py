@@ -1,5 +1,4 @@
 from utils.HashPassword import hash_password
-import bcrypt
 import settings
 from db.Schema import User,\
   Product,\
@@ -18,14 +17,16 @@ from middleware.Authentication import generate_auth_token
 from db.Schema import VerificationCode
 from datetime import datetime
 from CustomExceptions.DBException import DBException
+from flask_bcrypt import Bcrypt
 
 MAX_ITEM_QUANTITY = 10
+bcrypt = Bcrypt()
 
 def login_handler(email, password):
   try:
     user: User = User.query.filter_by(email=email).first()
 
-    if user is None or not bcrypt.checkpw(password.encode('utf-8'), user.hash):
+    if user is None or not bcrypt.check_password_hash(user.hash, password):
       raise DBException("Invalid email or password", 401)
     
     user_data = user.as_dict()
@@ -51,7 +52,7 @@ def register_handler(email, password):
       unit_v: ProductBoughtVector = ProductBoughtVector(product_id=product.id, user_id=new_user.id)
       settings.db.session.add(unit_v)
       settings.db.session.commit()
-  except exc.SQLAlchemyError:
+  except exc.SQLAlchemyError as e:
     raise DBException("Failed to create user account. Try again.", 500)
   except Exception as e:
     if type(e) is not DBException:
@@ -239,7 +240,7 @@ def create_order(order_details, user_id, percent_off, shipping):
     card_end=order_details["card_end"],
     country=order_details["country"],
     delivery_method=order_details["delivery_method"],
-    discount=order_details["discount"],
+    discount=order_details["discount"] if order_details["discount"] != "" else None,
     delivery_instructions=order_details["delivery_instructions"]
   )
 
@@ -380,7 +381,7 @@ def cancel_order_handler(id, user_id):
     if order.cancelled: 
       raise DBException("Order has already been cancelled.", 400)
     
-    if order.discount != "":
+    if order.discount:
       discount_code: DiscountJunction = DiscountJunction.query.filter(
         DiscountJunction.discount_name == order.discount, 
         DiscountJunction.user_id == user_id)\

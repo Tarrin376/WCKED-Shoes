@@ -1,5 +1,5 @@
 from db.Schema import Order, OrderItem, Size, Product, DiscountJunction
-from sqlalchemy import exc
+from sqlalchemy import exc, cast, String
 from CustomExceptions.DBException import DBException 
 from datetime import datetime
 import settings
@@ -50,7 +50,7 @@ def get_orders_handler(user_id, search, page, limit, filter):
   try:
     orders = settings.db.session.query(Order)\
     .filter(Order.user_id == user_id)\
-    .filter(Order.id.ilike('%' + search + '%'))\
+    .filter(cast(Order.id, String).ilike('%' + search + '%'))\
     .order_by(Order.date_ordered.desc())
 
     if filter == "arrived": orders = orders.filter(Order.delivered_date != None)
@@ -76,7 +76,8 @@ def get_orders_handler(user_id, search, page, limit, filter):
         "has_prev": orders.has_prev
       }
     }
-  except exc.SQLAlchemyError:
+  except exc.SQLAlchemyError as e:
+    print(e)
     raise DBException("Unable to load your orders. Try again.", 500)
   except KeyError:
     raise DBException("Invalid sort query parameter specified.", 400)
