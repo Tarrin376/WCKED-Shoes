@@ -24,10 +24,10 @@ def create_discount_code_handler(code_name, percent_off):
     discount_code: DiscountCode = DiscountCode.query.filter_by(name=code_name).first()
 
     if discount_code is not None:
-      raise DBException(f"Discount code {code_name} already exists.", status_code=400)
+      raise DBException(f"Discount code {code_name} already exists.", 400)
     
     if percent_off < 0 or percent_off > 1:
-      raise DBException("Discount code percentage must be between 0 and 1.", status_code=400)
+      raise DBException("Discount code percentage must be between 0 and 1.", 400)
     
     new_discount_code = DiscountCode(name=code_name, percent_off=percent_off)
     settings.db.session.add(new_discount_code)

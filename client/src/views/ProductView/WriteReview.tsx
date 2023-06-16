@@ -84,7 +84,7 @@ const WriteReview: React.FC<Props> = ({ product, setNext, sort, handleSort }) =>
       onChange={(e) => updateReviewTitle(e.target.value)} />
       <p className="text-side-text-light dark:text-side-text-gray mb-4">{`Review of the product (must be between ${minReviewLength} and ${maxReviewLength} characters)`}</p>
       <textarea className="text-box-light dark:text-box w-full h-[250px]" placeholder="Share your thoughts on the product" value={review}
-      onChange={(e) => updateReview(e.target.value)} />
+      onChange={(e) => updateReview(e.target.value)} maxLength={400} />
       {errorMessage && 
       <ErrorMessage
         error={errorMessage.message} 

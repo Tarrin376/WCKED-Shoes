@@ -48,7 +48,7 @@ const Product: React.FC<{}> = () => {
   const navigate = useNavigate();
   const windowSize = useWindowSize();
 
-  const customerBoughtEndpoint = `/api/products/${product?.id}/recommend-customer-bought?limit=${20}`
+  const customerBoughtEndpoint = `/api/products/${product?.id}/customers-bought?limit=${20}`
 
   const updateShoeSize = (size?: TSize) => {
     if (size) {
@@ -96,7 +96,7 @@ const Product: React.FC<{}> = () => {
         const productResponse = await axios.get<TProduct>(`/api${location.pathname}`);
         if (productResponse.status === 200) {
           const size = productResponse.data.sizes.find((cur: TSize) => cur.stock > 0);
-          setProduct({...productResponse.data, images: [productResponse.data.thumbnail, ...productResponse.data.images] });
+          setProduct({ ...productResponse.data, images: [productResponse.data.thumbnail, ...productResponse.data.images] });
           setCurSize(size);
           setSelectedImage(0);
         }

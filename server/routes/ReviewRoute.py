@@ -1,5 +1,5 @@
 from flask import Blueprint, request, Response, g
-from models.ReviewModel import add_review_handler, get_reviews_handler, add_helpful_count_handler, delete_review_handler
+from models.ReviewModel import add_review_handler, get_reviews_handler, mark_helpful_handler, delete_review_handler
 from CustomExceptions.DBException import DBException
 from middleware.Authentication import authenticate_user
 import json
@@ -39,10 +39,10 @@ def delete_review(id):
 @reviews_blueprint.route("/<id>/helpful", methods=["PUT"])
 @authenticate_user
 @limiter.limit("2 per second")
-def add_helpful_count(id):
+def mark_helpful(id):
   try:
     user_id = g.token["sub"]["id"]
-    helpful_count = add_helpful_count_handler(id, user_id)
+    helpful_count = mark_helpful_handler(id, user_id)
     return Response(str(helpful_count), status=201, mimetype="text/plain")
   except DBException as e:
     return Response(e.message, status=e.status_code, mimetype="text/plain")

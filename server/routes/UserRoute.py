@@ -20,6 +20,7 @@ import json
 from CustomExceptions.DBException import DBException
 from middleware.Authentication import authenticate_user
 from settings import limiter
+from utils.Redis import cache, DEFAULT_EXPIRATION
 
 user_blueprint = Blueprint("users", __name__)
 
@@ -194,7 +195,7 @@ def buy_it_again():
 
   try:
     token = g.token
-    products = buy_it_again_handler(token["sub"]["id"], (int)(limit))
+    products = cache("/buy-it-again", buy_it_again_handler, DEFAULT_EXPIRATION, token["sub"]["id"], (int)(limit))
     return Response(json.dumps(products), status=200, mimetype="application/json")
   except DBException as e:
     return Response(e.message, status=e.status_code, mimetype="text/plain")

@@ -5,6 +5,8 @@ from dotenv import load_dotenv
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 from flask_migrate import Migrate
+import redis
+import urllib.parse
 
 load_dotenv()
 
@@ -23,3 +25,5 @@ limiter = Limiter(
   storage_options={"socket_connect_timeout": 30},
   strategy="fixed-window"
 )
+
+redis_client = redis.Redis.from_url(os.environ['REDIS_STORAGE_URI'])

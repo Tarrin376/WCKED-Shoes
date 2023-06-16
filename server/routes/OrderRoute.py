@@ -4,6 +4,7 @@ from CustomExceptions.DBException import DBException
 from middleware.Authentication import authenticate_user, authenticate_admin
 import json
 from settings import limiter
+from utils.Redis import cache
 
 orders_blueprint = Blueprint("orders", __name__)
 
@@ -30,7 +31,7 @@ def get_orders():
 def get_order(id):
   try:
     user_id = g.token["sub"]["id"]
-    order = get_order_handler(id, user_id)
+    order = cache(f"/orders/${id}", get_order_handler, 3600, id, user_id)
     return Response(json.dumps(order), status=200, mimetype="application/json")
   except DBException as e:
     return Response(e.message, status=e.status_code, mimetype="text/plain")

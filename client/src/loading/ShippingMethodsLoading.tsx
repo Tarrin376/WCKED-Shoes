@@ -10,7 +10,7 @@ const ShippingMethodsLoading = () => {
     {new Array(shippingMethodLimit).fill(0).map((_, index) => {
       return (
         <div className={`${index < shippingMethodLimit - 1 ? "border-b border-light-border dark:border-main-gray-border" : ""} 
-        p-5 flex items-center justify-between`}>
+        p-5 flex items-center justify-between`} key={index}>
           <div className="flex gap-3 items-center">
             <input type="radio" disabled name="deliveryMethod" />
             <div>

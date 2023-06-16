@@ -72,7 +72,8 @@ def get_products_handler(sort, search, page, limit, asc):
         "has_prev": products.has_prev
       }
     }
-  except exc.SQLAlchemyError:
+  except exc.SQLAlchemyError as e:
+    print(e)
     raise DBException("Failed to get products.", 500)
   except KeyError:
     raise DBException("Invalid sort query parameter specified.", 400)

@@ -7,6 +7,7 @@ import { getAPIErrorMessage } from "../../utils/getAPIErrorMessage";
 import { AxiosError } from "axios";
 import { TErrorMessage } from "../../@types/TErrorMessage";
 import ErrorMessage from "../../components/ErrorMessage";
+import Button from "../../components/Button";
 
 interface Props {
   review: Readonly<TReview>,
@@ -34,7 +35,6 @@ const Review: React.FC<Props> = ({ review, setNext }) => {
     try {
       await axios.delete<string>(`/api/reviews/${review.id}`);
       setNext((cur: TReview[]) => cur.filter((curReview: TReview) => curReview.id !== review.id));
-      return undefined;
     }
     catch (error: any) {
       const errorMsg = getAPIErrorMessage(error as AxiosError);
@@ -68,11 +68,20 @@ const Review: React.FC<Props> = ({ review, setNext }) => {
           Helpful
         </button>}
         {review.is_own_review &&
-        <button className="danger-btn h-[30px] mt-3" onClick={deleteReview}>
-          Delete review
-        </button>}
+        <Button
+          action={deleteReview}
+          completedText="Review deleted"
+          defaultText="Delete review"
+          loadingText="Deleting review"
+          styles="danger-btn h-[30px] mt-3"
+          setErrorMessage={setErrorMessage}
+        />}
       </div>
-      {errorMessage && <ErrorMessage error={errorMessage.message} styles={"!mt-4"} />}
+      {errorMessage && 
+      <ErrorMessage 
+        error={errorMessage.message} 
+        styles="!mt-4" 
+      />}
     </div>
   )
 }

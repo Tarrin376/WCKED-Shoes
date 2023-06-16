@@ -4,6 +4,7 @@ from middleware.Authentication import authenticate_admin
 import json
 import requests
 from settings import limiter
+from utils.Redis import cache, DEFAULT_EXPIRATION
 from models.ProductModel import \
   create_product_handler,\
   get_products_handler,\
@@ -55,7 +56,7 @@ def create_product():
 @limiter.limit("2 per second")
 def get_product(product_id):
   try:
-    product = get_product_handler(product_id)
+    product = cache(f"/products/{product_id}", get_product_handler, DEFAULT_EXPIRATION, product_id)
     return Response(json.dumps(product), status=200, content_type="application/json")
   except DBException as e:
     return Response(e.message, status=e.status_code, mimetype="text/plain")
@@ -104,20 +105,21 @@ def update_product_thumbnail(product_id):
   except Exception:
     return Response("Insufficient data supplied. Unable to perform requested action.", status=400, mimetype="text/plain")
   
-@products_blueprint.route("/<product_id>/recommend-customer-bought", methods=["GET"])
+@products_blueprint.route("/<product_id>/customers-bought", methods=["GET"])
 @limiter.limit("2 per second")
 def recommend_customer_bought(product_id):
   limit = request.args.get("limit", "20", str)
 
   try:
-    recommended_products = recommend_customer_bought_handler((int)(product_id), (int)(limit))
+    recommended_products = cache(f"/{product_id}/customers-bought", recommend_customer_bought_handler, 
+      DEFAULT_EXPIRATION, (int)(product_id), (int)(limit))
     return Response(json.dumps(recommended_products), status=200, content_type="application/json")
   except DBException as e:
     return Response(e.message, status=e.status_code, mimetype="text/plain")
   except ValueError:
     return Response("'limit' or 'product id' is not a number.", status=400, mimetype="text/plain")
   
-@products_blueprint.route("/<product_id>/freq-bought-together", methods=["GET"])
+@products_blueprint.route("/<product_id>/freq-bought", methods=["GET"])
 @limiter.limit("2 per second")
 def frequently_bought_together(product_id):
   limit = request.args.get("limit", "", str)
@@ -126,7 +128,8 @@ def frequently_bought_together(product_id):
     return Response("Limit is not specified.", status=400, mimetype="text/plain")
 
   try:
-    freq_bought_products = frequently_bought_together_handler((int)(product_id), (int)(limit))
+    freq_bought_products = cache(f"/{product_id}/freq-bought", frequently_bought_together_handler,
+      DEFAULT_EXPIRATION, (int)(product_id), (int)(limit))
     return Response(json.dumps(freq_bought_products), status=200, content_type="application/json")
   except DBException as e:
     return Response(e.message, status=e.status_code, mimetype="text/plain")

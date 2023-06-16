@@ -12,7 +12,7 @@ class User(settings.db.Model):
   orders = settings.db.relationship('Order', backref='user', lazy=True)
   cart = settings.db.relationship('CartItem', backref='user', lazy=True, cascade="all, delete")
   discounts = settings.db.relationship('DiscountJunction', backref='user', lazy=True, cascade="all, delete")
-  purchased_products = settings.db.relationship('Product', secondary='purchased_products', lazy='subquery', backref=settings.db.backref('users', lazy=True))
+  found_helpful = settings.db.relationship('HelpfulReview', backref='user', lazy=True, cascade="all, delete")
 
   def as_dict(self):
     return {
@@ -29,7 +29,41 @@ class Admin(settings.db.Model):
     return {
       "id": self.id,
       "email": self.email,
-    } 
+    }
+  
+class Review(settings.db.Model):
+  id = settings.db.Column(settings.db.Integer, unique=True, nullable=False, primary_key=True)
+  user_id = settings.db.Column(settings.db.Integer, settings.db.ForeignKey('user.id'), nullable=False)
+  product_id = settings.db.Column(settings.db.Integer, settings.db.ForeignKey('product.id'), nullable=False)
+  rating = settings.db.Column(settings.db.Integer, nullable=False)
+  title = settings.db.Column(settings.db.String(50), nullable=False)
+  review = settings.db.Column(settings.db.String(400), nullable=False)
+  date_posted = settings.db.Column(settings.db.DateTime(timezone=True), default=datetime.now, nullable=False)
+  helpful_count = settings.db.Column(settings.db.Integer, default=0)
+  verified_purchase = settings.db.Column(settings.db.Boolean, default=False)
+  found_helpful = settings.db.relationship('HelpfulReview', backref='review', lazy=True, cascade="all, delete")
+
+  def as_dict(self, is_marked, is_own_review):
+    return {
+      "id": self.id,
+      "user_id": self.user_id,
+      "product_id": self.product_id,
+      "rating": self.rating,
+      "title": self.title,
+      "review": self.review,
+      "date_posted": f"{self.date_posted}",
+      "helpful_count": len(self.found_helpful),
+      "is_marked": is_marked,
+      "verified_purchase": self.verified_purchase,
+      "is_own_review": is_own_review
+    }
+  
+  @staticmethod
+  def sort_by_params():
+    return {
+      "date-posted": Review.date_posted,
+      "helpful-count": Review.helpful_count
+    }
   
 class HelpfulReview(settings.db.Model):
   user_id = settings.db.Column(settings.db.Integer, settings.db.ForeignKey('user.id'), nullable=False, primary_key=True)
@@ -51,6 +85,7 @@ class Size(settings.db.Model):
   product_id = settings.db.Column(settings.db.Integer, settings.db.ForeignKey('product.id'), nullable=False)
   stock = settings.db.Column(settings.db.Integer, default=0, nullable=False)
   size = settings.db.Column(settings.db.String(20), nullable=False)
+  ordered_items = settings.db.relationship('OrderItem', backref='size', lazy=True, cascade="all, delete")
 
   def as_dict(self):
     return {
@@ -116,39 +151,6 @@ class ProductImage(settings.db.Model):
   id = settings.db.Column(settings.db.Integer, primary_key=True)
   product_id = settings.db.Column(settings.db.Integer, settings.db.ForeignKey('product.id'), nullable=False)
   image_url = settings.db.Column(settings.db.TEXT, nullable=False)
-
-class Review(settings.db.Model):
-  id = settings.db.Column(settings.db.Integer, unique=True, nullable=False, primary_key=True)
-  user_id = settings.db.Column(settings.db.Integer, settings.db.ForeignKey('user.id'), nullable=False)
-  product_id = settings.db.Column(settings.db.Integer, settings.db.ForeignKey('product.id'), nullable=False)
-  rating = settings.db.Column(settings.db.Integer, nullable=False)
-  title = settings.db.Column(settings.db.String(50), nullable=False)
-  review = settings.db.Column(settings.db.String(200), nullable=False)
-  date_posted = settings.db.Column(settings.db.DateTime(timezone=True), default=datetime.now, nullable=False)
-  helpful_count = settings.db.Column(settings.db.Integer, default=0)
-  verified_purchase = settings.db.Column(settings.db.Boolean, default=False)
-
-  def as_dict(self, is_marked, is_own_review):
-    return {
-      "id": self.id,
-      "user_id": self.user_id,
-      "product_id": self.product_id,
-      "rating": self.rating,
-      "title": self.title,
-      "review": self.review,
-      "date_posted": f"{self.date_posted}",
-      "helpful_count": self.helpful_count,
-      "is_marked": is_marked,
-      "verified_purchase": self.verified_purchase,
-      "is_own_review": is_own_review
-    }
-  
-  @staticmethod
-  def sort_by_params():
-    return {
-      "date-posted": Review.date_posted,
-      "helpful-count": Review.helpful_count
-    }
   
 class Order(settings.db.Model):
   id = settings.db.Column(settings.db.Integer, primary_key=True)
@@ -170,6 +172,7 @@ class Order(settings.db.Model):
   discount = settings.db.Column(settings.db.String(50), settings.db.ForeignKey('discount_code.name'))
   cancelled = settings.db.Column(settings.db.Boolean, default=False)
   delivery_instructions = settings.db.Column(settings.db.String(100), nullable=False)
+  order_items = settings.db.relationship('OrderItem', cascade="all, delete", backref="order")
 
   def as_dict(self):
     return {
@@ -204,9 +207,7 @@ class OrderItem(settings.db.Model):
 
 class VerificationCode(settings.db.Model):
   __tablename__ ='verification_code'
-  id = settings.db.Column(settings.db.Integer, primary_key=True)
-  user_id = settings.db.Column(settings.db.Integer, settings.db.ForeignKey('user.id'))
-  email = settings.db.Column(settings.db.String(120), unique=True, nullable=False)
+  email = settings.db.Column(settings.db.String(120), primary_key=True, nullable=False)
   code = settings.db.Column(settings.db.String(4), nullable=False)
   date_created = settings.db.Column(settings.db.DateTime(timezone=True), default=datetime.now, nullable=False)
 
@@ -226,9 +227,8 @@ class DeliveryMethod(settings.db.Model):
     }
   
 class DiscountJunction(settings.db.Model):
-  id = settings.db.Column(settings.db.Integer, primary_key=True)
-  user_id = settings.db.Column(settings.db.Integer, settings.db.ForeignKey('user.id'), nullable=False)
-  discount_name = settings.db.Column(settings.db.String(50), settings.db.ForeignKey('discount_code.name'), nullable=False)
+  user_id = settings.db.Column(settings.db.Integer, settings.db.ForeignKey('user.id'), nullable=False, primary_key=True)
+  discount_name = settings.db.Column(settings.db.String(50), settings.db.ForeignKey('discount_code.name'), nullable=False, primary_key=True)
   
 class DiscountCode(settings.db.Model):
   __tablename__ = 'discount_code'
@@ -241,11 +241,6 @@ class DiscountCode(settings.db.Model):
       "name": self.name,
       "percent_off": self.percent_off
     }
-
-purchased_product = settings.db.Table('purchased_products',
-  settings.db.Column('user_id', settings.db.Integer, settings.db.ForeignKey('user.id'), nullable=False, primary_key=True),
-  settings.db.Column('product_id', settings.db.Integer, settings.db.ForeignKey('product.id'), nullable=False, primary_key=True)
-)
 
 class ProductBoughtVector(settings.db.Model):
   product_id = settings.db.Column(settings.db.Integer, settings.db.ForeignKey('product.id'), nullable=False, primary_key=True)

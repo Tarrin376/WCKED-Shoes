@@ -269,15 +269,12 @@ def add_order_items(cart_items, order, user, out_of_stock_items):
     settings.db.session.commit()
 
     order_item: OrderItem = OrderItem(item_id=item[0].item_id, order_id=order.id, quantity=item[0].quantity)
-    settings.db.session.add(order_item)
+    order.order_items.append(order_item)
+    settings.db.session.commit()
 
     product: Product = Product.query.filter_by(id=item[1]).first()
     product.num_sold += item[0].quantity
     settings.db.session.commit()
-
-    if item[1] not in user.purchased_products:
-      user.purchased_products.append(product)
-      settings.db.session.commit()
 
     unit_v: ProductBoughtVector = settings.db.session.query(ProductBoughtVector)\
       .filter_by(product_id=item[1], user_id=user.id)\
@@ -340,7 +337,7 @@ def checkout_handler(user_id, order_details):
       raise DBException(f"""Sorry, but some of your items do not have enough stock to satisfy your order. 
         Please reduce their quantities or remove them from your cart.""", 400, data=out_of_stock_items)
     
-    if order.discount != "":
+    if order.discount:
       discount_used: DiscountJunction = DiscountJunction(user_id=user_id, discount_name=order.discount)
       settings.db.session.add(discount_used)
       settings.db.session.commit()
@@ -393,31 +390,29 @@ def cancel_order_handler(id, user_id):
     order.cancelled = True
     settings.db.session.commit()
 
-    order_items = OrderItem.query.filter(OrderItem.order_id == order.id).all()
-
-    for i in range(len(order_items)):
-      item: Size = Size.query.filter(Size.id == order_items[i].item_id).first()
+    for i in range(len(order.order_items)):
+      item: Size = Size.query.filter(Size.id == order.order_items[i].item_id).first()
       product: Product = Product.query.filter(Product.id == item.product_id).first()
-      item.stock += order_items[i].quantity
+      item.stock += order.order_items[i].quantity
       settings.db.session.commit()
 
-      product.num_sold -= order_items[i].quantity
+      product.num_sold -= order.order_items[i].quantity
       settings.db.session.commit()
 
       unit_v: ProductBoughtVector = settings.db.session.query(ProductBoughtVector)\
         .filter_by(product_id=item.product_id, user_id=user_id)\
         .first()
       
-      unit_v.times_bought -= order_items[i].quantity
+      unit_v.times_bought -= order.order_items[i].quantity
       settings.db.session.commit()
 
       if unit_v.times_bought == 0:
         unit_v.bought = 0
         settings.db.session.commit()
 
-      for j in range(len(order_items)):
+      for j in range(len(order.order_items)):
         if i != j:
-          paired_item: Size = Size.query.filter(Size.id == order_items[j].item_id).first()
+          paired_item: Size = Size.query.filter(Size.id == order.order_items[j].item_id).first()
           bought_with: BoughtTogether = settings.db.session.query(BoughtTogether)\
             .filter_by(product_id=item.product_id, bought_with_id=paired_item.product_id)\
             .first()
@@ -428,6 +423,9 @@ def cancel_order_handler(id, user_id):
           if bought_with.frequency == 0:
             settings.db.session.delete(bought_with)
             settings.db.session.commit()
+
+      settings.db.session.delete(order.order_items[i])
+      settings.db.session.commit()
   except exc.SQLAlchemyError:
     raise DBException("Unable to update order status. Try again.", 500)
   except Exception as e:

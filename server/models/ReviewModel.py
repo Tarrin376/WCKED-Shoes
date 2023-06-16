@@ -5,6 +5,11 @@ from CustomExceptions.DBException import DBException
 
 def get_reviews_handler(product_id, sort, search, page, limit, asc, user_id):
   try:
+    user: User = settings.db.session.query(User).filter(User.id == user_id).first()
+
+    if user is None:
+      raise DBException("User not found", 404)
+    
     reviews = settings.db.paginate(settings.db.session.query(Review)
       .filter(Review.title.ilike('%' + search + '%'))
       .filter(Review.product_id == product_id)
@@ -13,9 +18,10 @@ def get_reviews_handler(product_id, sort, search, page, limit, asc, user_id):
     
     result = []
     for review in reviews.items:
-      is_marked: HelpfulReview = settings.db.session.query(HelpfulReview).filter(HelpfulReview.review_id == review.id).filter(HelpfulReview.user_id == user_id).first()
-      if is_marked is None: result.append(review.as_dict(False, review.user_id == user_id))
-      else: result.append(review.as_dict(True, review.user_id == user_id))
+      if review in user.found_helpful:
+        result.append(review.as_dict(True, review.user_id == user_id))
+      else:
+        result.append(review.as_dict(False, review.user_id == user_id))
 
     return {
       "next": result,
@@ -42,6 +48,7 @@ def get_reviews_handler(product_id, sort, search, page, limit, asc, user_id):
 def delete_review_handler(id):
   try:
     review: Review = settings.db.session.query(Review).filter(Review.id == id).first()
+
     if review is None:
       raise DBException("Review not found.", 404)
     
@@ -69,24 +76,27 @@ def delete_review_handler(id):
     else:
       raise e
 
-def add_helpful_count_handler(id, user_id):
+def mark_helpful_handler(id, user_id):
   try:
-    has_marked: HelpfulReview = settings.db.session.query(HelpfulReview)\
-      .filter(HelpfulReview.review_id == id)\
-      .filter(HelpfulReview.user_id == user_id)\
-      .first()
+    review: Review = settings.db.session.query(Review).filter(Review.id == id).first()
+    user: User = settings.db.session.query(User).filter(User.id == user_id).first()
 
-    if has_marked is None:
+    if review is None:
+      raise DBException("Review not found", 404)
+    
+    if user is None:
+      raise DBException("User not found", 404)
+
+    if review not in user.found_helpful:
       helpful = HelpfulReview(review_id=id, user_id=user_id)
-      settings.db.session.add(helpful)
+      review.found_helpful.append(helpful)
       settings.db.session.commit()
 
-      review: Review = settings.db.session.query(Review).filter(Review.id == id).first()
-      review.helpful_count = review.helpful_count + 1
+      user.found_helpful.append(helpful)
       settings.db.session.commit()
-      return review.helpful_count
+      return len(review.found_helpful)
     else:
-      raise DBException("You have already marked this review as helpful.", status_code=409)
+      raise DBException("You have already marked this review as helpful.", 409)
   except exc.SQLAlchemyError:
     raise DBException("Failed to add helpful count.", 500)
   except Exception as e:
@@ -101,11 +111,14 @@ def add_review_handler(product_id, user_id, data):
     user: User = settings.db.session.query(User).filter(User.id == user_id).first()
     
     if product is None or user is None:
-      raise DBException("Product or user does not exist.", status_code=404)
+      raise DBException("Product not found.", 404)
+    
+    if user is None:
+      raise DBException("User not found", 404)
     
     for review in product.reviews:
       if review.user_id == user_id:
-        raise DBException("You have already reviewed this product.", status_code=409)
+        raise DBException("You have already reviewed this product.", 409)
     
     has_purchased_product = settings.db.session.query(Order).filter(Order.user_id == user_id, Order.delivered_date != None)\
       .join(OrderItem, OrderItem.order_id == Order.id)\
@@ -122,14 +135,19 @@ def add_review_handler(product_id, user_id, data):
     settings.db.session.commit()
 
     product.num_reviews = product.num_reviews + 1
+    settings.db.session.commit()
+
     product.ratings = product.ratings + data["rating"]
+    settings.db.session.commit()
+
     product.rating = product.ratings / product.num_reviews
     settings.db.session.commit()
     return new_review.as_dict(False, True)
   except exc.SQLAlchemyError as e:
-    raise DBException(str(e), status_code=500)
+    print(e)
+    raise DBException("Failed to add review.", 500)
   except KeyError:
-    raise DBException("Missing required fields.", status_code=400)
+    raise DBException("Missing required fields.", 400)
   except Exception as e:
     if type(e) is not DBException:
       raise DBException("Something went wrong. Please contact our team if this continues.", 500)
