@@ -8,16 +8,17 @@ import { TOrderData } from "../../@types/TOrderData";
 
 interface Props {
   orderID: number,
-  setNext: React.Dispatch<React.SetStateAction<TOrderData[]>>
+  setNext: React.Dispatch<React.SetStateAction<TOrderData[]>>,
+  setDisabled: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-const CancelOrder: React.FC<Props> = ({ orderID, setNext }) => {
+const CancelOrder: React.FC<Props> = ({ orderID, setNext, setDisabled }) => {
   const [errorMessage, setErrorMessage] = useState<TErrorMessage>();
 
   const cancelOrder = async (): Promise<TErrorMessage | undefined> => {
     try {
+      setDisabled(true);
       await axios.delete<string>(`/api/users/cancel-order/${orderID}`);
-      return undefined;
     }
     catch (error: any) {
       const errorMsg = getAPIErrorMessage(error as AxiosError);
@@ -27,6 +28,7 @@ const CancelOrder: React.FC<Props> = ({ orderID, setNext }) => {
 
   const filterOutOrder = () => {
     setNext((cur: TOrderData[]) => cur.filter((order: TOrderData) => order.order_details.id !== orderID));
+    setDisabled(false);
   }
 
   return (

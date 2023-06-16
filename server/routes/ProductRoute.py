@@ -39,6 +39,8 @@ def get_products():
     return Response(e.message, status=e.status_code, mimetype="text/plain")
   except ValueError:
     return Response("'page' and 'limit' must be numbers.", status=400, mimetype="text/plain")
+  except Exception as e:
+    return Response(e.message, status=500, mimetype="text/plain")
 
 @products_blueprint.route("/create", methods=["POST"])
 @authenticate_admin
@@ -51,6 +53,8 @@ def create_product():
     return Response("Successfully created product.", status=201)
   except DBException as e:
     return Response(e.message, status=e.status_code)
+  except Exception as e:
+    return Response(e.message, status=500, mimetype="text/plain")
 
 @products_blueprint.route("/<product_id>", methods=["GET"])
 @limiter.limit("2 per second")
@@ -60,6 +64,8 @@ def get_product(product_id):
     return Response(json.dumps(product), status=200, content_type="application/json")
   except DBException as e:
     return Response(e.message, status=e.status_code, mimetype="text/plain")
+  except Exception as e:
+    return Response(e.message, status=500, mimetype="text/plain")
 
 @products_blueprint.route("/<product_id>/<size>", methods=["GET"])
 @limiter.limit("2 per second")
@@ -69,6 +75,8 @@ def check_size_stock(product_id, size):
     return Response(json.dumps(in_stock), status=200, content_type="application/json")
   except DBException as e:
     return Response(e.message, status=e.status_code, mimetype="text/plain")
+  except Exception as e:
+    return Response(e.message, status=500, mimetype="text/plain")
 
 @products_blueprint.route("/<product_id>", methods=["DELETE"])
 @authenticate_admin
@@ -79,6 +87,8 @@ def delete_product(product_id):
     return Response("Successfully deleted product.", status=200, mimetype="text/plain")
   except DBException as e:
     return Response(e.message, status=e.status_code, mimetype="text/plain")
+  except Exception as e:
+    return Response(e.message, status=500, mimetype="text/plain")
 
 @products_blueprint.route("/<product_id>/add-image", methods=["POST"])
 @authenticate_admin
@@ -91,6 +101,8 @@ def add_product_image(product_id):
     return Response("Successfully added image to product.", status=200, mimetype="text/plain")
   except DBException as e:
     return Response(e.message, status=e.status_code, mimetype="text/plain")
+  except Exception as e:
+    return Response(e.message, status=500, mimetype="text/plain")
 
 @products_blueprint.route("/<product_id>/update-thumbnail", methods=["PUT"])
 @authenticate_admin
@@ -98,12 +110,16 @@ def add_product_image(product_id):
 def update_product_thumbnail(product_id):
   try:
     thumbnail_url = request.json.get("thumbnail_url")
+
+    if thumbnail_url is None:
+      return Response("Thumbnail url not provided.", status=400, mimetype="text/plain") 
+    
     update_product_thumbnail_handler(product_id, thumbnail_url)
     return Response("Successfully updated thumbnail.", status=200, mimetype="text/plain")
   except DBException as e:
     return Response(e.message, status=e.status_code, mimetype="text/plain")
-  except Exception:
-    return Response("Insufficient data supplied. Unable to perform requested action.", status=400, mimetype="text/plain")
+  except Exception as e:
+    return Response(e.message, status=500, mimetype="text/plain")
   
 @products_blueprint.route("/<product_id>/customers-bought", methods=["GET"])
 @limiter.limit("2 per second")
@@ -118,6 +134,8 @@ def recommend_customer_bought(product_id):
     return Response(e.message, status=e.status_code, mimetype="text/plain")
   except ValueError:
     return Response("'limit' or 'product id' is not a number.", status=400, mimetype="text/plain")
+  except Exception as e:
+    return Response(e.message, status=500, mimetype="text/plain")
   
 @products_blueprint.route("/<product_id>/freq-bought", methods=["GET"])
 @limiter.limit("2 per second")
@@ -135,3 +153,5 @@ def frequently_bought_together(product_id):
     return Response(e.message, status=e.status_code, mimetype="text/plain")
   except ValueError:
     return Response("'limit' or 'product id' is not a number.", status=400, mimetype="text/plain")
+  except Exception as e:
+    return Response(e.message, status=500, mimetype="text/plain")

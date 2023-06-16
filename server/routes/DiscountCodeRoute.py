@@ -15,6 +15,8 @@ def delete_discount_code(code_name):
     return Response(f"Succesfully deleted discount code: {code_name}.", status=200, mimetype="text/plain")
   except DBException as e:
     return Response(e.message, e.status_code, mimetype="text/plain")
+  except Exception as e:
+    return Response(e.message, status=500, mimetype="text/plain")
 
 @discount_code_blueprint.route("/create", methods=["POST"])
 @authenticate_admin
@@ -29,3 +31,5 @@ def create_discount_code():
     return Response(e.message, e.status_code, mimetype="text/plain")
   except ValueError:
     return Response("Discount percentage is invalid.", status=400, mimetype="text/plain")
+  except Exception as e:
+    return Response(e.message, status=500, mimetype="text/plain")

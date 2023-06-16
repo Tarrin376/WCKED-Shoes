@@ -17,7 +17,9 @@ import { TOrderStatus } from "../../@types/TOrderStatus";
 
 interface Props {
   orderData: TOrderData,
-  setNext: React.Dispatch<React.SetStateAction<TOrderData[]>>
+  setNext: React.Dispatch<React.SetStateAction<TOrderData[]>>,
+  disabled: boolean,
+  setDisabled: React.Dispatch<React.SetStateAction<boolean>>
 }
 
 const orderStatusColours: {
@@ -29,7 +31,7 @@ const orderStatusColours: {
   "Delivered": "text-in-stock-green-text dark:text-in-stock-green-text-dark",
 }
 
-const Order: React.FC<Props> = ({ orderData, setNext }) => {
+const Order: React.FC<Props> = ({ orderData, setNext, disabled, setDisabled }) => {
   const themeContext = useContext(ThemeContext);
   const [orderDetailsPopUp, setOrderDetailsPopUp] = useState(false);
   const [orderHistoryPopUp, setOrderHistoryPopUp] = useState(false);
@@ -141,7 +143,8 @@ const Order: React.FC<Props> = ({ orderData, setNext }) => {
           </div>
           <div className="mt-5 flex max-md:flex-col-reverse gap-3">
             {orderData.order_details.order_status === "Order Created" && !orderData.order_details.cancelled &&
-            <button className="danger-btn" onClick={() => togglePopUps(false, false, !cancelOrderPopUp)}>
+            <button className={`danger-btn ${disabled ? "pointer-events-none disabled-btn-light dark:disabled-btn" : ""}`} 
+            onClick={() => togglePopUps(false, false, !cancelOrderPopUp)}>
               Cancel Order
             </button>}
             <div className="flex gap-3 max-xs:flex-col">
@@ -155,7 +158,12 @@ const Order: React.FC<Props> = ({ orderData, setNext }) => {
             </div>
           </div>
           {orderDetailsPopUp && <OrderDetails order={orderData.order_details} />}
-          {cancelOrderPopUp && <CancelOrder orderID={orderData.order_details.id} setNext={setNext} />}
+          {cancelOrderPopUp && 
+          <CancelOrder 
+            orderID={orderData.order_details.id} 
+            setNext={setNext}
+            setDisabled={setDisabled}
+          />}
           {orderHistoryPopUp &&
           <OrderActivity 
             dates={[

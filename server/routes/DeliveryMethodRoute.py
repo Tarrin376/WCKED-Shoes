@@ -17,6 +17,8 @@ def add_delivery_method():
     return Response("New delivery method added successfully.", status=201, mimetype="text/plain")
   except DBException as e:
     return Response(e.message, status=e.status_code, mimetype="text/plain")
+  except Exception as e:
+    return Response(e.message, status=500, mimetype="text/plain")
 
 @delivery_method_blueprint.route("/delete-delivery-method/<name>", methods=["DELETE"])
 @authenticate_admin
@@ -27,6 +29,8 @@ def delete_delivery_method(name):
     return Response("Delivery method has been deleted successfully.", status=200, mimetype="text/plain")
   except DBException as e:
     return Response(e.message, e.status_code, mimetype="text/plain")
+  except Exception as e:
+    return Response(e.message, status=500, mimetype="text/plain")
 
 @delivery_method_blueprint.route("", methods=["GET"])
 @limiter.limit("2 per second")
@@ -36,3 +40,5 @@ def get_delivery_methods():
     return Response(json.dumps(delivery_methods), status=200, mimetype="application/json")
   except DBException as e:
     return Response(e.message, e.status_code, mimetype="text/plain")
+  except Exception as e:
+    return Response(e.message, status=500, mimetype="text/plain")

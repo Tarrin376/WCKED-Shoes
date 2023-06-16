@@ -20,6 +20,8 @@ def login():
     return resp
   except DBException as e:
     return Response(e.message, status=e.status_code, mimetype="text/plain")
+  except Exception as e:
+    return Response(e.message, status=500, mimetype="text/plain")
   
 @admin_blueprint.route('/create', methods=["POST"])
 def create_admin():
@@ -31,3 +33,5 @@ def create_admin():
     return Response("Admin account created successfully.", status=201, mimetype="text/plain")
   except DBException as e:
     return Response(e.message, status=e.status_code, mimetype="text/plain")
+  except Exception as e:
+    return Response(e.message, status=500, mimetype="text/plain")

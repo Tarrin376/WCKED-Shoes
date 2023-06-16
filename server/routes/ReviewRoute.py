@@ -25,6 +25,8 @@ def get_reviews(product_id):
     return Response(e.message, status=e.status_code, mimetype="text/plain")
   except ValueError:
     return Response("'page' and 'limit' query parameters must be numbers.", status=400, mimetype="text/plain")
+  except Exception as e:
+    return Response(e.message, status=500, mimetype="text/plain")
   
 @reviews_blueprint.route("/<id>", methods=["DELETE"])
 @authenticate_user
@@ -35,6 +37,8 @@ def delete_review(id):
     return Response("Review deleted.", status=200, mimetype="text/plain")
   except DBException as e:
     return Response(e.message, status=e.status_code, mimetype="text/plain")
+  except Exception as e:
+    return Response(e.message, status=500, mimetype="text/plain")
 
 @reviews_blueprint.route("/<id>/helpful", methods=["PUT"])
 @authenticate_user
@@ -48,6 +52,8 @@ def mark_helpful(id):
     return Response(e.message, status=e.status_code, mimetype="text/plain")
   except KeyError:
     return Response("Insufficient data supplied. Unable to perform requested action.", status=400, mimetype="text/plain")
+  except Exception as e:
+    return Response(e.message, status=500, mimetype="text/plain")
 
 @reviews_blueprint.route("/<product_id>", methods=["POST"])
 @authenticate_user
@@ -61,3 +67,5 @@ def add_review(product_id):
     return Response(json.dumps(new_review), status=201, mimetype="application/json")
   except DBException as e:
     return Response(e.message, status=e.status_code, mimetype="text/plain")
+  except Exception as e:
+    return Response(e.message, status=500, mimetype="text/plain")

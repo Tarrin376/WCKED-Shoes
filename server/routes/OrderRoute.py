@@ -24,6 +24,8 @@ def get_orders():
     return Response(e.message, status=e.status_code, mimetype="text/plain")
   except ValueError:
     return Response("'page' and 'limit' query parameters must be numbers.", status=400, mimetype="text/plain")
+  except Exception as e:
+    return Response(e.message, status=500, mimetype="text/plain")
 
 @orders_blueprint.route("/<id>", methods=["GET"])
 @authenticate_user
@@ -35,6 +37,8 @@ def get_order(id):
     return Response(json.dumps(order), status=200, mimetype="application/json")
   except DBException as e:
     return Response(e.message, status=e.status_code, mimetype="text/plain")
+  except Exception as e:
+    return Response(e.message, status=500, mimetype="text/plain")
 
 @orders_blueprint.route("/<id>/update-status", methods=["PUT"])
 @authenticate_admin
@@ -49,3 +53,5 @@ def update_order_status(id):
     return Response(f"Order status was updated to: {status}.", status=200, mimetype="text/plain")
   except DBException as e:
     return Response(e.message, status=e.status_code, mimetype="text/plain")
+  except Exception as e:
+    return Response(e.message, status=500, mimetype="text/plain")

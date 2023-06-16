@@ -8,6 +8,8 @@ import { AxiosError } from "axios";
 import { TErrorMessage } from "../../@types/TErrorMessage";
 import ErrorMessage from "../../components/ErrorMessage";
 import Button from "../../components/Button";
+import { useWindowSize } from "../../hooks/useWindowSize";
+import { getPageSize } from "../../utils/getPageSize";
 
 interface Props {
   review: Readonly<TReview>,
@@ -18,6 +20,7 @@ const Review: React.FC<Props> = ({ review, setNext }) => {
   const [helpfulCount, setHelpfulCount] = useState<number>(review.helpful_count);
   const [disabled, setDisabled] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<TErrorMessage>();
+  const windowSize = useWindowSize();
   
   const addHelpfulCount = async () => {
     try {
@@ -48,14 +51,16 @@ const Review: React.FC<Props> = ({ review, setNext }) => {
         <h5 className="text-main-text-black dark:text-main-text-white font-semibold">{review.title}</h5>
         <p className="text-side-text-light dark:text-side-text-gray text-[15px]">{`Posted on ${convertDate(review.date_posted, true)}`}</p>
       </div>
-      <div className="flex items-center gap-[13px] mt-[6px] mb-2">
-        <RatingStars rating={review.rating} border={review.verified_purchase} />
-        {review.verified_purchase && <p className="popular">Verified Purchase</p>}
-        {review.is_own_review && 
-        <div className="flex items-center gap-[13px]">
-          <div className="w-[1px] bg-light-border dark:bg-main-gray-border h-[17px]"></div>
-          <p className="popular bg-bg-primary-btn-hover">Your review</p>
-        </div>}
+      <div className={`flex items-center gap-[13px] mt-[6px] mb-2 max-sm:flex-col-reverse max-sm:items-start`}>
+        <RatingStars rating={review.rating} border={review.verified_purchase && windowSize >= 480} />
+        <div className={`flex ${windowSize <= 385 ? "flex-col items-start gap-[8px]" : "items-center gap-[13px]"}`}>
+          {review.verified_purchase && <p className="popular">Verified Purchase</p>}
+          {review.is_own_review && 
+          <div className="flex items-center gap-[13px]">
+            {windowSize > 385 && <div className="w-[1px] bg-light-border dark:bg-main-gray-border h-[17px]"></div>}
+            <p className="popular bg-bg-primary-btn-hover">Your review</p>
+          </div>}
+          </div>
       </div>
       <p className="text-main-text-black dark:text-main-text-white">{review.review}</p>
       {helpfulCount > 0 && 

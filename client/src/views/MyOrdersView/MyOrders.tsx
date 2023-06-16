@@ -1,4 +1,4 @@
-import { useRef, useEffect, useContext } from "react";
+import { useRef, useEffect, useContext, useState } from "react";
 import { TOrderData } from "../../@types/TOrderData";
 import Order from "./Order";
 import { usePagination } from "../../hooks/usePagination";
@@ -25,6 +25,7 @@ const MyOrders = () => {
   const userContext = useContext(UserContext);
   const buyItAgainURL = `/api/users/buy-it-again?limit=${20}`;
   const recommended = useGetRecommended(buyItAgainURL);
+  const [disabled, setDisabled] = useState<boolean>(false);
 
   useEffect(() => {
     if (!userContext?.email) {
@@ -86,6 +87,8 @@ const MyOrders = () => {
                 orderData={order} 
                 key={order.order_details.id}
                 setNext={getOrders.setNext}
+                disabled={disabled}
+                setDisabled={setDisabled}
               />
             )
           })}

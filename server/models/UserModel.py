@@ -289,7 +289,7 @@ def add_order_items(cart_items, order, user, out_of_stock_items):
 
   for i in range(len(cart_items)):
     for j in range(len(cart_items)):
-      if i != j:
+      if cart_items[i][1] != cart_items[j][1]:
         bought_with: BoughtTogether = settings.db.session.query(BoughtTogether)\
           .filter_by(product_id=cart_items[i][1], bought_with_id=cart_items[j][1])\
           .first()
@@ -411,8 +411,9 @@ def cancel_order_handler(id, user_id):
         settings.db.session.commit()
 
       for j in range(len(order.order_items)):
-        if i != j:
-          paired_item: Size = Size.query.filter(Size.id == order.order_items[j].item_id).first()
+        paired_item: Size = Size.query.filter(Size.id == order.order_items[j].item_id).first()
+
+        if product.id != paired_item.product_id:
           bought_with: BoughtTogether = settings.db.session.query(BoughtTogether)\
             .filter_by(product_id=item.product_id, bought_with_id=paired_item.product_id)\
             .first()
@@ -423,9 +424,6 @@ def cancel_order_handler(id, user_id):
           if bought_with.frequency == 0:
             settings.db.session.delete(bought_with)
             settings.db.session.commit()
-
-      settings.db.session.delete(order.order_items[i])
-      settings.db.session.commit()
   except exc.SQLAlchemyError:
     raise DBException("Unable to update order status. Try again.", 500)
   except Exception as e:

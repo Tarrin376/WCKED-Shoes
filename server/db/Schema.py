@@ -102,7 +102,7 @@ class Product(settings.db.Model):
   num_sold = settings.db.Column(settings.db.Integer, default=0)
   ratings = settings.db.Column(settings.db.Integer, default=0)
   rating = settings.db.Column(settings.db.Float, default=0)
-  description = settings.db.Column(settings.db.String(500), nullable=False)
+  description = settings.db.Column(settings.db.String(700), nullable=False)
   price = settings.db.Column(settings.db.Float, nullable=False)
   images = settings.db.relationship('ProductImage', backref='product', lazy=True, cascade="all, delete")
   thumbnail = settings.db.Column(settings.db.TEXT, nullable=False)

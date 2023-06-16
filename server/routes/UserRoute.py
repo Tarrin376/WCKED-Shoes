@@ -43,6 +43,8 @@ def login():
     return resp
   except DBException as e:
     return Response(e.message, status=e.status_code, mimetype="text/plain")
+  except Exception as e:
+    return Response(e.message, status=500, mimetype="text/plain")
 
 @user_blueprint.route("/jwt-login", methods=["GET"])
 @authenticate_user
@@ -62,6 +64,8 @@ def register():
     return Response("Account created successfully.", status=201, mimetype="text/plain")
   except DBException as e:
     return Response(e.message, status=e.status_code, mimetype="text/plain")
+  except Exception as e:
+    return Response(e.message, status=500, mimetype="text/plain")
 
 @user_blueprint.route("/logout", methods=["GET"])
 @authenticate_user
@@ -73,6 +77,8 @@ def logout():
     return resp
   except DBException as e:
     return Response(e.message, status=e.status_code, mimetype="text/plain")
+  except Exception as e:
+    return Response(e.message, status=500, mimetype="text/plain")
 
 @user_blueprint.route("/find", methods=["POST"])
 @limiter.limit("2 per second")
@@ -84,6 +90,8 @@ def find_user():
     return Response(user_found, status=200, mimetype="application/json")
   except DBException as e:
     return Response(e.message, status=e.status_code, mimetype="text/plain")
+  except Exception as e:
+    return Response(e.message, status=500, mimetype="text/plain")
 
 @user_blueprint.route("/send-code", methods=["POST"])
 @limiter.limit("3 per 60 seconds")
@@ -96,6 +104,8 @@ def send_code():
     return Response(code, status=201, mimetype="text/plain")
   except DBException as e:
     return Response(e.message, status=e.status_code, mimetype="text/plain")
+  except Exception as e:
+    return Response(e.message, status=500, mimetype="text/plain")
 
 @user_blueprint.route("/verify-email", methods=["POST"])
 @limiter.limit("3 per 60 seconds")
@@ -108,6 +118,8 @@ def verify_email():
     return Response("Email verified.", status=200, mimetype="text/plain")
   except DBException as e:
     return Response(e.message, status=e.status_code, mimetype="text/plain")
+  except Exception as e:
+    return Response(e.message, status=500, mimetype="text/plain")
   
 @user_blueprint.route("/cart", methods=["GET"])
 @authenticate_user
@@ -119,6 +131,8 @@ def get_cart():
     return Response(json.dumps(cart), status=200, mimetype="application/json")
   except DBException as e:
     return Response(e.message, status=e.status_code, mimetype="text/plain")
+  except Exception as e:
+    return Response(e.message, status=500, mimetype="text/plain")
 
 @user_blueprint.route("/cart/<product_id>/<size>/<quantity>", methods=["POST"])
 @authenticate_user
@@ -133,6 +147,8 @@ def add_to_cart(product_id, size, quantity):
     return Response(e.message, status=e.status_code, mimetype="text/plain")
   except ValueError:
     return Response("Invalid quantity.", status=400, mimetype="text/plain")
+  except Exception as e:
+    return Response(e.message, status=500, mimetype="text/plain")
   
 @user_blueprint.route("/cart/<product_id>/<size>/<quantity>", methods=["PUT", "DELETE"])
 @authenticate_user
@@ -147,6 +163,8 @@ def update_item_quantity(product_id, size, quantity):
     return Response(e.message, status=e.status_code, mimetype="text/plain")
   except ValueError:
     return Response("Invalid quantity.", status=400, mimetype="text/plain")
+  except Exception as e:
+    return Response(e.message, status=500, mimetype="text/plain")
   
 @user_blueprint.route("/cart/checkout", methods=["POST"])
 @authenticate_user
@@ -161,6 +179,8 @@ def checkout():
   except DBException as e:
     if e.data is not None: return Response(json.dumps(e.data), status=e.status_code, mimetype="application/json")
     else: return Response(e.message, status=e.status_code, mimetype="text/plain")
+  except Exception as e:
+    return Response(e.message, status=500, mimetype="text/plain")
 
 @user_blueprint.route("/discount/<code_name>", methods=["DELETE"])
 @authenticate_user
@@ -172,6 +192,8 @@ def remove_discount():
     return Response(f"Discount code was removed.")
   except DBException as e:
     return Response(e.message, status=e.status_code, mimetype="text/plain")
+  except Exception as e:
+    return Response(e.message, status=500, mimetype="text/plain")
 
 @user_blueprint.route("/cancel-order/<order_id>", methods=["DELETE"])
 @authenticate_user
@@ -183,6 +205,8 @@ def cancel_order(order_id):
     return Response(f"Order was successfully cancelled.", status=200, mimetype="text/plain")
   except DBException as e:
     return Response(e.message, status=e.status_code, mimetype="text/plain")
+  except Exception as e:
+    return Response(e.message, status=500, mimetype="text/plain")
   
 @user_blueprint.route("/buy-it-again", methods=["GET"])
 @authenticate_user
@@ -201,6 +225,8 @@ def buy_it_again():
     return Response(e.message, status=e.status_code, mimetype="text/plain")
   except ValueError:
     return Response("'limit' is not a number.", status=400, mimetype="text/plain")
+  except Exception as e:
+    return Response(e.message, status=500, mimetype="text/plain")
   
 @user_blueprint.route("/apply-discount/<code_name>", methods=["GET"])
 @authenticate_user
@@ -212,3 +238,5 @@ def apply_discount(code_name):
     return Response(json.dumps(discount), status=200, mimetype="application/json")
   except DBException as e:
     return Response(e.message, e.status_code, mimetype="text/plain")
+  except Exception as e:
+    return Response(e.message, status=500, mimetype="text/plain")
