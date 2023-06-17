@@ -70,6 +70,7 @@ const Layout: React.FC<{}> = () => {
     });
 
     navigate("/cart");
+    window.scrollTo(0, 0);
   }
 
   const logout = async (): Promise<TErrorMessage | undefined> => {
@@ -89,6 +90,7 @@ const Layout: React.FC<{}> = () => {
       if (!searchQuery.match(new RegExp("^[0-9]+$"))) navigate(`/`, { state: searchQuery });
       else navigate(`/orders/${searchQuery}`);
       setSearchQuery("");
+      window.scrollTo(0, 0);
     }
   }
 

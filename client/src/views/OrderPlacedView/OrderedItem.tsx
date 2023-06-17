@@ -14,6 +14,7 @@ const OrderedItem: React.FC<Props> = ({ item, isFirst, noBorder, styles, buyAgai
 
   const goToProduct = () => {
     navigate(`/products/${item.product_id}`);
+    window.scrollTo(0, 0);
   }
 
   return (

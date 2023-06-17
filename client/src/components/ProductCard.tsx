@@ -29,6 +29,7 @@ const ProductCard: React.FC<Props> = ({ product, styles, setTotalPrice, smallSiz
 
   const goToProduct = () => {
     navigate(`/products/${product.id}`, { replace: true });
+    window.scrollTo(0, 0);
   }
 
   const toggleChecked = () => {

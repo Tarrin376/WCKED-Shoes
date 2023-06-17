@@ -9,10 +9,9 @@ import { TErrorMessage } from "../../@types/TErrorMessage";
 import ErrorMessage from "../../components/ErrorMessage";
 import Button from "../../components/Button";
 import { useWindowSize } from "../../hooks/useWindowSize";
-import { getPageSize } from "../../utils/getPageSize";
 
 interface Props {
-  review: Readonly<TReview>,
+  review: TReview,
   setNext: React.Dispatch<React.SetStateAction<TReview[]>>
 }
 
@@ -22,15 +21,16 @@ const Review: React.FC<Props> = ({ review, setNext }) => {
   const [errorMessage, setErrorMessage] = useState<TErrorMessage>();
   const windowSize = useWindowSize();
   
-  const addHelpfulCount = async () => {
+  const addHelpfulCount = async (): Promise<TErrorMessage | undefined> => {
     try {
       const countResponse = await axios.put<string>(`/api/reviews/${review.id}/helpful`);
       setHelpfulCount(parseInt(countResponse.data));
+      review.is_marked = true;
       setDisabled(true);
     }
     catch (error: any) {
       const errorMsg = getAPIErrorMessage(error as AxiosError);
-      setErrorMessage(errorMsg);
+      return errorMsg;
     }
   }
 
@@ -42,6 +42,15 @@ const Review: React.FC<Props> = ({ review, setNext }) => {
     catch (error: any) {
       const errorMsg = getAPIErrorMessage(error as AxiosError);
       return errorMsg;
+    }
+  }
+
+  const getReviewHelpfulText = () => {
+    if (review.is_marked) {
+      return helpfulCount === 1 ? "You found this review helpful" : `You and ${helpfulCount - 1} ${helpfulCount - 1 === 1 ? "other" : "others"} 
+      found this review helpful`;
+    } else {
+      return `${helpfulCount === 1 ? 'One person' : `${helpfulCount} people`} found this review helpful`;
     }
   }
 
@@ -65,13 +74,18 @@ const Review: React.FC<Props> = ({ review, setNext }) => {
       <p className="text-main-text-black dark:text-main-text-white">{review.review}</p>
       {helpfulCount > 0 && 
       <p className="text-side-text-light dark:text-side-text-gray mt-2 text-[15px]">
-        {`${helpfulCount === 1 ? 'One person' : `${helpfulCount} people`} found this review helpful`}
+        {getReviewHelpfulText()}
       </p>} 
       <div className="gap-3 flex items-center">
         {(!review.is_marked && !disabled && !review.is_own_review) &&
-        <button className="secondary-btn h-[30px] mt-3" onClick={addHelpfulCount}>
-          Helpful
-        </button>}
+        <Button
+          action={addHelpfulCount}
+          completedText="Marked as helpful"
+          defaultText="Helpful"
+          loadingText="Marking as helpful"
+          styles="secondary-btn h-[30px] mt-3"
+          setErrorMessage={setErrorMessage}
+        />}
         {review.is_own_review &&
         <Button
           action={deleteReview}

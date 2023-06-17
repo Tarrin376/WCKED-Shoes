@@ -141,7 +141,7 @@ def add_to_cart_handler(user_id, product_id, size_chosen, quantity):
       settings.db.session.commit()
     else:
       if cart_item.quantity + quantity > MAX_ITEM_QUANTITY:
-        raise DBException(f"Limit of {MAX_ITEM_QUANTITY} of the same item reached.", 400)
+        raise DBException(f"You cannot have more than {MAX_ITEM_QUANTITY} of {product.name} in your cart.", 400)
       elif cart_item.quantity + quantity > size.stock:
         raise DBException(f"Sorry, you have requested more of {product.name} than the {size.stock} available in this size.", 400)
       

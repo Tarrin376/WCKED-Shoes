@@ -11,6 +11,7 @@ import CartPriceSummary from "../../components/CartPriceSummary";
 import { TDiscount } from "../../@types/TDiscount";
 import CartPriceSummaryLoading from "../../loading/CartPriceSummaryLoading";
 import ErrorMessage from "../../components/ErrorMessage";
+import Button from "../../components/Button";
 
 interface Props {
   formRef: React.RefObject<HTMLFormElement>,
@@ -49,21 +50,19 @@ const PaymentInfo: React.FC<Props> = ({ formRef, selectedMethod, cartItems, sele
     });
   }
 
-  const handlePayment = async () => {
+  const handlePayment = async (): Promise<TErrorMessage | undefined> => {
     const validForm = isValidForm();
 
     if (!formRef || !formRef.current) {
-      return;
+      return { message: "Form has not been initialized yet.", status: 400 };
     }
 
     if (!validForm) {
-      setErrorMessage({ message: "One or more required fields are empty or invalid.", status: 400 });
-      return;
+      return { message: "One or more required fields are empty or invalid.", status: 400 };
     }
 
     if (!selectedMethod) {
-      setErrorMessage({ message: "Please select a delivery method.", status: 400 });
-      return;
+      return { message: "Please select a delivery method.", status: 400 };
     }
 
     try {
@@ -90,17 +89,18 @@ const PaymentInfo: React.FC<Props> = ({ formRef, selectedMethod, cartItems, sele
       });
       
       navigate(`/orders/${orderResponse.data.id}`);
+      window.scrollTo(0, 0);
     }
     catch (error: any) {
       const err = error as AxiosError;
       const data = err.response!.data;
       
       if (typeof data === "string") {
-        setErrorMessage({ message: data, status: err.response!.status });
+        return { message: data, status: err.response!.status };
       } else {
-        setErrorMessage({ message: `Sorry, but some of your items do not have enough stock to satisfy your order. 
-        Please reduce their quantities or remove them from your cart.`, status: err.response!.status });
         setNotEnoughStockItems(data as number[]);
+        return { message: `Sorry, but some of your items do not have enough stock to satisfy your order. 
+        Please reduce their quantities or remove them from your cart.`, status: err.response!.status };
       }
     }
   }
@@ -175,10 +175,14 @@ const PaymentInfo: React.FC<Props> = ({ formRef, selectedMethod, cartItems, sele
           /> : 
           <CartPriceSummaryLoading />}
           {errorMessage && <ErrorMessage error={errorMessage.message} styles="!mt-4" />}
-          <button className={`btn-primary w-full mt-6 h-[45px] text-base ${!cartItems.cart ? "disabled-btn-light dark:disabled-btn" : ""}`} 
-          type="button" onClick={handlePayment}>
-            Make Payment
-          </button>
+          <Button 
+            action={handlePayment}
+            completedText="Payment Confirmed"
+            defaultText="Make Payment"
+            loadingText="Processing Payment"
+            styles={`btn-primary w-full mt-6 h-[45px] text-base ${!cartItems.cart ? "disabled-btn-light dark:disabled-btn" : ""}`}
+            setErrorMessage={setErrorMessage}
+          />
         </div>
       </div>
     </div>

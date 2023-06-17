@@ -35,12 +35,18 @@ const OrderPlaced = () => {
       catch (error: any) {
         const errorMsg = getAPIErrorMessage(error as AxiosError);
         navigate("/error", { state: { error: errorMsg.message } });
+        window.scrollTo(0, 0);
       }
     })()
   }, [location.pathname, navigate]);
 
   if (!orderData) {
     return <OrderPlacedLoading />
+  }
+
+  const backToProductsPage = () => {
+    navigate("/");
+    window.scrollTo(0, 0);
   }
   
   return (
@@ -117,10 +123,7 @@ const OrderPlaced = () => {
           </div>
           <div className="flex justify-between items-center mb-2">
             <p className="text-[15px] text-side-text-light dark:text-side-text-gray">
-              {"Discount code: "}
-              <span className="text-bg-primary-btn-hover">
-                {orderData.order_details.discount.name}
-              </span>
+              Discount:
             </p>
             <p className="text-[15px] text-side-text-light dark:text-side-text-gray">
               {`- £${(subtotal * orderData.order_details.discount.percent_off).toFixed(2)}
@@ -137,7 +140,7 @@ const OrderPlaced = () => {
           </div>
         </div>
       </div>
-      <button className="btn-primary w-[180px] h-[45px] m-auto block mt-[70px]" onClick={() => navigate("/")}>
+      <button className="btn-primary w-[180px] h-[45px] m-auto block mt-[70px]" onClick={backToProductsPage}>
         Continue shopping
       </button>
     </div>

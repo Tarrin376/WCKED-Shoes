@@ -33,6 +33,8 @@ const MyOrders = () => {
     } else if (getOrders.errorMessage) {
       navigate("/error", { state: { error: getOrders.errorMessage.message } });
     }
+
+    window.scrollTo(0, 0);
   }, [getOrders.errorMessage, navigate, userContext?.email])
 
   return (

@@ -25,6 +25,8 @@ const useGetCart = (): TUseGetCart => {
         } else {
           navigate("/error", { state: { error: errorMsg.message } });
         }
+
+        window.scrollTo(0, 0);
       }
     })()
   }, [setCart, navigate, userContext]);

@@ -95,8 +95,7 @@ const SignUp: React.FC<Props> = (props) => {
         defaultText="Sign up"
         loadingText="Checking credentials"
         styles={`btn-primary w-full h-[45px] text-base
-        ${checkEmailAndPass(props.emailAddress, props.password) 
-        ? 'disabled-btn-light dark:disabled-btn' : ''}`}
+        ${checkEmailAndPass(props.emailAddress, props.password) ? 'disabled-btn-light dark:disabled-btn' : ''}`}
         setErrorMessage={setErrorMessage}
       />
       <p className="text-center mt-4 text-side-text-light dark:text-side-text-gray">

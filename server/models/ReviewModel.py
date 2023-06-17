@@ -18,10 +18,14 @@ def get_reviews_handler(product_id, sort, search, page, limit, asc, user_id):
     
     result = []
     for review in reviews.items:
-      if review in user.found_helpful:
-        result.append(review.as_dict(True, review.user_id == user_id))
-      else:
-        result.append(review.as_dict(False, review.user_id == user_id))
+      marked = False
+
+      for helpful in user.found_helpful:
+        if helpful.review_id == review.id:
+          marked = True
+          break
+      
+      result.append(review.as_dict(marked, review.user_id == user_id))
 
     return {
       "next": result,

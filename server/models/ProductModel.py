@@ -4,6 +4,8 @@ from sqlalchemy import exc
 from CustomExceptions.DBException import DBException
 import numpy as np
 import math
+import heapq
+from utils.PNode import PNode
 
 def create_product_handler(product):
   try:
@@ -176,7 +178,7 @@ def update_product_thumbnail_handler(product_id, thumbnail_url):
   
 def recommend_customer_bought_handler(product_id, limit):
   try:
-    N = len(settings.db.session.query(User).all())
+    N = settings.db.session.query(User).count()
     target_vector = get_product_vector(product_id, N)
     products = []
 
@@ -184,9 +186,7 @@ def recommend_customer_bought_handler(product_id, limit):
       return products
 
     all_products = settings.db.session.query(Product).all()
-
     for product in all_products:
-      vector = get_product_vector(product.id, N)
       if product.id != product_id:
         vector = get_product_vector(product.id, N)
         angle = get_vector_angle(target_vector, vector)
@@ -232,26 +232,32 @@ def get_product_vector(product_id, N):
     else:
       raise e
 
-def frequently_bought_together_handler(product_id, limit):
+def frequently_bought_handler(product_id, limit):
   try:
-    bought_with_products: list[BoughtTogether] = settings.db.session.query(BoughtTogether)\
+    bought_with: list[BoughtTogether] = settings.db.session.query(BoughtTogether)\
     .filter(BoughtTogether.product_id == product_id)\
     .all()
-    
-    products = []
-    for edge in bought_with_products:
-      products.append([edge.bought_with, edge.frequency])
-    
-    products.sort(key=lambda x: (x[1], x[0].rating), reverse=True)
-    res = [product.card_details() for product, _ in products[:min(len(products), limit)]]
 
+    nodes = [PNode(product) for product in bought_with]
+    top_k = []
+
+    for node in nodes:
+      if len(top_k) < limit:
+        heapq.heappush(top_k, node)
+        continue
+
+      if node.edge.frequency > top_k[0].edge.frequency:
+        heapq.heappop(top_k)
+        heapq.heappush(top_k, node)
+    
+    res = [node.edge.bought_with.card_details() for node in top_k]
     if len(res) == 0:
       return res
     
-    res.insert(0, bought_with_products[0].product.card_details())
+    res.insert(0, bought_with[0].product.card_details())
     return res
   except exc.SQLAlchemyError:
-    raise DBException("Failed to load product.", 500)
+    raise DBException("Failed to load frequently bought products.", 500)
   except Exception as e:
     if type(e) is not DBException:
       raise DBException("Something went wrong. Please contact our team if this continues.", 500)

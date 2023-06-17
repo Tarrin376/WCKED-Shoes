@@ -6,6 +6,7 @@ const Error: React.FC<{}> = () => {
 
   const navigateHome = () => {
     navigate("/");
+    window.scrollTo(0, 0);
   }
 
   return (

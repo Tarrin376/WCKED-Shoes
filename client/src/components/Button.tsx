@@ -16,6 +16,7 @@ interface Props {
 const Button: React.FC<Props> = ({ action, completedText, defaultText, loadingText, styles, children, setErrorMessage, whenComplete }) => {
   const btnRef = useRef<HTMLButtonElement>(null);
   const [btnText, setBtnText] = useState(defaultText);
+  const [disabled, setDisabled] = useState<boolean>(false);
 
   const handleAction = async () => {
     setBtnText(loadingText);
@@ -25,7 +26,12 @@ const Button: React.FC<Props> = ({ action, completedText, defaultText, loadingTe
         setBtnText(completedText);
       } else {
         setErrorMessage(error);
-        setTimeout(() => setErrorMessage(undefined), 3500);
+        setDisabled(true);
+
+        setTimeout(() => {
+          setErrorMessage(undefined);
+          setDisabled(false);
+        }, 3500);
         setBtnText(defaultText);
       }
     })()
@@ -53,8 +59,9 @@ const Button: React.FC<Props> = ({ action, completedText, defaultText, loadingTe
   }, [defaultText])
 
   return (
-    <button className={`${styles} ${btnText !== defaultText ? "pointer-events-none btn" : ""}`} 
-    ref={btnRef} onClick={handleAction}>
+    <button className={`${styles} ${btnText !== defaultText ? "pointer-events-none btn" : ""} 
+    ${disabled ? "pointer-events-none disabled-btn-light dark:disabled-btn" : ""}`} 
+    ref={btnRef} onClick={handleAction} type="button">
       <div className="flex items-center justify-center gap-3">
         {btnText === loadingText ? <img src={gear} className="w-[20px] h-[20px] mt-[1px]" alt="gear" />
         : children && btnText === defaultText && children}

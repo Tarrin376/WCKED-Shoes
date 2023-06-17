@@ -104,6 +104,7 @@ const Product: React.FC<{}> = () => {
       catch (error: any) {
         const errorMsg = getAPIErrorMessage(error as AxiosError);
         navigate("/error", { state: { error: errorMsg.message } });
+        window.scrollTo(0, 0);
       }
     })()
   }, [location.pathname, navigate, userContext?.email]);
@@ -168,18 +169,18 @@ const Product: React.FC<{}> = () => {
           </div>
           {product.sizes && <Sizes sizes={product.sizes} curSize={curSize} updateShoeSize={updateShoeSize} />}
           {errorMessage && <ErrorMessage error={errorMessage.message} styles="w-fit px-3" />}
-          <div className={`mt-7 flex ${windowSize <= 344 ? "flex-col-reverse gap-4" : "gap-5"}`}>
+          <div className={`mt-7 flex ${windowSize <= 360 ? "flex-col-reverse gap-4" : "gap-5"}`}>
             <Button 
               action={() => addToCart(product!.id, !curSize ? curSize : curSize.size, quantity)} 
               completedText={completedText} 
               defaultText={defaultText} 
               loadingText={loadingText} 
-              styles={`btn-primary h-[48px] ${windowSize <= 344 ? "w-full" : "w-[180px]"} flex items-center justify-center gap-4 px-4
+              styles={`btn-primary h-[48px] ${windowSize <= 360 ? "w-full" : "w-[180px]"} flex items-center justify-center gap-4 px-4
               ${!curSize || userContext?.email === "" ? 'disabled-btn-light dark:disabled-btn' : ''}`}
               setErrorMessage={setErrorMessage}>
               <img src={DarkCartIcon} className="w-[23px] h-[23px]" alt="" />
             </Button>
-            <div className={`flex ${windowSize <= 344 ? "w-full" : "w-[140px]"} h-[48px] border border-light-border dark:border-[#444444] 
+            <div className={`flex ${windowSize <= 360 ? "w-full" : "w-[140px]"} h-[48px] border border-light-border dark:border-[#444444] 
             shadow-light-component-shadow dark:shadow-gray-component-shadow btn items-center justify-between p-4 pb-[17px]`}>
               <button className="text-main-text-black dark:text-main-text-white font-bold text-[23px]" onClick={() => updateItemQuantity(-1)}>-</button>
               <p className="font-semibold text-[17px] text-main-text-black dark:text-main-text-white">{quantity}</p>

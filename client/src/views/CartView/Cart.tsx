@@ -13,6 +13,7 @@ const Cart: React.FC<{}> = () => {
 
   const goToCheckout = () => {
     navigate("/checkout");
+    window.scrollTo(0, 0);
   }
 
   if (!cartItems.cart) {

@@ -57,7 +57,7 @@ const WriteReview: React.FC<Props> = ({ product, setNext, sort, handleSort }) =>
         title: reviewTitle,
         review: review,
       });
-      
+
       setRating(5);
       setReviewTitle("");
       setReview("");

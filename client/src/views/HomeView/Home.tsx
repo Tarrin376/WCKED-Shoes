@@ -27,6 +27,7 @@ const Home: React.FC<{}> = () => {
   useEffect(() => {
     if (getProducts.errorMessage) {
       navigate("/error", { state: { error: getProducts.errorMessage.message } });
+      window.scrollTo(0, 0);
     }
   }, [getProducts.errorMessage, navigate])
 

@@ -53,7 +53,7 @@
     @apply font-semibold text-main-text-black dark:text-main-text-white cursor-pointer;
   }
   .secondary-btn {
-    @apply text-main-text-black bg-[#ececee] hover:bg-[#e6e6e7] dark:bg-[#292929] 
+    @apply text-main-text-white bg-main-text-black hover:bg-main-text-black-hover dark:bg-[#292929] 
     dark:dark:hover:bg-[#2c2c2c] dark:text-main-text-white rounded-md px-4 h-[37px] 
     btn dark:border dark:border-[#444444];
   }

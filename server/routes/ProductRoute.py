@@ -14,7 +14,7 @@ from models.ProductModel import \
   update_product_thumbnail_handler,\
   check_size_stock_handler,\
   recommend_customer_bought_handler,\
-  frequently_bought_together_handler
+  frequently_bought_handler
 
 products_blueprint = Blueprint("products", __name__)
 
@@ -40,7 +40,7 @@ def get_products():
   except ValueError:
     return Response("'page' and 'limit' must be numbers.", status=400, mimetype="text/plain")
   except Exception as e:
-    return Response(e.message, status=500, mimetype="text/plain")
+    return Response(str(e), status=500, mimetype="text/plain")
 
 @products_blueprint.route("/create", methods=["POST"])
 @authenticate_admin
@@ -54,7 +54,7 @@ def create_product():
   except DBException as e:
     return Response(e.message, status=e.status_code)
   except Exception as e:
-    return Response(e.message, status=500, mimetype="text/plain")
+    return Response(str(e), status=500, mimetype="text/plain")
 
 @products_blueprint.route("/<product_id>", methods=["GET"])
 @limiter.limit("2 per second")
@@ -65,7 +65,7 @@ def get_product(product_id):
   except DBException as e:
     return Response(e.message, status=e.status_code, mimetype="text/plain")
   except Exception as e:
-    return Response(e.message, status=500, mimetype="text/plain")
+    return Response(str(e), status=500, mimetype="text/plain")
 
 @products_blueprint.route("/<product_id>/<size>", methods=["GET"])
 @limiter.limit("2 per second")
@@ -76,7 +76,7 @@ def check_size_stock(product_id, size):
   except DBException as e:
     return Response(e.message, status=e.status_code, mimetype="text/plain")
   except Exception as e:
-    return Response(e.message, status=500, mimetype="text/plain")
+    return Response(str(e), status=500, mimetype="text/plain")
 
 @products_blueprint.route("/<product_id>", methods=["DELETE"])
 @authenticate_admin
@@ -88,7 +88,7 @@ def delete_product(product_id):
   except DBException as e:
     return Response(e.message, status=e.status_code, mimetype="text/plain")
   except Exception as e:
-    return Response(e.message, status=500, mimetype="text/plain")
+    return Response(str(e), status=500, mimetype="text/plain")
 
 @products_blueprint.route("/<product_id>/add-image", methods=["POST"])
 @authenticate_admin
@@ -102,7 +102,7 @@ def add_product_image(product_id):
   except DBException as e:
     return Response(e.message, status=e.status_code, mimetype="text/plain")
   except Exception as e:
-    return Response(e.message, status=500, mimetype="text/plain")
+    return Response(str(e), status=500, mimetype="text/plain")
 
 @products_blueprint.route("/<product_id>/update-thumbnail", methods=["PUT"])
 @authenticate_admin
@@ -119,7 +119,7 @@ def update_product_thumbnail(product_id):
   except DBException as e:
     return Response(e.message, status=e.status_code, mimetype="text/plain")
   except Exception as e:
-    return Response(e.message, status=500, mimetype="text/plain")
+    return Response(str(e), status=500, mimetype="text/plain")
   
 @products_blueprint.route("/<product_id>/customers-bought", methods=["GET"])
 @limiter.limit("2 per second")
@@ -135,18 +135,18 @@ def recommend_customer_bought(product_id):
   except ValueError:
     return Response("'limit' or 'product id' is not a number.", status=400, mimetype="text/plain")
   except Exception as e:
-    return Response(e.message, status=500, mimetype="text/plain")
+    return Response(str(e), status=500, mimetype="text/plain")
   
 @products_blueprint.route("/<product_id>/freq-bought", methods=["GET"])
 @limiter.limit("2 per second")
-def frequently_bought_together(product_id):
+def frequently_bought(product_id):
   limit = request.args.get("limit", "", str)
 
   if limit == "":
     return Response("Limit is not specified.", status=400, mimetype="text/plain")
 
   try:
-    freq_bought_products = cache(f"/{product_id}/freq-bought", frequently_bought_together_handler,
+    freq_bought_products = cache(f"/{product_id}/freq-bought", frequently_bought_handler,
       DEFAULT_EXPIRATION, (int)(product_id), (int)(limit))
     return Response(json.dumps(freq_bought_products), status=200, content_type="application/json")
   except DBException as e:
@@ -154,4 +154,4 @@ def frequently_bought_together(product_id):
   except ValueError:
     return Response("'limit' or 'product id' is not a number.", status=400, mimetype="text/plain")
   except Exception as e:
-    return Response(e.message, status=500, mimetype="text/plain")
+    return Response(str(e), status=500, mimetype="text/plain")

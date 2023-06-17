@@ -13,6 +13,7 @@ import { getAPIErrorMessage } from "../../utils/getAPIErrorMessage";
 import { AxiosError } from "axios";
 import ErrorMessage from "../../components/ErrorMessage";
 import { TErrorMessage } from "../../@types/TErrorMessage";
+import { UserContext } from "../../providers/UserProvider";
 
 interface Props {
   product: TProduct,
@@ -28,6 +29,7 @@ const FreqBoughtTogether: React.FC<Props> = ({ product, curSize, addToCart, styl
   const themeContext = useContext(ThemeContext);
   const [errorMessage, setErrorMessage] = useState<TErrorMessage>();
   const [outOfStockItems, setOutOfStockItems] = useState<number[]>([]);
+  const userContext = useContext(UserContext);
 
   const addItemsToCart = async (): Promise<TErrorMessage | undefined> => {
     try {
@@ -99,13 +101,11 @@ const FreqBoughtTogether: React.FC<Props> = ({ product, curSize, addToCart, styl
           </p>
           <Button 
             action={addItemsToCart} 
-            completedText={recommended.products && outOfStockItems.length === recommended.products.length ? 
-            getDefaultBtnText() : "Items added to bag"}
+            completedText="Items added to bag"
             defaultText={getDefaultBtnText()}
-            loadingText={"Adding items to bag"} 
-            styles={`btn-primary text-base w-[250px] h-[35px] 
-            ${recommended.products && outOfStockItems.length === recommended.products.length ? 
-            "!bg-bg-primary-btn" : ""} `}
+            loadingText="Adding items to bag"
+            styles={`btn-primary text-base w-[250px] h-[35px] ${!curSize || userContext?.email === "" ? 
+            'disabled-btn-light dark:disabled-btn' : ''}`}
             setErrorMessage={setErrorMessage}
           />
           {errorMessage && 

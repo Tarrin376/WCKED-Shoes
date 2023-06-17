@@ -123,6 +123,11 @@ const LoggedIn: React.FC<LoggedInMobileProps> = (props) => {
   const themeContext = useContext(ThemeContext);
   const navigate = useNavigate();
 
+  const goToOrders = () => {
+    navigate("/orders");
+    window.scrollTo(0, 0);
+  }
+
   return (
     <div className="flex flex-col justify-between h-full">
       <ul className="flex flex-col gap-2">
@@ -135,7 +140,7 @@ const LoggedIn: React.FC<LoggedInMobileProps> = (props) => {
           </div>
           <p className="text-main-text-black dark:text-main-text-white">View your bag</p>
         </li>
-        <li className="mobile-nav-item" onClick={() => props.closeSidebar(() => navigate("/orders"))}>
+        <li className="mobile-nav-item" onClick={() => props.closeSidebar(goToOrders)}>
           {themeContext?.darkMode ?
             <img src={DarkOrdersIcon} className="w-[28px] h-[28px] ml-5" alt="" /> 
             : <img src={LightOrdersIcon} className="w-[28px] h-[28px] ml-5" alt="" />}
