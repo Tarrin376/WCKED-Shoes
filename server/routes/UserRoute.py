@@ -136,7 +136,7 @@ def get_cart():
 
 @user_blueprint.route("/cart/<product_id>/<size>/<quantity>", methods=["POST"])
 @authenticate_user
-@limiter.limit("2 per second")
+@limiter.limit("3 per second")
 def add_to_cart(product_id, size, quantity):
   try:
     token = g.token
@@ -152,7 +152,7 @@ def add_to_cart(product_id, size, quantity):
   
 @user_blueprint.route("/cart/<product_id>/<size>/<quantity>", methods=["PUT", "DELETE"])
 @authenticate_user
-@limiter.limit("2 per second")
+@limiter.limit("3 per second")
 def update_item_quantity(product_id, size, quantity):
   try:
     token = g.token

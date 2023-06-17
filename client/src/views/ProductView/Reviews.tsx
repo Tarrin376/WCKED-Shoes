@@ -12,6 +12,8 @@ import Review from "./Review";
 import ErrorMessage from "../../components/ErrorMessage";
 import WriteReview from "./WriteReview";
 import { useWindowSize } from "../../hooks/useWindowSize";
+import { filterReviews } from "../../utils/filterReviews";
+import { FilterOptions } from "../../components/FilterOptions";
 
 interface Props {
   product: TProduct;
@@ -32,19 +34,28 @@ const Reviews: React.FC<Props> = ({ product }) => {
           <p className="text-side-text-light dark:text-side-text-gray mb-[3px]">{`Reviews (${product.num_reviews})`}</p>
           {userContext?.email !== "" && <Rating rating={product.rating} />}
         </div>
-        <select className={`px-4 !rounded-md light-component dark:gray-component sm:w-[190px] cursor-pointer h-[40px] !shadow-none max-sm:w-full`}
-        onChange={(e) => getReviews.handleSort(e.currentTarget.selectedIndex)} value={getReviews.sort.label}>
-          <OrderByOptions options={orderReviews} />
-        </select>
+        <div className="flex gap-3 flex-wrap">
+          <OrderByOptions 
+            options={orderReviews} 
+            handleSort={getReviews.handleSort} 
+            styles={`px-4 !rounded-md light-component dark:gray-component w-[180px] cursor-pointer 
+            h-[40px] !shadow-none max-sm:!w-full ${getReviews.loading ? "pointer-events-none" : ""}`}
+          />
+          <FilterOptions 
+            options={filterReviews} 
+            handleFilter={getReviews.handleFilter} 
+            styles={`px-4 !rounded-md light-component dark:gray-component w-[180px] cursor-pointer 
+            h-[40px] !shadow-none max-sm:!w-full ${getReviews.loading ? "pointer-events-none" : ""}`} 
+          />
+        </div>
         {userContext?.email !== "" ?
-        <div className="mt-4 h-[425px] overflow-y-scroll pr-5">
+        <div className="mt-5 h-[425px] overflow-y-scroll pr-5">
           <div className="flex flex-col gap-4">
             {getReviews.next.map((review, index) => {
               return (
                 <Review 
                   review={review} 
                   key={index}
-                  setNext={getReviews.setNext}
                 />
               )
             })}
@@ -68,12 +79,7 @@ const Reviews: React.FC<Props> = ({ product }) => {
           </p>
         </div>}
       </div>
-      <WriteReview 
-        product={product}
-        setNext={getReviews.setNext}
-        sort={getReviews.sort}
-        handleSort={getReviews.handleSort}
-      />
+      <WriteReview product={product} />
     </div>
   )
 };

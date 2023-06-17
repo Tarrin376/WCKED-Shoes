@@ -26,7 +26,7 @@ const ProductLoading: React.FC<{}> = () => {
           <div className="h-[48px] w-[180px] mt-7 loading-light dark:loading-dark"></div>
         </div>
       </div>
-      <div className="text-main-text-black dark:text-main-text-white text-[19px] mb-6 loading-light dark:loading-dark max-w-[300px] h-[27px] font-semibold"></div>
+      <div className="text-main-text-black dark:text-main-text-white text-[19px] mb-8 loading-light dark:loading-dark max-w-[300px] h-[27px] font-semibold"></div>
       <div className="mb-[14px] loading-light dark:loading-dark h-[17px] w-[97%]"></div>
       <div className="mb-[14px] loading-light dark:loading-dark h-[17px] w-[97%]"></div>
       <div className="mb-[14px] loading-light dark:loading-dark h-[17px] w-[95%]"></div>

@@ -43,11 +43,12 @@ const Home: React.FC<{}> = () => {
             Search
           </button>
         </div>
-        <select className={`px-4 !rounded-md light-component dark:gray-component cursor-pointer h-[50px] max-md:w-full md:w-fit 
-        ${getProducts.loading ? "disabled-btn-light dark:disabled-btn" : ""}`} 
-        onChange={(e) => getProducts.handleSort(e.currentTarget.selectedIndex)}>
-          <OrderByOptions options={orderProducts} />
-        </select>
+        <OrderByOptions 
+          options={orderProducts} 
+          handleSort={getProducts.handleSort} 
+          styles={`px-4 !rounded-md light-component dark:gray-component cursor-pointer h-[50px] 
+          max-md:w-full md:w-fit ${getProducts.loading ? "disabled-btn-light dark:disabled-btn" : ""}`}
+        />
       </div>
       <ProductCards 
         getProducts={getProducts} 

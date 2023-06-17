@@ -11,15 +11,15 @@ reviews_blueprint = Blueprint("reviews", __name__)
 @authenticate_user
 @limiter.limit("2 per second")
 def get_reviews(product_id):
-  sort = request.args.get("sort", "date-posted", str)
-  search = request.args.get("search", "", str)
+  sort = request.args.get("sort", "helpful-count", str)
+  filter = request.args.get("filter", "", str)
   page = request.args.get("page", "1", str)
   limit = request.args.get("limit", "4", str)
   asc = request.args.get("asc", "true", str)
   user_id = g.token["sub"]["id"]
 
   try:
-    response = get_reviews_handler(product_id, sort, search, int(page), int(limit), asc, user_id)
+    response = get_reviews_handler(product_id, sort, int(page), int(limit), asc, user_id, filter)
     return Response(json.dumps(response), status=200, content_type="application/json")
   except DBException as e:
     return Response(e.message, status=e.status_code, mimetype="text/plain")

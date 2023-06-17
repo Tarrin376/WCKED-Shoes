@@ -5,7 +5,6 @@ from datetime import datetime
 import settings
 
 order_status = {"Order Created", "Processing", "Shipped", "Delivered", "Cancelled"}
-filter_options = {"active", "arrived", "pending", "cancelled"}
 
 def format_order_items(order_id): 
   order_items = OrderItem.query.filter_by(order_id=order_id)\
@@ -44,9 +43,6 @@ def get_order_handler(id, user_id):
       raise e
   
 def get_orders_handler(user_id, search, page, limit, filter):
-  if filter not in filter_options:
-    raise DBException("Filter option provided is not supported.")
-
   try:
     orders = settings.db.session.query(Order)\
     .filter(Order.user_id == user_id)\
@@ -76,8 +72,7 @@ def get_orders_handler(user_id, search, page, limit, filter):
         "has_prev": orders.has_prev
       }
     }
-  except exc.SQLAlchemyError as e:
-    print(e)
+  except exc.SQLAlchemyError:
     raise DBException("Unable to load your orders. Try again.", 500)
   except KeyError:
     raise DBException("Invalid sort query parameter specified.", 400)

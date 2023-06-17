@@ -1,5 +1,5 @@
 
-export const orderFilters: {
+export const filterOrders: {
   [key: string]: string
 } = {
   "Orders": "active",

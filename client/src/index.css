@@ -53,9 +53,9 @@
     @apply font-semibold text-main-text-black dark:text-main-text-white cursor-pointer;
   }
   .secondary-btn {
-    @apply text-main-text-white bg-main-text-black hover:bg-main-text-black-hover dark:bg-[#292929] 
+    @apply text-main-text-white bg-main-text-black hover:bg-main-text-black-hover !border-main-text-black dark:bg-[#292929] 
     dark:dark:hover:bg-[#2c2c2c] dark:text-main-text-white rounded-md px-4 h-[37px] 
-    btn dark:border dark:border-[#444444];
+    btn dark:border dark:!border-[#444444];
   }
   .mobile-nav-item {
     @apply flex items-center gap-6 p-3 cursor-pointer hover:bg-[#f7f7f7] dark:hover:bg-[#212121] rounded-[8px] transition ease-out;

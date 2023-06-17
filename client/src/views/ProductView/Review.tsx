@@ -12,13 +12,13 @@ import { useWindowSize } from "../../hooks/useWindowSize";
 
 interface Props {
   review: TReview,
-  setNext: React.Dispatch<React.SetStateAction<TReview[]>>
 }
 
-const Review: React.FC<Props> = ({ review, setNext }) => {
+const Review: React.FC<Props> = ({ review }) => {
   const [helpfulCount, setHelpfulCount] = useState<number>(review.helpful_count);
   const [disabled, setDisabled] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<TErrorMessage>();
+  const [hide, setHide] = useState<boolean>(false);
   const windowSize = useWindowSize();
   
   const addHelpfulCount = async (): Promise<TErrorMessage | undefined> => {
@@ -37,7 +37,7 @@ const Review: React.FC<Props> = ({ review, setNext }) => {
   const deleteReview = async (): Promise<TErrorMessage | undefined> => {
     try {
       await axios.delete<string>(`/api/reviews/${review.id}`);
-      setNext((cur: TReview[]) => cur.filter((curReview: TReview) => curReview.id !== review.id));
+      setHide(true);
     }
     catch (error: any) {
       const errorMsg = getAPIErrorMessage(error as AxiosError);
@@ -54,9 +54,13 @@ const Review: React.FC<Props> = ({ review, setNext }) => {
     }
   }
 
+  if (hide) {
+    return <></>
+  }
+
   return (
     <div className="border-b border-b-light-border dark:border-b-main-gray-border pb-6">
-      <div className="flex max-md:flex-col md:items-center md:gap-4">
+      <div className="flex max-md:flex-col md:items-center md:gap-3">
         <h5 className="text-main-text-black dark:text-main-text-white font-semibold">{review.title}</h5>
         <p className="text-side-text-light dark:text-side-text-gray text-[15px]">{`Posted on ${convertDate(review.date_posted, true)}`}</p>
       </div>

@@ -3,20 +3,22 @@ import settings
 from sqlalchemy import exc
 from CustomExceptions.DBException import DBException
 
-def get_reviews_handler(product_id, sort, search, page, limit, asc, user_id):
+def get_reviews_handler(product_id, sort, page, limit, asc, user_id, filter):
   try:
     user: User = settings.db.session.query(User).filter(User.id == user_id).first()
-
     if user is None:
       raise DBException("User not found", 404)
     
-    reviews = settings.db.paginate(settings.db.session.query(Review)
-      .filter(Review.title.ilike('%' + search + '%'))
-      .filter(Review.product_id == product_id)
-      .order_by(Review.sort_by_params()[sort] if asc == "true" else Review.sort_by_params()[sort].desc()),
-      page=page, per_page=limit)
+    reviews = settings.db.session.query(Review)\
+      .filter(Review.product_id == product_id)\
+      .order_by(Review.sort_by_params()[sort] if asc == "true" else Review.sort_by_params()[sort].desc())
     
+    if filter == "verified": 
+      reviews = reviews.filter(Review.verified_purchase == True)
+
+    reviews = settings.db.paginate(reviews, page=page, per_page=limit)
     result = []
+
     for review in reviews.items:
       marked = False
 

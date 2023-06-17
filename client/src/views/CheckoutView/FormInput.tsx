@@ -48,11 +48,11 @@ const FormInput: React.FC<Props> = ({ label, styles, type, placeholder, optional
         </label>
         {showCardIcons && <CardImages styles="w-[25px] h-[25px]" />}
       </div>
-      {errorMessage && errorMessage.length > 0 && <p className="text-sm mb-[-5px] text-side-text-red">{errorMessage}</p>}
-      {discountText && discountText.length > 0 && <p className="text-sm mb-[-5px] text-green-light dark:text-green-dark">{discountText}</p>}
-      {discountError && discountError.length > 0 && <p className="text-sm mb-[-5px] text-side-text-red">{discountError}</p>}
+      {errorMessage && errorMessage.length > 0 && <p className="text-sm text-side-text-red">{errorMessage}</p>}
+      {discountText && discountText.length > 0 && <p className="text-sm text-green-light dark:text-green-dark">{discountText}</p>}
+      {discountError && discountError.length > 0 && <p className="text-sm text-side-text-red">{discountError}</p>}
       <input 
-        type={type} name={label} className={`text-box-light dark:text-box w-full mt-3 text-main-text-black dark:text-main-text-white
+        type={type} name={label} className={`text-box-light dark:text-box w-full mt-2 text-main-text-black dark:text-main-text-white
         ${errorMessage && errorMessage.length > 0 ? "text-box-error-focus" : ""}`} 
         placeholder={placeholder} value={value} onChange={handleChange} maxLength={maxLength}
       />

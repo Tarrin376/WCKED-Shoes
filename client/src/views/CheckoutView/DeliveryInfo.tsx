@@ -13,7 +13,7 @@ const DeliveryInfo: React.FC<Props> = ({ selectedCountry, setSelectedCountry }) 
       <div className="light-component dark:gray-component p-5 pt-3 flex gap-3 flex-col">
         <div className="flex gap-5 items-center max-md:flex-col max-md:gap-3">
           <div className="md:w-1/2 max-md:w-full">
-            <label className="block mb-3" htmlFor={"country/region"}>Country/region</label>
+            <label className="block mb-2" htmlFor={"country/region"}>Country/region</label>
             <CountryDropdown 
               selectedCountry={selectedCountry} 
               setSelectedCountry={setSelectedCountry} 

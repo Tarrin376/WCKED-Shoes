@@ -3,13 +3,13 @@ import { TOrderByOption } from "../@types/TOrderByOption";
 
 export const orderReviews: TOrderByOption<TReviewOptions>[] = [
   {
-    label: "Most recent",
-    orderBy: "date-posted",
+    label: "Most helpful",
+    orderBy: "helpful-count",
     order: "desc"
   },
   {
-    label: "Most helpful",
-    orderBy: "helpful-count",
+    label: "Most recent",
+    orderBy: "date-posted",
     order: "desc"
   }
 ]
