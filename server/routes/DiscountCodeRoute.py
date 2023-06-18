@@ -1,18 +1,18 @@
 from flask import Blueprint, Response, request
-from models.DiscountCodeModel import delete_discount_code_handler, create_discount_code_handler
+from models.DiscountCodeModel import expire_discount_code_handler, create_discount_code_handler
 from CustomExceptions.DBException import DBException 
 from middleware.Authentication import authenticate_admin
 from settings import limiter
 
 discount_code_blueprint = Blueprint("discount_code", __name__)
 
-@discount_code_blueprint.route("/<code_name>", methods=["DELETE"])
+@discount_code_blueprint.route("/<code_name>", methods=["PUT"])
 @authenticate_admin
 @limiter.limit("2 per second")
-def delete_discount_code(code_name):
+def expire_discount_code(code_name):
   try:
-    delete_discount_code_handler(code_name)
-    return Response(f"Succesfully deleted discount code: {code_name}.", status=200, mimetype="text/plain")
+    expire_discount_code_handler(code_name)
+    return Response(f"Succesfully set discount code validity to expired.", status=200, mimetype="text/plain")
   except DBException as e:
     return Response(e.message, e.status_code, mimetype="text/plain")
   except Exception as e:

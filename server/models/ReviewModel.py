@@ -98,9 +98,12 @@ def mark_helpful_handler(id, user_id):
       review.found_helpful.append(helpful)
       settings.db.session.commit()
 
+      review.helpful_count += 1
+      settings.db.session.commit()
+
       user.found_helpful.append(helpful)
       settings.db.session.commit()
-      return len(review.found_helpful)
+      return review.helpful_count
     else:
       raise DBException("You have already marked this review as helpful.", 409)
   except exc.SQLAlchemyError:

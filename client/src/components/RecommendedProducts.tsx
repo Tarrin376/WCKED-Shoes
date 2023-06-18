@@ -27,7 +27,7 @@ const RecommendedProducts: React.FC<Props> = ({ title, URL, styles, column }) =>
   return (
     <RecommendedWrapper title={title} styles={styles} column={column}>
       <div className={column ? "flex flex-col items-center gap-[22px] w-[320px] h-[calc(100vh-140px)] overflow-y-scroll" : 
-      "overflow-x-scroll whitespace-nowrap pb-5 w-full"}>
+      "overflow-x-scroll whitespace-nowrap pb-6 w-full"}>
         {recommended.products ? recommended.products.map((product: TProductCard, index: number) => {
           return (
             <ProductCard 
@@ -37,7 +37,7 @@ const RecommendedProducts: React.FC<Props> = ({ title, URL, styles, column }) =>
               smallSize={true}
             />
           )
-        }) :
+        }) : 
         new Array(loadingProductCount).fill(0).map((_, index: number) => {
           return (
             <ProductCardLoading 

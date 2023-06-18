@@ -97,6 +97,7 @@ def send_code_handler(email, code):
       raise e
 
 def send_email(email, code):
+  # Setup logic for sending verification code emails to users
   pass
 
 def verify_email_handler(email, code):
@@ -308,14 +309,10 @@ def checkout_handler(user_id, order_details):
     discount_code: DiscountCode = settings.db.session.query(DiscountCode).filter_by(name=order_details["discount"]).first()
     shipping: DeliveryMethod = settings.db.session.query(DeliveryMethod).filter_by(name=order_details["delivery_method"]).first()
 
-    if user is None: 
-      raise DBException("User does not exist.", 404)
-    
-    if shipping is None:
-      raise DBException("Delivery method does not exist.", 404)
-    
-    if discount_code is None and order_details["discount"] != "":
-      raise DBException("Discount code does not exist.", 404)
+    if user is None: raise DBException("User does not exist.", 404)
+    if shipping is None: raise DBException("Delivery method does not exist.", 404)
+    if discount_code is None and order_details["discount"] != "": raise DBException("Discount code does not exist.", 404)
+    if discount_code.is_expired: raise DBException("Discount code used is expired.", 400)
     
     cart_items = CartItem.query.filter_by(user_id=user_id)\
       .join(Size, CartItem.item_id == Size.id)\
@@ -334,8 +331,7 @@ def checkout_handler(user_id, order_details):
     if len(out_of_stock_items) > 0:
       settings.db.session.delete(order)
       settings.db.session.commit()
-      raise DBException(f"""Sorry, but some of your items do not have enough stock to satisfy your order. 
-        Please reduce their quantities or remove them from your cart.""", 400, data=out_of_stock_items)
+      raise DBException(f"Sorry, but some of your items do not have enough stock to satisfy your order.", 400, data=out_of_stock_items)
     
     if order.discount:
       discount_used: DiscountJunction = DiscountJunction(user_id=user_id, discount_name=order.discount)
@@ -347,22 +343,6 @@ def checkout_handler(user_id, order_details):
     raise DBException("Unable to checkout. Try again.", 500)
   except KeyError:
     raise DBException("Required information missing from order details.", 400)
-  except Exception as e:
-    if type(e) is not DBException:
-      raise DBException("Something went wrong. Please contact our team if this continues.", 500)
-    else:
-      raise e
-
-def remove_discount_handler(user_id):
-  try:
-    user: User = User.query.filter_by(user_id=user_id).first()
-    if user is None: 
-      raise DBException("User does not exist.", 404)
-    
-    user.discount_code = None
-    settings.db.session.commit()
-  except exc.SQLAlchemyError:
-    raise DBException("Unable to remove discount. Try again.", 500)
   except Exception as e:
     if type(e) is not DBException:
       raise DBException("Something went wrong. Please contact our team if this continues.", 500)
@@ -460,6 +440,8 @@ def apply_discount_handler(code_name, user_id):
 
     if discount_code is None: raise DBException("Discount code does not exist.", 404)
     if discount_used is not None: raise DBException("You have already used this discount code in a different order.", 400)
+    if discount_code.is_expired: raise DBException("This discount code has expired.", 400)
+
     return discount_code.as_dict()
   except exc.SQLAlchemyError:
     raise DBException("Failed to get discount code.", 500)

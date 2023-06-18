@@ -48,8 +48,6 @@ const Product: React.FC<{}> = () => {
   const navigate = useNavigate();
   const windowSize = useWindowSize();
 
-  const customerBoughtEndpoint = `/api/products/${product?.id}/customers-bought?limit=${20}`
-
   const updateShoeSize = (size?: TSize) => {
     if (size) {
       setCurSize(size);
@@ -115,13 +113,13 @@ const Product: React.FC<{}> = () => {
 
   return (
     <>
-      <h4 className="text-side-text-light dark:text-side-text-gray text-[18px] mb-[70px] max-md:text-[17px]">
+      <h4 className="text-side-text-light dark:text-side-text-gray text-[18px] mb-[40px] max-md:text-[17px]">
         {"Home > Products > "}
         <span className="text-main-text-black dark:text-main-text-white">
           {product.name}
         </span>
       </h4>
-      <div className="flex max-xl:flex-col w-full gap-7 mb-[62px]">
+      <div className="flex max-xl:flex-col w-full gap-7 mb-[40px]">
         <div className="flex max-2xl:flex-col-reverse items-center xl:w-2/3 max-xl:w-full gap-6">
           <div className="max-2xl:whitespace-nowrap max-2xl:w-full 2xl:h-[540px] 2xl:w-[205px] 
           max-2xl:h-fit max-2xl:pb-4 2xl:overflow-y-scroll max-2xl:overflow-x-scroll max-2xl:overflow-y-hidden max-lg:hidden">
@@ -197,7 +195,7 @@ const Product: React.FC<{}> = () => {
       />
       <RecommendedProducts 
         title="Customers who bought this item also bought" 
-        URL={customerBoughtEndpoint}
+        URL={`/api/products/${product?.id}/customers-bought?limit=${20}`}
       />
       <Reviews product={product} />
     </>

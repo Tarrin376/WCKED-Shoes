@@ -52,7 +52,7 @@ class Review(settings.db.Model):
       "title": self.title,
       "review": self.review,
       "date_posted": f"{self.date_posted}",
-      "helpful_count": len(self.found_helpful),
+      "helpful_count": self.helpful_count,
       "is_marked": is_marked,
       "verified_purchase": self.verified_purchase,
       "is_own_review": is_own_review
@@ -235,11 +235,12 @@ class DiscountCode(settings.db.Model):
   name = settings.db.Column(settings.db.String(50), nullable=False, primary_key=True)
   percent_off = settings.db.Column(settings.db.Float, nullable=False)
   users = settings.db.relationship('DiscountJunction', backref='discount_code', lazy=True, cascade="all, delete")
+  is_expired = settings.db.Column(settings.db.Boolean, default=False)
 
   def as_dict(self):
     return {
       "name": self.name,
-      "percent_off": self.percent_off
+      "percent_off": self.percent_off,
     }
 
 class ProductBoughtVector(settings.db.Model):

@@ -5,12 +5,17 @@ import { useNavigate } from "react-router-dom";
 import { UserContext } from "../providers/UserProvider";
 import { TUseGetCart } from "../@types/TUseGetCart";
 import { getAPIErrorMessage } from "../utils/getAPIErrorMessage";
+import { TErrorMessage } from "../@types/TErrorMessage";
+import { useNavigateErrorPage } from "./useNavigateErrorPage";
 
 const useGetCart = (): TUseGetCart => {
   const [cart, setCart] = useState<TCartItem[]>();
   const subtotal = cart ? cart.reduce((sum, cartItem: TCartItem) => sum + cartItem.price * cartItem.quantity, 0) : 0;
   const navigate = useNavigate();
   const userContext = useContext(UserContext);
+  const [errorMessage, setErrorMessage] = useState<TErrorMessage>();
+  
+  useNavigateErrorPage(errorMessage);
 
   useEffect(() => {
     (async () => {
@@ -20,13 +25,7 @@ const useGetCart = (): TUseGetCart => {
       }
       catch (error: any) {
         const errorMsg = getAPIErrorMessage(error as AxiosError);
-        if (!userContext?.email) {
-          navigate("/");
-        } else {
-          navigate("/error", { state: { error: errorMsg.message } });
-        }
-
-        window.scrollTo(0, 0);
+        setErrorMessage(errorMsg);
       }
     })()
   }, [setCart, navigate, userContext]);

@@ -4,15 +4,14 @@ import { useState } from "react";
 import Button from "../../components/Button";
 import { TErrorMessage } from "../../@types/TErrorMessage";
 import { getAPIErrorMessage } from "../../utils/getAPIErrorMessage";
-import { TOrderData } from "../../@types/TOrderData";
 
 interface Props {
   orderID: number,
-  setNext: React.Dispatch<React.SetStateAction<TOrderData[]>>,
-  setDisabled: React.Dispatch<React.SetStateAction<boolean>>
+  setDisabled: React.Dispatch<React.SetStateAction<boolean>>,
+  setHide: React.Dispatch<React.SetStateAction<boolean>>,
 }
 
-const CancelOrder: React.FC<Props> = ({ orderID, setNext, setDisabled }) => {
+const CancelOrder: React.FC<Props> = ({ orderID, setDisabled, setHide }) => {
   const [errorMessage, setErrorMessage] = useState<TErrorMessage>();
 
   const cancelOrder = async (): Promise<TErrorMessage | undefined> => {
@@ -27,7 +26,7 @@ const CancelOrder: React.FC<Props> = ({ orderID, setNext, setDisabled }) => {
   }
 
   const filterOutOrder = () => {
-    setNext((cur: TOrderData[]) => cur.filter((order: TOrderData) => order.order_details.id !== orderID));
+    setHide(true);
     setDisabled(false);
   }
 

@@ -9,7 +9,6 @@ from models.UserModel import \
   get_cart_handler,\
   update_item_quantity_handler,\
   checkout_handler,\
-  remove_discount_handler,\
   cancel_order_handler,\
   buy_it_again_handler,\
   apply_discount_handler
@@ -156,7 +155,7 @@ def add_to_cart(product_id, size, quantity):
 def update_item_quantity(product_id, size, quantity):
   try:
     token = g.token
-    updated_cart = update_item_quantity_handler(token["sub"]["id"], product_id, size, int(quantity))
+    updated_cart = update_item_quantity_handler(token["sub"]["id"], product_id, size, (int)(quantity))
     resp = Response(json.dumps(updated_cart), status=200, mimetype="application/json")
     return resp
   except DBException as e:
@@ -179,19 +178,6 @@ def checkout():
   except DBException as e:
     if e.data is not None: return Response(json.dumps(e.data), status=e.status_code, mimetype="application/json")
     else: return Response(e.message, status=e.status_code, mimetype="text/plain")
-  except Exception as e:
-    return Response(str(e), status=500, mimetype="text/plain")
-
-@user_blueprint.route("/discount/<code_name>", methods=["DELETE"])
-@authenticate_user
-@limiter.limit("2 per second")
-def remove_discount():
-  try:
-    token = g.token
-    remove_discount_handler(token["sub"]["id"])
-    return Response(f"Discount code was removed.")
-  except DBException as e:
-    return Response(e.message, status=e.status_code, mimetype="text/plain")
   except Exception as e:
     return Response(str(e), status=500, mimetype="text/plain")
 

@@ -3,13 +3,16 @@ from CustomExceptions.DBException import DBException
 import settings
 from sqlalchemy import exc
 
-def delete_discount_code_handler(code_name):
+def expire_discount_code_handler(code_name):
   try:
     discount_code: DiscountCode = DiscountCode.query.filter_by(name=code_name).first()
     if discount_code is None: 
-      raise DBException("Discount code does not exist.")
+      raise DBException("Discount code does not exist.", 404)
     
-    settings.db.session.delete(discount_code)
+    if discount_code.is_expired:
+      raise DBException("Discount code is already expired.", 400)
+    
+    discount_code.is_expired = True
     settings.db.session.commit()
   except exc.SQLAlchemyError:
     raise DBException("Failed to delete discount code.", 500)

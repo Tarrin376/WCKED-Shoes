@@ -7,7 +7,6 @@ import OrderedItem from "./OrderedItem";
 import { TOrderedItem } from "../../@types/TOrderedItem";
 import AirplaneIconDark from "../../assets/airplane.png";
 import AirplaneIconLight from "../../assets/airplane-light.png";
-import { useNavigate } from "react-router-dom";
 import CardImages from "../../components/CardImages";
 import { ThemeContext } from "../../providers/ThemeProvider";
 import { TOrderData } from "../../@types/TOrderData";
@@ -15,6 +14,8 @@ import { getShortDateFormatRange } from "../../utils/getShortDateFormatRange";
 import OrderPlacedLoading from "../../loading/OrderPlacedLoading";
 import { getAPIErrorMessage } from "../../utils/getAPIErrorMessage";
 import { useWindowSize } from "../../hooks/useWindowSize";
+import { TErrorMessage } from "../../@types/TErrorMessage";
+import { useNavigateErrorPage } from "../../hooks/useNavigateErrorPage";
 
 const OrderPlaced = () => {
   const location = useLocation();
@@ -22,8 +23,8 @@ const OrderPlaced = () => {
   const themeContext = useContext(ThemeContext);
   const [orderData, setOrderData] = useState<TOrderData>();
   const subtotal = orderData ? orderData.items.reduce((sum, item) => sum + item.price * item.quantity, 0) : 0;
-
-  const navigate = useNavigate();
+  const [errorMessage, setErrorMessage] = useState<TErrorMessage>();
+  const navigate = useNavigateErrorPage(errorMessage);
   const windowSize = useWindowSize();
 
   useEffect(() => {
@@ -34,11 +35,10 @@ const OrderPlaced = () => {
       }
       catch (error: any) {
         const errorMsg = getAPIErrorMessage(error as AxiosError);
-        navigate("/error", { state: { error: errorMsg.message } });
-        window.scrollTo(0, 0);
+        setErrorMessage(errorMsg);
       }
     })()
-  }, [location.pathname, navigate]);
+  }, [location.pathname]);
 
   if (!orderData) {
     return <OrderPlacedLoading />

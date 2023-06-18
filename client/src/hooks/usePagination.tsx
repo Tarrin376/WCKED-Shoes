@@ -99,7 +99,6 @@ export const usePagination = <T1, T2>(orderBy: readonly TOrderByOption<T2>[], li
     handleSearch,
     handleFilter,
     resetState,
-    setNext
   }
 
   return data;

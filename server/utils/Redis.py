@@ -28,7 +28,7 @@ def cache(url, handler, expires, *args):
         redis_client.setex(key, expires, json.dumps(data))
     else:
       data = handler(*args)
-  except Exception:
+  except redis.exceptions:
     data = handler(*args)
   
   return data

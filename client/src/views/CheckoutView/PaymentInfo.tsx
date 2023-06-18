@@ -39,7 +39,7 @@ const PaymentInfo: React.FC<Props> = ({ formRef, selectedMethod, cartItems, sele
 
     return Object.entries(fieldValues).every((pair) => {
       const name = pair[0] as string;
-      const value = pair[1] as string;
+      const value = (pair[1] as string).trim();
 
       if (name === "country/region" || name === "deliveryMethod" || name === "Apply discount code") {
         return true;
@@ -68,18 +68,18 @@ const PaymentInfo: React.FC<Props> = ({ formRef, selectedMethod, cartItems, sele
     try {
       const formData = new FormData(formRef.current);
       const fieldValues = Object.fromEntries(formData.entries());
-      const cardNum = fieldValues["Credit card number"] as string;
+      const cardNum = (fieldValues["Credit card number"] as string).trim();
 
       const orderResponse = await axios.post<{ id: string }>("/api/users/cart/checkout", {
-        mobile_number: fieldValues["Mobile number"] as string,
-        delivery_instructions: fieldValues["Delivery instructions"] as string,
-        address_line1: fieldValues["Address line 1"] as string,
-        address_line2: fieldValues["Address line 2"] as string,
-        town_or_city: fieldValues["Town/City"] as string,
-        postcode: fieldValues["Postcode"] as string,
-        first_name: fieldValues["First name"] as string,
-        last_name: fieldValues["Last name"] as string,
-        email_address: fieldValues["Email address"] as string,
+        mobile_number: (fieldValues["Mobile number"] as string).trim(),
+        delivery_instructions: (fieldValues["Delivery instructions"] as string).trim(),
+        address_line1: (fieldValues["Address line 1"] as string).trim(),
+        address_line2: (fieldValues["Address line 2"] as string).trim(),
+        town_or_city: (fieldValues["Town/City"] as string).trim(),
+        postcode: (fieldValues["Postcode"] as string).trim(),
+        first_name: (fieldValues["First name"] as string).trim(),
+        last_name: (fieldValues["Last name"] as string).trim(),
+        email_address: (fieldValues["Email address"] as string).trim(),
         date_ordered: new Date().toDateString(),
         subtotal: cartItems.subtotal,
         card_end: cardNum.substring(cardNum.length - 4),
@@ -105,31 +105,29 @@ const PaymentInfo: React.FC<Props> = ({ formRef, selectedMethod, cartItems, sele
     }
   }
 
-  const applyDiscountCode = async () => {
+  const applyDiscountCode = async (): Promise<TErrorMessage | undefined> => {
     if (!formRef || !formRef.current) {
       return;
     }
 
     const formData = new FormData(formRef.current);
     const fieldValues = Object.fromEntries(formData.entries());
-    const code = fieldValues["Apply discount code"] as string;
+    const code = (fieldValues["Apply discount code"] as string).trim();
 
     if (code.length === 0) {
       setDiscountText("");
-      setDiscountError({ message: "Please enter a valid code", status: 400 });
-      return;
+      return { message: "Please enter a valid code", status: 400 };
     }
 
     try {
       const response = await axios.get<TDiscount>(`/api/users/apply-discount/${code}`);
       setDiscount(response.data);
       setDiscountText(`You saved ${response.data.percent_off * 100}% off your order!`);
-      setDiscountError(undefined);
     }
     catch (error: any) {
       setDiscountText("");
       const errorMsg = getAPIErrorMessage(error as AxiosError);
-      setDiscountError(errorMsg);
+      return errorMsg;
     }
   }
 
@@ -161,9 +159,14 @@ const PaymentInfo: React.FC<Props> = ({ formRef, selectedMethod, cartItems, sele
             discountError={discountError ? discountError.message : ""}
             maxLength={50}
           />
-          <button type="button" className="secondary-btn h-[35px] mt-1 w-fit" onClick={applyDiscountCode}>
-            Apply discount
-          </button>
+          <Button
+            action={applyDiscountCode}
+            completedText="Applied discount"
+            defaultText="Apply discount"
+            loadingText="Applying discount"
+            styles="secondary-btn h-[35px] mt-1 w-fit"
+            setErrorMessage={setDiscountError}
+          />
         </div>
         <div>
           {cartItems.cart ? 

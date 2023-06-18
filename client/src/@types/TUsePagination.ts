@@ -14,5 +14,4 @@ export type TUsePagination<T1, T2> = {
   handleSearch: () => void,
   handleFilter: (filter: string) => void,
   resetState: () => void,
-  setNext: React.Dispatch<React.SetStateAction<T1[]>>
 }

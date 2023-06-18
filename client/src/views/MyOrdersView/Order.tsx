@@ -17,7 +17,6 @@ import { TOrderStatus } from "../../@types/TOrderStatus";
 
 interface Props {
   orderData: TOrderData,
-  setNext: React.Dispatch<React.SetStateAction<TOrderData[]>>,
   disabled: boolean,
   setDisabled: React.Dispatch<React.SetStateAction<boolean>>
 }
@@ -31,12 +30,13 @@ const orderStatusColours: {
   "Delivered": "text-in-stock-green-text dark:text-in-stock-green-text-dark",
 }
 
-const Order: React.FC<Props> = ({ orderData, setNext, disabled, setDisabled }) => {
+const Order: React.FC<Props> = ({ orderData, disabled, setDisabled }) => {
   const themeContext = useContext(ThemeContext);
   const [orderDetailsPopUp, setOrderDetailsPopUp] = useState(false);
   const [orderHistoryPopUp, setOrderHistoryPopUp] = useState(false);
   const [cancelOrderPopUp, setCancelOrderPopUp] = useState(false);
   const [deliveryInstructions, setDeliveryInstructions] = useState(false);
+  const [hide, setHide] = useState<boolean>(false);
   const windowSize = useWindowSize();
 
   const togglePopUps = (orderDetails: boolean, orderHistory: boolean, cancelOrder: boolean) => {
@@ -47,6 +47,10 @@ const Order: React.FC<Props> = ({ orderData, setNext, disabled, setDisabled }) =
 
   const toggleDeliveryInstructions = () => {
     setDeliveryInstructions((cur) => !cur);
+  }
+
+  if (hide) {
+    return <></>
   }
 
   return (
@@ -148,11 +152,13 @@ const Order: React.FC<Props> = ({ orderData, setNext, disabled, setDisabled }) =
               Cancel Order
             </button>}
             <div className="flex gap-3 max-xs:flex-col">
-              <button className="secondary-btn flex-grow" onClick={() => togglePopUps(!orderDetailsPopUp, false, false)}>
+              <button className={`secondary-btn flex-grow ${disabled ? "pointer-events-none disabled-btn-light dark:disabled-btn" : ""}`} 
+              onClick={() => togglePopUps(!orderDetailsPopUp, false, false)}>
                 {orderDetailsPopUp ? "Hide order details" : "Show order details"}
               </button>
               {!orderData.order_details.cancelled && 
-              <button className="secondary-btn flex-grow" onClick={() => togglePopUps(false, !orderHistoryPopUp, false)}>
+              <button className={`secondary-btn flex-grow ${disabled ? "pointer-events-none disabled-btn-light dark:disabled-btn" : ""}`} 
+              onClick={() => togglePopUps(false, !orderHistoryPopUp, false)}>
                 {orderHistoryPopUp ? "Hide order activity" : "View order activity"}
               </button>}
             </div>
@@ -161,8 +167,8 @@ const Order: React.FC<Props> = ({ orderData, setNext, disabled, setDisabled }) =
           {cancelOrderPopUp && 
           <CancelOrder 
             orderID={orderData.order_details.id} 
-            setNext={setNext}
             setDisabled={setDisabled}
+            setHide={setHide}
           />}
           {orderHistoryPopUp &&
           <OrderActivity 

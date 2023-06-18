@@ -1,4 +1,4 @@
-import { useRef, useEffect, useContext, useState } from "react";
+import { useRef, useState } from "react";
 import { TOrderData } from "../../@types/TOrderData";
 import Order from "./Order";
 import { usePagination } from "../../hooks/usePagination";
@@ -11,10 +11,9 @@ import RecommendedProducts from "../../components/RecommendedProducts";
 import { useScrollPosition } from "../../hooks/useScrollPosition";
 import { getPageSize } from "../../utils/getPageSize";
 import OrderCardsLoading from "../../loading/OrderCardsLoading";
-import { useNavigate } from "react-router-dom";
-import { UserContext } from "../../providers/UserProvider";
 import { useGetRecommended } from "../../hooks/useGetRecommended";
 import { FilterOptions } from "../../components/FilterOptions";
+import { useNavigateErrorPage } from "../../hooks/useNavigateErrorPage";
 
 const MyOrders = () => {
   const searchRef = useRef<HTMLInputElement>(null);
@@ -22,21 +21,11 @@ const MyOrders = () => {
   const windowSize = useWindowSize();
   const scrollPosition = useScrollPosition();
   const pageSize = getPageSize(windowSize);
-  const navigate = useNavigate();
-  const userContext = useContext(UserContext);
   const buyItAgainURL = `/api/users/buy-it-again?limit=${20}`;
   const recommended = useGetRecommended(buyItAgainURL);
   const [disabled, setDisabled] = useState<boolean>(false);
-
-  useEffect(() => {
-    if (!userContext?.email) {
-      navigate("/");
-    } else if (getOrders.errorMessage) {
-      navigate("/error", { state: { error: getOrders.errorMessage.message } });
-    }
-
-    window.scrollTo(0, 0);
-  }, [getOrders.errorMessage, navigate, userContext?.email])
+  
+  useNavigateErrorPage(getOrders.errorMessage);
 
   return (
     <>
@@ -77,15 +66,14 @@ const MyOrders = () => {
         </div>
       </div>
       <div className="flex gap-[40px] justify-between mt-[40px] max-2xl:flex-col pb-1 relative 2xl:min-h-[100vh]">
-        <div className={`flex gap-[25px] flex-col max-2xl:w-full ${scrollPosition.top >= 345 && windowSize >= 1518 && recommended.products &&
-        recommended.products.length > 0 ? 
+        <div className={`flex gap-[25px] flex-col max-2xl:w-full ${scrollPosition.top >= 345 && windowSize >= 1518 
+        && recommended.products && recommended.products.length > 0 ? 
           "w-[calc(100%-320px-40px)]" : "flex-grow"}`}>
           {getOrders.next.map((order: TOrderData) => {
             return (
               <Order 
                 orderData={order} 
                 key={order.order_details.id}
-                setNext={getOrders.setNext}
                 disabled={disabled}
                 setDisabled={setDisabled}
               />

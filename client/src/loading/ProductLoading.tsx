@@ -2,9 +2,9 @@
 const ProductLoading: React.FC<{}> = () => {
   return (
     <>
-      <div className="mb-[70px] h-7 max-w-[350px] loading-light dark:loading-dark">
+      <div className="mb-[40px] h-7 max-w-[350px] loading-light dark:loading-dark">
       </div>
-      <div className="flex max-xl:flex-col w-full gap-7 mb-[62px]">
+      <div className="flex max-xl:flex-col w-full gap-7 mb-[40px]">
         <div className="flex max-2xl:flex-col-reverse items-center xl:w-2/3 max-xl:w-full gap-6">
           <ProductImagesLoading />
           <div className="w-full h-[540px] max-xl:h-[600px] max-lg:h-[400px] max-md:h-[300px] max-sm:h-[245px] bg-center bg-cover rounded-[8px] relative 
