@@ -34,9 +34,9 @@ export interface LoggedInProps {
 }
 
 const Layout: React.FC<{}> = () => {
-  const [loginPopUp, setLoginPopUp] = useState(false);
-  const [signUpPopUp, setSignUpPopUp] = useState(false);
-  const [verifyEmailPopUp, setVerifyEmailPopUp] = useState(false);
+  const [loginPopUp, setLoginPopUp] = useState<boolean>(false);
+  const [signUpPopUp, setSignUpPopUp] = useState<boolean>(false);
+  const [verifyEmailPopUp, setVerifyEmailPopUp] = useState<boolean>(false);
   const [emailAddress, setEmailAddress] = useState("");
   const [password, setPassword] = useState("");
   const [searchQuery, setSearchQuery] = useState("");

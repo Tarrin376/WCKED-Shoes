@@ -1,18 +1,20 @@
 import { orderProducts } from "../../utils/orderProducts";
 import ProductCards from "../../components/ProductCards";
-import { useRef } from "react";
+import { useRef, useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import { TProductOptions } from "../../@types/TProductOptions";
 import OrderByOptions from "../../components/OrderByOptions";
 import { usePagination } from "../../hooks/usePagination";
 import { TProductCard } from "../../@types/TProductCard";
 import { useNavigateErrorPage } from "../../hooks/useNavigateErrorPage";
+import Welcome from "../../components/Welcome";
 
 const productsLimit = 10;
 
 const Home: React.FC<{}> = () => {
   const location = useLocation();
   const searchRef = useRef<HTMLInputElement>(null);
+  const [welcomePopUp, setWelcomePopUp] = useState<boolean>(false);
 
   const getProducts = usePagination<TProductCard, TProductOptions>(
     orderProducts, 
@@ -22,6 +24,10 @@ const Home: React.FC<{}> = () => {
     "", 
     searchRef
   );
+
+  useEffect(() => {
+    setWelcomePopUp(true);
+  }, [])
 
   useNavigateErrorPage(getProducts.errorMessage);
 
@@ -48,6 +54,7 @@ const Home: React.FC<{}> = () => {
         getProducts={getProducts} 
         productsLimit={productsLimit} 
       />
+      {welcomePopUp && <Welcome setWelcomePopUp={setWelcomePopUp} />}
     </>
   )
 };

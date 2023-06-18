@@ -72,7 +72,7 @@ const NavSidebar: React.FC<NavSidebarProps> = ({ props, navSidebar, toggleNavSid
         dark:shadow-gray-component-shadow shadow-light-component-shadow ${navSidebar ? "left-0" : "left-[-280px]"} dark:bg-nav-dark bg-nav-light`}>
           <div>
             <div className="flex items-center justify-between">
-              <h1 className="text-2xl text-main-text-black dark:text-main-text-white">The Shoes</h1>
+              <h1 className="text-2xl text-main-text-black dark:text-main-text-white">Wicked shoes</h1>
               <button onClick={toggleNavSidebar}>
                 <img src={themeContext?.darkMode ? DarkClose : LightClose} className="w-[22px] h-[22px]" alt="" />
               </button>

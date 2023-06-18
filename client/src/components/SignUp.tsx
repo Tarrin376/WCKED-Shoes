@@ -66,8 +66,7 @@ const SignUp: React.FC<Props> = (props) => {
   }, [props.password])
 
   return (
-    <PopUpWrapper setPopUp={props.setSignUpPopUp}>
-      <Star />
+    <PopUpWrapper setPopUp={props.setSignUpPopUp} star={true}>
       <h1 className="text-main-text-black dark:text-main-text-white text-2xl mb-2">Sign up</h1>
       <p className="mb-6 text-side-text-light dark:text-side-text-gray">Create an account and start saving thousands of design hours with a 30-day free trial</p>
       {errorMessage && <ErrorMessage error={errorMessage.message} styles="mb-6" />}

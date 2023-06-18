@@ -24,7 +24,7 @@ const DesktopNavbar: React.FC<NavbarProps> = (props) => {
       <div className="flex items-center gap-[70px]">
         <Link to="/">
           <button className="text-2xl text-main-text-black dark:text-main-text-white cursor-pointer hover:!text-bg-primary-btn-hover btn">
-            The Shoes
+            Wicked shoes
           </button>
         </Link>
         <form onSubmit={props.searchHandler}>

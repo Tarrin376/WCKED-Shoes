@@ -1,33 +1,19 @@
 from settings import redis_client
 import json
-import socket
 import redis
 
-DEFAULT_EXPIRATION = 420
+DEFAULT_EXPIRATION = 300
 
-def get_ip():
-  try:
-    hostname = socket.gethostname()
-    ip_address = socket.gethostbyname(hostname)
-    return ip_address
-  except socket.error:
-    return None
-
-def cache(url, handler, expires, *args):
-  ip = get_ip()
+def cache(key, handler, expires, *args):
   data = None
 
   try:
-    if ip:
-      key = f"{ip}@{url}"
-      found = redis_client.get(key)
-      if found:
-        data = json.loads(found)
-      else: 
-        data = handler(*args)
-        redis_client.setex(key, expires, json.dumps(data))
-    else:
+    found = redis_client.get(key)
+    if found:
+      data = json.loads(found)
+    else: 
       data = handler(*args)
+      redis_client.setex(key, expires, json.dumps(data))
   except redis.RedisError:
     data = handler(*args)
   

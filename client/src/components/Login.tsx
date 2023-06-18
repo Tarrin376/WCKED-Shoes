@@ -66,8 +66,7 @@ const Login: React.FC<Props> = (props) => {
   }
 
   return (
-    <PopUpWrapper setPopUp={props.setLoginPopUp}>
-      <Star />
+    <PopUpWrapper setPopUp={props.setLoginPopUp} star={true}>
       <h1 className="text-main-text-black dark:text-main-text-white text-2xl mb-6">Log in</h1>
       {errorMessage && <ErrorMessage error={errorMessage.message} styles="mb-6" />}
       <div className="flex flex-col gap-2 mb-4">
