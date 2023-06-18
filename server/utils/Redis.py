@@ -3,7 +3,7 @@ import json
 import socket
 import redis
 
-DEFAULT_EXPIRATION = 300
+DEFAULT_EXPIRATION = 420
 
 def get_ip():
   try:
@@ -28,7 +28,7 @@ def cache(url, handler, expires, *args):
         redis_client.setex(key, expires, json.dumps(data))
     else:
       data = handler(*args)
-  except redis.exceptions:
+  except redis.RedisError:
     data = handler(*args)
   
   return data

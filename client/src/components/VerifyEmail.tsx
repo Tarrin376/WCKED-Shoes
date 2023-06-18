@@ -1,10 +1,11 @@
 import PopUpWrapper from "../wrappers/PopUpWrapper";
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import axios, { AxiosError } from "axios";
 import ErrorMessage from "./ErrorMessage";
 import { TErrorMessage } from "../@types/TErrorMessage";
 import { getAPIErrorMessage } from "../utils/getAPIErrorMessage";
 import Button from "./Button";
+import { useSearchInputRefs } from "../hooks/useSearchInputRefs";
 
 interface Props {
   setVerifyEmailPopUp: React.Dispatch<React.SetStateAction<boolean>>,
@@ -14,7 +15,10 @@ interface Props {
 }
 
 const VerifyEmail: React.FC<Props> = ({ setVerifyEmailPopUp, setSignUpPopUp, emailAddress, password }) => {
-  const [code, setCode] = useState<string[]>(['', '', '', '']);
+  const inputs = 4;
+  const inputRefs = useSearchInputRefs(inputs);
+  const inputIndex = useRef<number>(-1);
+
   const [errorMessage, setErrorMessage] = useState<TErrorMessage>();
   const [secretCode, setSecretCode] = useState<string>("");
   const [toggleSecretCode, setToggleSecretCode] = useState<boolean>(false);
@@ -31,12 +35,32 @@ const VerifyEmail: React.FC<Props> = ({ setVerifyEmailPopUp, setSignUpPopUp, ema
     }
   }, [emailAddress]);
 
+  const handleKeyDown = useCallback((e: KeyboardEvent) => {
+    const key = e.key;
+
+    if (/^\d$/.test(key) && inputIndex.current < inputRefs.current.length) {
+      inputIndex.current = Math.min(inputRefs.current.length - 1, inputIndex.current + 1);
+      inputRefs.current[inputIndex.current].current!.value = key;
+    } else if (key === "Backspace" && inputIndex.current >= 0) {
+      inputRefs.current[inputIndex.current].current!.value = "";
+      inputIndex.current = Math.max(-1, inputIndex.current - 1);
+    }
+  }, [inputRefs]);
+
   useEffect(() => {
     sendVerificationCode();
   }, [sendVerificationCode]);
 
+  useEffect(() => {
+    document.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+    }
+  }, [handleKeyDown]);
+
   const checkVerificationCode = async (): Promise<TErrorMessage | undefined> => {
-    const codeInput = code.join('');
+    const codeInput = inputRefs.current.map((input) => input.current!.value).join("");
 
     try {
       await axios.post<string>("/api/users/verify-email", { 
@@ -80,14 +104,6 @@ const VerifyEmail: React.FC<Props> = ({ setVerifyEmailPopUp, setSignUpPopUp, ema
     setVerifyEmailPopUp(false);
   }
 
-  const updateCode = (e: React.ChangeEvent<HTMLInputElement>, index: number) => {
-    const val = e.target.value;
-    const num = val !== "" ? parseInt(val) : 0;
-    if (!isNaN(num) || val === "") {
-      setCode([...code.slice(0, index), val, ...code.slice(index + 1)]);
-    }
-  }
-
   return (
     <PopUpWrapper setPopUp={setVerifyEmailPopUp}>
       <h4 className="text-2xl mb-2">Please check your email</h4>
@@ -111,11 +127,15 @@ const VerifyEmail: React.FC<Props> = ({ setVerifyEmailPopUp, setSignUpPopUp, ema
         </p>}
       </>}
       <div className="flex justify-between">
-        {code.map((item, index) => {
+        {inputRefs.current.map((ref: React.RefObject<HTMLInputElement>, index: number) => {
           return (
-            <input type="text" key={index} value={item} maxLength={1} 
-            className="w-[85px] h-[85px] text-[45px] text-center text-box-light dark:text-box" 
-            onChange={(e) => updateCode(e, index)} />
+            <input 
+              type="text" 
+              key={index}
+              maxLength={1} 
+              ref={ref}
+              className="w-[85px] h-[85px] text-[45px] text-center text-box-light dark:text-box pointer-events-none"
+            />
           )
         })}
       </div>
