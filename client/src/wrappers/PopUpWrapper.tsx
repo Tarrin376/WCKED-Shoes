@@ -23,7 +23,7 @@ const PopUpWrapper: React.FC<Props> = ({ children, setPopUp, popUpStyles, title,
   return (
     <div className="bg-[#0f0f0fb4] dark:bg-[#0c0c0cde] fixed top-0 left-0 w-[100vw] h-[100vh] flex items-center justify-center">
       <OutsideClickHandler onOutsideClick={closePopUp}>
-        <div className={`max-w-[430px] w-[90vw] m-auto light-component shadow-pop-up-light-shadow dark:gray-component 
+        <div className={`max-w-[430px] w-[90vw] max-h-[90vh] m-auto light-component shadow-pop-up-light-shadow dark:gray-component 
         dark:shadow-pop-up-shadow p-5 pt-4 ${popUpStyles}`}>
           <div className="mb-5 flex justify-between gap-4">
             {!star ? <h1 className="text-main-text-black dark:text-main-text-white text-[26px]">

@@ -4,6 +4,7 @@ import RedisIcon from "../assets/redis.png";
 import PostgreSQLIcon from "../assets/postgresql.png";
 import PythonIcon from "../assets/python.png";
 import TailwindIcon from "../assets/tailwind.png";
+import { useRef } from "react";
 
 interface Props {
   setWelcomePopUp: React.Dispatch<React.SetStateAction<boolean>>
@@ -24,7 +25,7 @@ const technologies: TTechnologyItem[] = [
 
 const mainFeatures = [
   "Uses Amazon's item-to-item collaborative filtering algorithm for product recommendations.",
-  "Uses my own algorithm for recommending 'frequently bought together' products.",
+  "Recommends 'frequently bought together' products to users.",
   "Recommends products to buy again using my own algorithm",
   "Uses Redis to cache API calls and improve page load times.",
   "Allows users to monitor the progress of their orders and gives authorised personel the ability to update these orders through the backend API.",
@@ -38,8 +39,19 @@ const validDiscountCodes = ["WELCOME", "WICKED", "FRESH"];
 const expiredDiscountCodes = ["HELLO", "ORANGE", "SHOES"]
 
 const Welcome: React.FC<Props> = ({ setWelcomePopUp }) => {
+  const dontShowAgain = useRef(false);
+
+  const toggleDontShowAgain = () => {
+    dontShowAgain.current = !dontShowAgain.current;
+  }
+
+  const continueToProject = () => {
+    localStorage.setItem("dont-show-again", `${dontShowAgain.current}`);
+    setWelcomePopUp(false);
+  }
+
   return (
-    <PopUpWrapper setPopUp={setWelcomePopUp} popUpStyles="max-w-[600px] max-h-[700px] overflow-y-scroll" title="Welcome to Wicked Shoes!">
+    <PopUpWrapper setPopUp={setWelcomePopUp} popUpStyles="max-w-[600px] overflow-y-scroll" title="Welcome!">
       <h3 className="text-side-text-red mb-2">*Important, please read!</h3>
       <p className="text-side-text-light dark:text-side-text-gray mb-3">
         This is a side project, not a legitimate e-commerce site. 
@@ -87,9 +99,16 @@ const Welcome: React.FC<Props> = ({ setWelcomePopUp }) => {
             )
         })}
       </ul>
-      <p className="text-[18px] text-center font-semibold">
+      <p className="text-[18px] font-semibold mb-1">
         Thank you very much for taking your time to read this!
       </p>
+      <div>
+        <input type="checkbox" id="remember-me" onChange={toggleDontShowAgain} />
+        <label htmlFor="remember-me" className="ml-2 font-semibold text-[15px]">Don't show this again</label>
+      </div>
+      <button className="signup-btn mt-3 m-auto block" onClick={continueToProject}>
+        Continue
+      </button>
     </PopUpWrapper>
   );
 };

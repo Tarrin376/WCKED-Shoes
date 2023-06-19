@@ -40,9 +40,11 @@ const Order: React.FC<Props> = ({ orderData, disabled, setDisabled }) => {
   const windowSize = useWindowSize();
 
   const togglePopUps = (orderDetails: boolean, orderHistory: boolean, cancelOrder: boolean) => {
-    setOrderDetailsPopUp(orderDetails);
-    setOrderHistoryPopUp(orderHistory);
-    setCancelOrderPopUp(cancelOrder);
+    if (!disabled) {
+      setOrderDetailsPopUp(orderDetails);
+      setOrderHistoryPopUp(orderHistory);
+      setCancelOrderPopUp(cancelOrder);
+    }
   }
 
   const toggleDeliveryInstructions = () => {
@@ -192,7 +194,7 @@ const DiscountText: React.FC<{ name: string, percentOff: number, cancelled: bool
   const windowSize = useWindowSize();
   return (
     <p className={`text-[15px] text-side-text-light dark:text-main-text-white ${windowSize <= 618 ? "mt-[6px]" : ""}`}>
-      {"Discount code: "}
+      {"Discount: "}
       <span className={`text-bg-primary-btn-hover ${cancelled && name !== "N/A" ? "line-through" : ""}`}>
         {`${name}${name !== "N/A" ? 
         ` (${(percentOff * 100).toFixed(2)}% off)` : ""}`}

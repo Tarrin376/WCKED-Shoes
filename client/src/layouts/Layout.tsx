@@ -98,7 +98,7 @@ const Layout: React.FC<{}> = () => {
     <>
       <div className="dark:bg-nav-dark bg-nav-light flex justify-center items-center h-[90px] px-3 border-b border-light-border 
       dark:border-main-gray-border">
-        {windowSize >= 1076 ? 
+        {windowSize >= 1120 ? 
         <DesktopNavbar 
           searchQuery={searchQuery}
           openLoginPopUp={openLoginPopUp}

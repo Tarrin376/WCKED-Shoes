@@ -10,7 +10,11 @@ import redis
 load_dotenv()
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['SQLALCHEMY_DATABASE_URI']
+
+prodURI = os.environ['DATABASE_URI']
+prodURI = prodURI.replace("postgres://", "postgresql://")
+
+app.config['SQLALCHEMY_DATABASE_URI'] = prodURI
 app.config['SECRET_KEY'] = os.environ['APP_SECRET_KEY']
 
 db = SQLAlchemy()

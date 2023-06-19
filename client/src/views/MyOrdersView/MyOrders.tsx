@@ -27,6 +27,12 @@ const MyOrders = () => {
   
   useNavigateErrorPage(getOrders.errorMessage);
 
+  const handleOrderFilter = (filter: string) => {
+    if (!disabled) {
+      getOrders.handleFilter(filterOrders[filter])
+    }
+  }
+
   return (
     <>
       <h4 className="text-side-text-light dark:text-side-text-gray text-[18px] mb-[50px] max-md:text-[17px]">
@@ -45,7 +51,7 @@ const MyOrders = () => {
           {Object.keys(filterOrders).map((filter: string, index: number) => {
             return (
               <li className={`nav-item pb-[14px] ${filterOrders[filter] === getOrders.filter ? `border-b-[3px] border-b-main-text-black 
-              dark:border-b-main-text-white` : ""}`} key={index} onClick={() => getOrders.handleFilter(filterOrders[filter])}>
+              dark:border-b-main-text-white` : ""}`} key={index} onClick={() => handleOrderFilter(filter)}>
                 {filter}
               </li>
             )
@@ -59,7 +65,7 @@ const MyOrders = () => {
         />}
         <div className="flex gap-4 2xl:w-[320px] max-2xl:max-w-[420px] max-md:max-w-full max-sm:flex-col">
           <input type="text" className="text-box-light dark:text-box sm:w-[60%] h-[39px]" placeholder="Search by order ID" ref={searchRef} />
-          <button className={`secondary-btn sm:w-[40%] h-[39px] ${getOrders.loading ? "dark:disabled-btn disabled-btn-light" : ""}`} 
+          <button className={`secondary-btn sm:w-[40%] h-[39px] ${getOrders.loading || disabled ? "dark:disabled-btn disabled-btn-light" : ""}`} 
           onClick={getOrders.handleSearch}>
             Find Order
           </button>
@@ -80,7 +86,7 @@ const MyOrders = () => {
             )
           })}
           {getOrders.loading && <OrderCardsLoading />}
-          {!getOrders.reachedLimit && !getOrders.loading && 
+          {!getOrders.reachedLimit && !getOrders.loading && !disabled &&
           <button className="m-auto block secondary-btn h-[40px]" 
           onClick={getOrders.handlePage}>
             Show More Orders

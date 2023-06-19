@@ -26,7 +26,9 @@ const Home: React.FC<{}> = () => {
   );
 
   useEffect(() => {
-    setWelcomePopUp(true);
+    if (localStorage.getItem("dont-show-again") !== "true") {
+      setWelcomePopUp(true);
+    }
   }, [])
 
   useNavigateErrorPage(getProducts.errorMessage);

@@ -27,7 +27,7 @@ const Reviews: React.FC<Props> = ({ product }) => {
   const windowSize = useWindowSize();
 
   return (
-    <div className="flex max-xl:flex-col gap-6 max-xl:h-fit max-2xl:h-[630px] pb-2 mt-[20px]">
+    <div className="flex max-xl:flex-col gap-8 max-xl:h-fit max-2xl:h-[630px] pb-2 mt-[20px]">
       <div className="light-component dark:gray-component p-5 pt-3 2xl:w-[65%] max-2xl:w-[60%] max-xl:w-full relative">
         <h4 className="text-[21px] mb-3 font-semibold">Rating & Reviews</h4>
         <div className={`flex mb-5 ${windowSize <= 315 ? "flex-col gap-1" : "items-center gap-4"}`}>

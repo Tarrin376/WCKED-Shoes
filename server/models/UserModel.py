@@ -312,7 +312,7 @@ def checkout_handler(user_id, order_details):
     if user is None: raise DBException("User does not exist.", 404)
     if shipping is None: raise DBException("Delivery method does not exist.", 404)
     if discount_code is None and order_details["discount"] != "": raise DBException("Discount code does not exist.", 404)
-    if discount_code.is_expired: raise DBException("Discount code used is expired.", 400)
+    if discount_code and discount_code.is_expired: raise DBException("Discount code used is expired.", 400)
     
     cart_items = CartItem.query.filter_by(user_id=user_id)\
       .join(Size, CartItem.item_id == Size.id)\
@@ -345,6 +345,7 @@ def checkout_handler(user_id, order_details):
     raise DBException("Required information missing from order details.", 400)
   except Exception as e:
     if type(e) is not DBException:
+      print(e)
       raise DBException("Something went wrong. Please contact our team if this continues.", 500)
     else:
       raise e

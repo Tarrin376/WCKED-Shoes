@@ -27,7 +27,7 @@ const ProductDetails: React.FC<Props> = ({ product }) => {
                 {method.name}
               </p>
               <p className="text-[15px] text-side-text-light dark:text-side-text-gray">
-                {method.estimated_lower_days === method.estimated_higher_days ? "Overnight" : 
+                {method.estimated_lower_days === 0 && method.estimated_higher_days === 0 ? "Today" : 
                 `${method.estimated_lower_days} - ${method.estimated_higher_days} Business Days`}
               </p>
               <p className="font-semibold text-in-stock-green-text mt-[2px] dark:text-in-stock-green-text-dark">
