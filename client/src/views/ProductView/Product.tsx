@@ -63,6 +63,7 @@ const Product: React.FC<{}> = () => {
   }
 
   const addToCart = async (productId: number, size: string | undefined, qty: number): Promise<TErrorMessage | undefined> => {
+    console.log("hello");
     if (size === undefined) {
       return { message: "Please select a size", status: 400 };
     }
