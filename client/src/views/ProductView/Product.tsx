@@ -68,7 +68,7 @@ const Product: React.FC<{}> = () => {
     }
 
     try {
-      const response = await axios.post<TUser>(`${process.env.REACT_APP_API_URL}/api/users/cart/${productId}/${size}/${qty}`);
+      const response = await axios.post<TUser>(`${process.env.REACT_APP_API_URL}/api/users/cart/${productId}/${size}/${qty}`, { withCredentials: true });
       userContext?.setUserData((cur) => {
         return {
           ...cur,

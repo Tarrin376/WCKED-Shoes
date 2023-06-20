@@ -26,7 +26,7 @@ const CartItem: React.FC<Props> = ({ cartItem, setCart, disabled, setDisabled })
   const removeFromCart = async () => {
     try {
       setDisabled(true);
-      const removeResponse = await axios.delete<{user_data: TUser, cart: TCartItem[]}>(removeURL);
+      const removeResponse = await axios.delete<{user_data: TUser, cart: TCartItem[]}>(removeURL, { withCredentials: true });
       setCart(removeResponse.data.cart);
     }
     catch (error: any) {
@@ -42,7 +42,7 @@ const CartItem: React.FC<Props> = ({ cartItem, setCart, disabled, setDisabled })
     try {
       setDisabled(true);
       const change = parseInt(e.target.value) - cartItem.quantity;
-      const updateResponse = await axios.put<{ user_data: TUser, cart: TCartItem[], valid: boolean }>(updateURL + change);
+      const updateResponse = await axios.put<{ user_data: TUser, cart: TCartItem[], valid: boolean }>(updateURL + change, { withCredentials: true });
       setCart(updateResponse.data.cart);
       setErrorMessage(undefined);
     }

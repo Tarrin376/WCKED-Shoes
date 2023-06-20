@@ -86,7 +86,7 @@ const PaymentInfo: React.FC<Props> = ({ formRef, selectedMethod, cartItems, sele
         country: selectedCountry,
         delivery_method: selectedMethod!.name,
         discount: discount.name
-      });
+      }, { withCredentials: true });
       
       navigate(`/orders/${orderResponse.data.id}`);
       window.scrollTo(0, 0);
@@ -120,7 +120,7 @@ const PaymentInfo: React.FC<Props> = ({ formRef, selectedMethod, cartItems, sele
     }
 
     try {
-      const response = await axios.get<TDiscount>(`${process.env.REACT_APP_API_URL}/api/users/apply-discount/${code}`);
+      const response = await axios.get<TDiscount>(`${process.env.REACT_APP_API_URL}/api/users/apply-discount/${code}`, { withCredentials: true });
       setDiscount(response.data);
       setDiscountText(`You saved ${response.data.percent_off * 100}% off your order!`);
     }

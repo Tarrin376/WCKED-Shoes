@@ -17,7 +17,7 @@ const CancelOrder: React.FC<Props> = ({ orderID, setDisabled, setHide }) => {
   const cancelOrder = async (): Promise<TErrorMessage | undefined> => {
     try {
       setDisabled(true);
-      await axios.delete<string>(`${process.env.REACT_APP_API_URL}/api/users/cancel-order/${orderID}`);
+      await axios.delete<string>(`${process.env.REACT_APP_API_URL}/api/users/cancel-order/${orderID}`, { withCredentials: true });
     }
     catch (error: any) {
       const errorMsg = getAPIErrorMessage(error as AxiosError);

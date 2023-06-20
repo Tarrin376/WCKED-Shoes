@@ -23,7 +23,7 @@ const Review: React.FC<Props> = ({ review }) => {
   
   const addHelpfulCount = async (): Promise<TErrorMessage | undefined> => {
     try {
-      const countResponse = await axios.put<string>(`${process.env.REACT_APP_API_URL}/api/reviews/${review.id}/helpful`);
+      const countResponse = await axios.put<string>(`${process.env.REACT_APP_API_URL}/api/reviews/${review.id}/helpful`, { withCredentials: true });
       setHelpfulCount(parseInt(countResponse.data));
       review.is_marked = true;
       setDisabled(true);
@@ -36,7 +36,7 @@ const Review: React.FC<Props> = ({ review }) => {
 
   const deleteReview = async (): Promise<TErrorMessage | undefined> => {
     try {
-      await axios.delete<string>(`${process.env.REACT_APP_API_URL}/api/reviews/${review.id}`);
+      await axios.delete<string>(`${process.env.REACT_APP_API_URL}/api/reviews/${review.id}`, { withCredentials: true });
       setHide(true);
     }
     catch (error: any) {

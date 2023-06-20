@@ -22,6 +22,7 @@ const Home: React.FC<{}> = () => {
     `${process.env.REACT_APP_API_URL}/api/products`, 
     location.state || "", 
     "", 
+    false,
     searchRef
   );
 

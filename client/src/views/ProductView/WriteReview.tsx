@@ -50,7 +50,7 @@ const WriteReview: React.FC<Props> = ({ product }) => {
         rating: rating,
         title: reviewTitle,
         review: review,
-      });
+      }, { withCredentials: true });
 
       setRating(5);
       setReviewTitle("");

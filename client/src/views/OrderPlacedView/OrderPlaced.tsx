@@ -30,7 +30,7 @@ const OrderPlaced = () => {
   useEffect(() => {
     (async () => {
       try {
-        const orderResponse = await axios.get<TOrderData>(`${process.env.REACT_APP_API_URL}/api${location.pathname}`);
+        const orderResponse = await axios.get<TOrderData>(`${process.env.REACT_APP_API_URL}/api${location.pathname}`, { withCredentials: true });
         setOrderData(orderResponse.data);
       }
       catch (error: any) {

@@ -17,7 +17,7 @@ import { useNavigateErrorPage } from "../../hooks/useNavigateErrorPage";
 
 const MyOrders = () => {
   const searchRef = useRef<HTMLInputElement>(null);
-  const getOrders = usePagination<TOrderData, TOrderOptions>(orderOrders, 3, `${process.env.REACT_APP_API_URL}/api/orders`, "", "active", searchRef);
+  const getOrders = usePagination<TOrderData, TOrderOptions>(orderOrders, 3, `${process.env.REACT_APP_API_URL}/api/orders`, "", "active", true, searchRef);
   const windowSize = useWindowSize();
   const scrollPosition = useScrollPosition();
   const pageSize = getPageSize(windowSize);
