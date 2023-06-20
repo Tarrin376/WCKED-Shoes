@@ -136,7 +136,7 @@ def get_cart():
 @user_blueprint.route("/cart/<product_id>", methods=["POST"])
 @authenticate_user
 @limiter.limit("3 per second")
-def add_to_cart(product_id, size, quantity):
+def add_to_cart(product_id):
   try:
     size = request.json.get("size")
     quantity = request.json.get("quantity")

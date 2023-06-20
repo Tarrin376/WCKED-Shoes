@@ -72,6 +72,7 @@ const Product: React.FC<{}> = () => {
         size: size,
         quantity: qty
       }, { withCredentials: true });
+      
       userContext?.setUserData((cur) => {
         return {
           ...cur,
