@@ -46,7 +46,7 @@ const WriteReview: React.FC<Props> = ({ product }) => {
     }
 
     try {
-      await axios.post<TReview>(`/api/reviews/${product.id}`, {
+      await axios.post<TReview>(`${process.env.REACT_APP_API_URL}/api/reviews/${product.id}`, {
         rating: rating,
         title: reviewTitle,
         review: review,

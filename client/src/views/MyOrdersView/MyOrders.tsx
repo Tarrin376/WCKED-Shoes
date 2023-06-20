@@ -17,11 +17,11 @@ import { useNavigateErrorPage } from "../../hooks/useNavigateErrorPage";
 
 const MyOrders = () => {
   const searchRef = useRef<HTMLInputElement>(null);
-  const getOrders = usePagination<TOrderData, TOrderOptions>(orderOrders, 3, "/api/orders", "", "active", searchRef);
+  const getOrders = usePagination<TOrderData, TOrderOptions>(orderOrders, 3, `${process.env.REACT_APP_API_URL}/api/orders`, "", "active", searchRef);
   const windowSize = useWindowSize();
   const scrollPosition = useScrollPosition();
   const pageSize = getPageSize(windowSize);
-  const buyItAgainURL = `/api/users/buy-it-again?limit=${20}`;
+  const buyItAgainURL = `${process.env.REACT_APP_API_URL}/api/users/buy-it-again?limit=${20}`;
   const recommended = useGetRecommended(buyItAgainURL);
   const [disabled, setDisabled] = useState<boolean>(false);
   

@@ -25,7 +25,7 @@ const VerifyEmail: React.FC<Props> = ({ setVerifyEmailPopUp, setSignUpPopUp, ema
 
   const sendVerificationCode = useCallback(async () => {
     try {
-      const verificationCode = await axios.post<string>("/api/users/send-code", { email: emailAddress });
+      const verificationCode = await axios.post<string>(`${process.env.REACT_APP_API_URL}/api/users/send-code`, { email: emailAddress });
       setSecretCode(verificationCode.data);
       setErrorMessage(undefined);
     }
@@ -63,7 +63,7 @@ const VerifyEmail: React.FC<Props> = ({ setVerifyEmailPopUp, setSignUpPopUp, ema
     const codeInput = inputRefs.current.map((input) => input.current!.value).join("");
 
     try {
-      await axios.post<string>("/api/users/verify-email", { 
+      await axios.post<string>(`${process.env.REACT_APP_API_URL}/api/users/verify-email`, { 
         code: codeInput,
         email: emailAddress 
       });
@@ -78,7 +78,7 @@ const VerifyEmail: React.FC<Props> = ({ setVerifyEmailPopUp, setSignUpPopUp, ema
 
   const createAccount = async (): Promise<TErrorMessage | undefined> => {
     try {
-      await axios.post<string>("/api/users/register", {
+      await axios.post<string>(`${process.env.REACT_APP_API_URL}/api/users/register`, {
         email: emailAddress,
         password: password
       });

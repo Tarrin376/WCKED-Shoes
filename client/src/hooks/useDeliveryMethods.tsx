@@ -14,7 +14,7 @@ export const useDeliveryMethods = (): {
   useEffect(() => {
     (async () => {
       try {
-        const response = await axios.get<TDeliveryMethod[]>("/api/delivery-methods");
+        const response = await axios.get<TDeliveryMethod[]>(`${process.env.REACT_APP_API_URL}/api/delivery-methods`);
         setMethods(response.data);
       }
       catch (error: any) {

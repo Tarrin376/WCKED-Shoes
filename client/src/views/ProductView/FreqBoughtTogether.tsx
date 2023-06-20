@@ -23,7 +23,7 @@ interface Props {
 }
 
 const FreqBoughtTogether: React.FC<Props> = ({ product, curSize, addToCart, styles }) => {
-  const recommended = useGetRecommended(`/api/products/${product.id}/freq-bought?limit=${2}`);
+  const recommended = useGetRecommended(`${process.env.REACT_APP_API_URL}/api/products/${product.id}/freq-bought?limit=${2}`);
   const [totalPrice, setTotalPrice] = useState<number>(product.price);
   const [checkedItems, setCheckedItems] = useState<Readonly<TCheckedItem[]>>([]);
   const themeContext = useContext(ThemeContext);

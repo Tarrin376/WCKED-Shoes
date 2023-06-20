@@ -18,8 +18,8 @@ interface Props {
 export const quantityLimit = 10;
 
 const CartItem: React.FC<Props> = ({ cartItem, setCart, disabled, setDisabled }) => {
-  const removeURL = `/api/users/cart/${cartItem.product_id}/${cartItem.curSize.size}/${-cartItem.quantity}`;
-  const updateURL = `/api/users/cart/${cartItem.product_id}/${cartItem.curSize.size}/`;
+  const removeURL = `${process.env.REACT_APP_API_URL}/api/users/cart/${cartItem.product_id}/${cartItem.curSize.size}/${-cartItem.quantity}`;
+  const updateURL = `${process.env.REACT_APP_API_URL}/api/users/cart/${cartItem.product_id}/${cartItem.curSize.size}/`;
   const [errorMessage, setErrorMessage] = useState<TErrorMessage | undefined>();
   const windowSize = useWindowSize();
 

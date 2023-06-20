@@ -20,7 +20,7 @@ const useGetCart = (): TUseGetCart => {
   useEffect(() => {
     (async () => {
       try {
-        const cartResponse = await axios.get<TCartItem[]>("/api/users/cart");
+        const cartResponse = await axios.get<TCartItem[]>(`${process.env.REACT_APP_API_URL}/api/users/cart`);
         setCart(cartResponse.data);
       }
       catch (error: any) {
