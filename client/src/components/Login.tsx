@@ -32,7 +32,7 @@ const Login: React.FC<Props> = (props) => {
         email: props.emailAddress,
         password: props.password,
         remember_me: rememberMe
-      });
+      }, { withCredentials: true });
 
       setEmail(loginResponse.data.email);
     }

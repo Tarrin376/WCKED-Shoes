@@ -24,7 +24,7 @@ const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => 
   useEffect(() => {
     (async () => {
       try {
-        const authResponse = await axios.get<TUser>(`${process.env.REACT_APP_API_URL}/api/users/jwt-login`);
+        const authResponse = await axios.get<TUser>(`${process.env.REACT_APP_API_URL}/api/users/jwt-login`, { withCredentials: true });
         setUserData((cur) => {
           return {
             ...cur,
