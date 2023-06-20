@@ -133,11 +133,17 @@ def get_cart():
   except Exception as e:
     return Response(str(e), status=500, mimetype="application/json")
 
-@user_blueprint.route("/cart/<product_id>/<size>/<quantity>", methods=["POST"])
+@user_blueprint.route("/cart/<product_id>", methods=["POST"])
 @authenticate_user
 @limiter.limit("3 per second")
 def add_to_cart(product_id, size, quantity):
   try:
+    size = request.json.get("size")
+    quantity = request.json.get("quantity")
+
+    if not size or not quantity:
+      return Response("Size or quantity not specified", status=400, mimetype="application/json")
+
     token = g.token
     result = add_to_cart_handler(token["sub"]["id"], product_id, size, (int)(quantity))
     resp = Response(json.dumps(result), status=200, mimetype="application/json")

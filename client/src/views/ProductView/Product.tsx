@@ -63,13 +63,15 @@ const Product: React.FC<{}> = () => {
   }
 
   const addToCart = async (productId: number, size: string | undefined, qty: number): Promise<TErrorMessage | undefined> => {
-    console.log("hello");
     if (size === undefined) {
       return { message: "Please select a size", status: 400 };
     }
 
     try {
-      const response = await axios.post<TUser>(`${process.env.REACT_APP_API_URL}/api/users/cart/${productId}/${size}/${qty}`, { withCredentials: true });
+      const response = await axios.post<TUser>(`${process.env.REACT_APP_API_URL}/api/users/cart/${productId}`, {
+        size: size,
+        quantity: qty
+      }, { withCredentials: true });
       userContext?.setUserData((cur) => {
         return {
           ...cur,
