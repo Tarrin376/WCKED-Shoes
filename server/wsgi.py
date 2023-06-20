@@ -9,7 +9,7 @@ def run_app():
   if mode == 'development':
     app.run(debug=True, port=port)
   else:
-    bind = f"localhost:{port}"
+    bind = f"0.0.0.0:{port}"
     cmd = f"gunicorn --bind {bind} wsgi:app"
     os.system(cmd)
 
