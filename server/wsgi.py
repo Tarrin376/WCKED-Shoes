@@ -15,4 +15,5 @@ def run_app():
     cmd = f"gunicorn --bind {bind} wsgi:app"
     os.system(cmd)
 
-run_app()
+if __name__ == '__main__':
+  run_app()
