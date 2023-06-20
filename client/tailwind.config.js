@@ -21,7 +21,7 @@ module.exports = {
       'orange': '#e39d0b',
       'side-text-gray': '#DADADA',
       'loading-gray': '#202020',
-      'loading-light': '#e9eaef',
+      'loading-light': '#e2e3ea',
       'footer-dark': '#0d0d0d',
       'line-gray': '#4f4f4f',
       'green-dark': '#1CCF3E',

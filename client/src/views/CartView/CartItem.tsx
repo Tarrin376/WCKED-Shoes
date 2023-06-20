@@ -20,7 +20,7 @@ export const quantityLimit = 10;
 const CartItem: React.FC<Props> = ({ cartItem, setCart, disabled, setDisabled }) => {
   const removeURL = `/api/users/cart/${cartItem.product_id}/${cartItem.curSize.size}/${-cartItem.quantity}`;
   const updateURL = `/api/users/cart/${cartItem.product_id}/${cartItem.curSize.size}/`;
-  const [errorMessage, setErrorMessage] = useState<TErrorMessage>();
+  const [errorMessage, setErrorMessage] = useState<TErrorMessage | undefined>();
   const windowSize = useWindowSize();
 
   const removeFromCart = async () => {

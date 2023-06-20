@@ -2,7 +2,6 @@ from flask import Blueprint, request, Response
 from CustomExceptions.DBException import DBException
 from middleware.Authentication import authenticate_admin
 import json
-import requests
 from settings import limiter
 from utils.Redis import cache, DEFAULT_EXPIRATION
 from models.ProductModel import \
@@ -33,8 +32,6 @@ def get_products():
       "next": list(map(lambda x: x.card_details(), response["next"])),
       "meta": response["meta"]
     }), status=200, content_type="application/json")
-  except requests.exceptions.ProxyError:
-    raise DBException("Uh oh, our servers had trouble processing that request. Please try again.", 407)
   except DBException as e:
     return Response(e.message, status=e.status_code, mimetype="application/json")
   except ValueError:

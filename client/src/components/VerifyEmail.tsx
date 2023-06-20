@@ -19,7 +19,7 @@ const VerifyEmail: React.FC<Props> = ({ setVerifyEmailPopUp, setSignUpPopUp, ema
   const inputRefs = useSearchInputRefs(inputs);
   const inputIndex = useRef<number>(-1);
 
-  const [errorMessage, setErrorMessage] = useState<TErrorMessage>();
+  const [errorMessage, setErrorMessage] = useState<TErrorMessage | undefined>();
   const [secretCode, setSecretCode] = useState<string>("");
   const [toggleSecretCode, setToggleSecretCode] = useState<boolean>(false);
 

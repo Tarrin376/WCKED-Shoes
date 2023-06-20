@@ -18,7 +18,7 @@ export const usePagination = <T1, T2>(orderBy: readonly TOrderByOption<T2>[], li
   const [reachedLimit, setReachedLimit] = useState<boolean>(false);
   const [totalFound, setTotalFound] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(false);
-  const [errorMessage, setErrorMessage] = useState<TErrorMessage>();
+  const [errorMessage, setErrorMessage] = useState<TErrorMessage | undefined>();
 
   const queryURL = `${URL}?search=${searchQuery}&filter=${filter}&sort=${sort.orderBy}&page=${page}&limit=${limit}&asc=${sort.order === "asc"}`;
 

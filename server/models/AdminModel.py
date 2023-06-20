@@ -33,8 +33,7 @@ def create_admin_handler(email, password):
     new_admin = Admin(email=email, hash=hash)
     settings.db.session.add(new_admin)
     settings.db.session.commit()
-  except exc.SQLAlchemyError as e:
-    print(e)
+  except exc.SQLAlchemyError:
     raise DBException("Failed to create admin account. Try again.", 500)
   except Exception as e:
     if type(e) is not DBException:

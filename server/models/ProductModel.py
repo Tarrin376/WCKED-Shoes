@@ -36,8 +36,7 @@ def create_product_handler(product):
 
     settings.db.session.commit()
     create_product_vector(new_product.id)
-  except exc.SQLAlchemyError as e:
-    print(e)
+  except exc.SQLAlchemyError:
     raise DBException("Failed to create product.", 500)
   except KeyError:
     raise DBException("Product is missing required fields.", 400)
@@ -74,8 +73,7 @@ def get_products_handler(sort, search, page, limit, asc):
         "has_prev": products.has_prev
       }
     }
-  except exc.SQLAlchemyError as e:
-    print(e)
+  except exc.SQLAlchemyError:
     raise DBException("Failed to get products.", 500)
   except KeyError:
     raise DBException("Invalid sort query parameter specified.", 400)
@@ -133,8 +131,7 @@ def delete_product_handler(product_id):
     
     settings.db.session.delete(product)
     settings.db.session.commit()
-  except exc.SQLAlchemyError as e:
-    print(e)
+  except exc.SQLAlchemyError:
     raise DBException("Failed to delete product.", 500)
   except Exception as e:
     if type(e) is not DBException:

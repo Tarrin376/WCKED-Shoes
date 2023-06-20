@@ -345,7 +345,6 @@ def checkout_handler(user_id, order_details):
     raise DBException("Required information missing from order details.", 400)
   except Exception as e:
     if type(e) is not DBException:
-      print(e)
       raise DBException("Something went wrong. Please contact our team if this continues.", 500)
     else:
       raise e

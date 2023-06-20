@@ -152,8 +152,7 @@ def add_review_handler(product_id, user_id, data):
     product.rating = product.ratings / product.num_reviews
     settings.db.session.commit()
     return new_review.as_dict(False, True)
-  except exc.SQLAlchemyError as e:
-    print(e)
+  except exc.SQLAlchemyError:
     raise DBException("Failed to add review.", 500)
   except KeyError:
     raise DBException("Missing required fields.", 400)

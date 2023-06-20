@@ -27,7 +27,7 @@ const mainFeatures = [
   "Uses Amazon's item-to-item collaborative filtering algorithm for product recommendations.",
   "Recommends 'frequently bought together' products to users.",
   "Recommends products to buy again using my own algorithm",
-  "Uses Redis to cache API calls and improve page load times.",
+  "Uses Redis to cache API calls and implement rate-limiting to help avoid malicious users from exhausting system resources.",
   "Allows users to monitor the progress of their orders and gives authorised personel the ability to update these orders through the backend API.",
   "Users can read, upvote, and write reviews for products. You can filter by 'verified purchases' which only show reviews written by customers that have purchased and recieved the product.",
   "Users can search for products and sort them by popularity, rating, and carbon footprint.",
