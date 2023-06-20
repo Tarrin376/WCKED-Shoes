@@ -1,5 +1,4 @@
 import PopUpWrapper from "../wrappers/PopUpWrapper";
-import Star from "./Star";
 import { useState, useEffect } from "react";
 import { isOkPassword, isMediumPassword, isStrongPassword } from "../utils/checkPasswordStrength";
 import { checkEmailAddress, checkPassword, checkEmailAndPass } from "../utils/checkEmailAndPass";

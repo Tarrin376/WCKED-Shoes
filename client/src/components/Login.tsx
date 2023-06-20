@@ -1,6 +1,5 @@
 import PopUpWrapper from "../wrappers/PopUpWrapper";
 import { checkEmailAddress, checkPassword, checkEmailAndPass } from "../utils/checkEmailAndPass";
-import Star from "./Star";
 import axios, { AxiosError } from "axios";
 import { useState, useContext } from "react";
 import ErrorMessage from "./ErrorMessage";
