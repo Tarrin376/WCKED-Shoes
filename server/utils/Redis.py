@@ -13,7 +13,8 @@ def cache(key, handler, expires, *args):
       data = json.loads(found)
     else: 
       data = handler(*args)
-      redis_client.setex(key, expires, json.dumps(data))
+      if (isinstance(data, list) and len(data) > 0) or not isinstance(data, list):
+        redis_client.setex(key, expires, json.dumps(data))
   except redis.RedisError:
     data = handler(*args)
   

@@ -158,6 +158,7 @@ const PaymentInfo: React.FC<Props> = ({ formRef, selectedMethod, cartItems, sele
             discountText={discountText}
             discountError={discountError ? discountError.message : ""}
             maxLength={50}
+            setUppercase={true}
           />
           <Button
             action={applyDiscountCode}

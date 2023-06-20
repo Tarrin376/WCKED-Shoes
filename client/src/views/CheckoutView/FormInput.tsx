@@ -12,17 +12,18 @@ interface Props {
   showCardIcons?: boolean,
   discountText?: string,
   discountError?: string,
-  maxLength?: number
+  maxLength?: number,
+  setUppercase?: boolean
 }
 
-const FormInput: React.FC<Props> = ({ label, styles, type, placeholder, optionalText, showCardIcons, discountText, discountError, maxLength }) => {
+const FormInput: React.FC<Props> = (props) => {
   const [value, setValue] = useState("");
   const [errorMessage, setErrorMessage] = useState<string | undefined>("");
   const windowSize = useWindowSize();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    const checkInput = checkoutInputChecks[label];
+    const value = props.setUppercase ? e.target.value.toUpperCase() : e.target.value;
+    const checkInput = checkoutInputChecks[props.label];
 
     if (checkInput === undefined) {
       setValue(value);
@@ -40,21 +41,21 @@ const FormInput: React.FC<Props> = ({ label, styles, type, placeholder, optional
   };
 
   return (
-    <div className={styles}>
+    <div className={props.styles}>
       <div className={`flex ${windowSize <= 360 ? "flex-col" : "items-center gap-3"}`}>
-        <label className="block text-main-text-black dark:text-main-text-white" htmlFor={label}>
-          {`${label} `}
-          {optionalText && <span className="text-side-text-light dark:text-side-text-gray italic">*{optionalText}</span>}
+        <label className="block text-main-text-black dark:text-main-text-white" htmlFor={props.label}>
+          {`${props.label} `}
+          {props.optionalText && <span className="text-side-text-light dark:text-side-text-gray italic">*{props.optionalText}</span>}
         </label>
-        {showCardIcons && <CardImages styles="w-[25px] h-[25px]" />}
+        {props.showCardIcons && <CardImages styles="w-[25px] h-[25px]" />}
       </div>
       {errorMessage && errorMessage.length > 0 && <p className="text-sm text-side-text-red">{errorMessage}</p>}
-      {discountText && discountText.length > 0 && <p className="text-sm text-green-light dark:text-green-dark">{discountText}</p>}
-      {discountError && discountError.length > 0 && <p className="text-sm text-side-text-red">{discountError}</p>}
+      {props.discountText && props.discountText.length > 0 && <p className="text-sm text-green-light dark:text-green-dark">{props.discountText}</p>}
+      {props.discountError && props.discountError.length > 0 && <p className="text-sm text-side-text-red">{props.discountError}</p>}
       <input 
-        type={type} name={label} className={`text-box-light dark:text-box w-full mt-2 text-main-text-black dark:text-main-text-white
+        type={props.type} name={props.label} className={`text-box-light dark:text-box w-full mt-2 text-main-text-black dark:text-main-text-white
         ${errorMessage && errorMessage.length > 0 ? "text-box-error-focus" : ""}`} 
-        placeholder={placeholder} value={value} onChange={handleChange} maxLength={maxLength}
+        placeholder={props.placeholder} value={value} onChange={handleChange} maxLength={props.maxLength}
       />
     </div>
   )

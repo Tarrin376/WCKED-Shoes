@@ -18,7 +18,7 @@ interface Props {
   outOfStockItems?: number[]
 }
 
-export const popularSoldCount = 2;
+export const popularSoldCount = 15;
 
 const ProductCard: React.FC<Props> = ({ product, styles, setTotalPrice, smallSize, setCheckedItems, dropdown, outOfStockItems }) => {
   const navigate = useNavigate();

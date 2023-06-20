@@ -24,8 +24,12 @@ def expire_discount_code_handler(code_name):
 
 def create_discount_code_handler(code_name, percent_off):
   try:
-    discount_code: DiscountCode = DiscountCode.query.filter_by(name=code_name).first()
+    if not code_name or not percent_off:
+      raise DBException("Code name or percent off not specified.", 400)
 
+    code_name = code_name.upper()
+    discount_code: DiscountCode = DiscountCode.query.filter_by(name=code_name).first()
+    
     if discount_code is not None:
       raise DBException(f"Discount code {code_name} already exists.", 400)
     

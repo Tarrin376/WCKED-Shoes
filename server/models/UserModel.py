@@ -339,7 +339,7 @@ def checkout_handler(user_id, order_details):
       settings.db.session.commit()
 
     return order.id
-  except exc.SQLAlchemyError:
+  except exc.SQLAlchemyError as e:
     raise DBException("Unable to checkout. Try again.", 500)
   except KeyError:
     raise DBException("Required information missing from order details.", 400)
