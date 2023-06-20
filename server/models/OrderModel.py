@@ -1,4 +1,4 @@
-from db.Schema import Order, OrderItem, Size, Product, DiscountJunction
+from db.Schema import Order, OrderItem, Size, Product
 from sqlalchemy import exc, cast, String
 from CustomExceptions.DBException import DBException 
 from datetime import datetime
