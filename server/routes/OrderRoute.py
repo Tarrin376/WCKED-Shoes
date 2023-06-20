@@ -21,11 +21,11 @@ def get_orders():
     orders = get_orders_handler(user_id, search, (int)(page), (int)(limit), filter)
     return Response(json.dumps(orders), status=200, mimetype="application/json")
   except DBException as e:
-    return Response(e.message, status=e.status_code, mimetype="text/plain")
+    return Response(e.message, status=e.status_code, mimetype="application/json")
   except ValueError:
-    return Response("'page' and 'limit' query parameters must be numbers.", status=400, mimetype="text/plain")
+    return Response("'page' and 'limit' query parameters must be numbers.", status=400, mimetype="application/json")
   except Exception as e:
-    return Response(str(e), status=500, mimetype="text/plain")
+    return Response(str(e), status=500, mimetype="application/json")
 
 @orders_blueprint.route("/<id>", methods=["GET"])
 @authenticate_user
@@ -36,9 +36,9 @@ def get_order(id):
     order = cache(f"/orders/${id}", get_order_handler, 3600, id, user_id)
     return Response(json.dumps(order), status=200, mimetype="application/json")
   except DBException as e:
-    return Response(e.message, status=e.status_code, mimetype="text/plain")
+    return Response(e.message, status=e.status_code, mimetype="application/json")
   except Exception as e:
-    return Response(str(e), status=500, mimetype="text/plain")
+    return Response(str(e), status=500, mimetype="application/json")
 
 @orders_blueprint.route("/<id>/update-status", methods=["PUT"])
 @authenticate_admin
@@ -46,12 +46,12 @@ def get_order(id):
 def update_order_status(id):
   status = request.json.get("status")
   if status != "Order Created" and status != "Processing" and status != "Shipped" and status != "Delivered":
-    return Response("Order status is not valid.", status=400, mimetype="text/plain")
+    return Response("Order status is not valid.", status=400, mimetype="application/json")
   
   try:
     update_order_status_handler(id, status)
-    return Response(f"Order status was updated to: {status}.", status=200, mimetype="text/plain")
+    return Response(f"Order status was updated to: {status}.", status=200, mimetype="application/json")
   except DBException as e:
-    return Response(e.message, status=e.status_code, mimetype="text/plain")
+    return Response(e.message, status=e.status_code, mimetype="application/json")
   except Exception as e:
-    return Response(str(e), status=500, mimetype="text/plain")
+    return Response(str(e), status=500, mimetype="application/json")

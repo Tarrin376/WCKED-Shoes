@@ -19,9 +19,9 @@ def login():
     resp.set_cookie(key="auth_token", value=result[0], expires=datetime.datetime.utcnow() + datetime.timedelta(hours=2), httponly=True, samesite="Lax")
     return resp
   except DBException as e:
-    return Response(e.message, status=e.status_code, mimetype="text/plain")
+    return Response(e.message, status=e.status_code, mimetype="application/json")
   except Exception as e:
-    return Response(str(e), status=500, mimetype="text/plain")
+    return Response(str(e), status=500, mimetype="application/json")
   
 @admin_blueprint.route('/create', methods=["POST"])
 def create_admin():
@@ -30,8 +30,8 @@ def create_admin():
 
   try:
     create_admin_handler(email, password)
-    return Response("Admin account created successfully.", status=201, mimetype="text/plain")
+    return Response("Admin account created successfully.", status=201, mimetype="application/json")
   except DBException as e:
-    return Response(e.message, status=e.status_code, mimetype="text/plain")
+    return Response(e.message, status=e.status_code, mimetype="application/json")
   except Exception as e:
-    return Response(str(e), status=500, mimetype="text/plain")
+    return Response(str(e), status=500, mimetype="application/json")

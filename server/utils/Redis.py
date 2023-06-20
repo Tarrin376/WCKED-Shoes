@@ -15,7 +15,7 @@ def cache(key, handler, expires, *args):
       data = handler(*args)
       if (isinstance(data, list) and len(data) > 0) or not isinstance(data, list):
         redis_client.setex(key, expires, json.dumps(data))
-  except redis.RedisError:
+  except redis.exceptions.RedisError:
     data = handler(*args)
-  
+
   return data

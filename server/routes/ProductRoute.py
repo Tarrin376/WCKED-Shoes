@@ -36,11 +36,11 @@ def get_products():
   except requests.exceptions.ProxyError:
     raise DBException("Uh oh, our servers had trouble processing that request. Please try again.", 407)
   except DBException as e:
-    return Response(e.message, status=e.status_code, mimetype="text/plain")
+    return Response(e.message, status=e.status_code, mimetype="application/json")
   except ValueError:
-    return Response("'page' and 'limit' must be numbers.", status=400, mimetype="text/plain")
+    return Response("'page' and 'limit' must be numbers.", status=400, mimetype="application/json")
   except Exception as e:
-    return Response(str(e), status=500, mimetype="text/plain")
+    return Response(str(e), status=500, mimetype="application/json")
 
 @products_blueprint.route("/create", methods=["POST"])
 @authenticate_admin
@@ -54,7 +54,7 @@ def create_product():
   except DBException as e:
     return Response(e.message, status=e.status_code)
   except Exception as e:
-    return Response(str(e), status=500, mimetype="text/plain")
+    return Response(str(e), status=500, mimetype="application/json")
 
 @products_blueprint.route("/<product_id>", methods=["GET"])
 @limiter.limit("2 per second")
@@ -63,9 +63,9 @@ def get_product(product_id):
     product = cache(f"/products/{product_id}", get_product_handler, DEFAULT_EXPIRATION, product_id)
     return Response(json.dumps(product), status=200, content_type="application/json")
   except DBException as e:
-    return Response(e.message, status=e.status_code, mimetype="text/plain")
+    return Response(e.message, status=e.status_code, mimetype="application/json")
   except Exception as e:
-    return Response(str(e), status=500, mimetype="text/plain")
+    return Response(str(e), status=500, mimetype="application/json")
 
 @products_blueprint.route("/<product_id>/<size>", methods=["GET"])
 @limiter.limit("2 per second")
@@ -74,9 +74,9 @@ def check_size_stock(product_id, size):
     in_stock = check_size_stock_handler(product_id, size)
     return Response(json.dumps(in_stock), status=200, content_type="application/json")
   except DBException as e:
-    return Response(e.message, status=e.status_code, mimetype="text/plain")
+    return Response(e.message, status=e.status_code, mimetype="application/json")
   except Exception as e:
-    return Response(str(e), status=500, mimetype="text/plain")
+    return Response(str(e), status=500, mimetype="application/json")
 
 @products_blueprint.route("/<product_id>", methods=["DELETE"])
 @authenticate_admin
@@ -84,11 +84,11 @@ def check_size_stock(product_id, size):
 def delete_product(product_id):
   try:
     delete_product_handler(product_id)
-    return Response("Successfully deleted product.", status=200, mimetype="text/plain")
+    return Response("Successfully deleted product.", status=200, mimetype="application/json")
   except DBException as e:
-    return Response(e.message, status=e.status_code, mimetype="text/plain")
+    return Response(e.message, status=e.status_code, mimetype="application/json")
   except Exception as e:
-    return Response(str(e), status=500, mimetype="text/plain")
+    return Response(str(e), status=500, mimetype="application/json")
 
 @products_blueprint.route("/<product_id>/add-image", methods=["POST"])
 @authenticate_admin
@@ -98,11 +98,11 @@ def add_product_image(product_id):
 
   try:
     add_product_image_handler(product_id, image_url)
-    return Response("Successfully added image to product.", status=200, mimetype="text/plain")
+    return Response("Successfully added image to product.", status=200, mimetype="application/json")
   except DBException as e:
-    return Response(e.message, status=e.status_code, mimetype="text/plain")
+    return Response(e.message, status=e.status_code, mimetype="application/json")
   except Exception as e:
-    return Response(str(e), status=500, mimetype="text/plain")
+    return Response(str(e), status=500, mimetype="application/json")
 
 @products_blueprint.route("/<product_id>/update-thumbnail", methods=["PUT"])
 @authenticate_admin
@@ -112,14 +112,14 @@ def update_product_thumbnail(product_id):
     thumbnail_url = request.json.get("thumbnail_url")
 
     if thumbnail_url is None:
-      return Response("Thumbnail url not provided.", status=400, mimetype="text/plain") 
+      return Response("Thumbnail url not provided.", status=400, mimetype="application/json") 
     
     update_product_thumbnail_handler(product_id, thumbnail_url)
-    return Response("Successfully updated thumbnail.", status=200, mimetype="text/plain")
+    return Response("Successfully updated thumbnail.", status=200, mimetype="application/json")
   except DBException as e:
-    return Response(e.message, status=e.status_code, mimetype="text/plain")
+    return Response(e.message, status=e.status_code, mimetype="application/json")
   except Exception as e:
-    return Response(str(e), status=500, mimetype="text/plain")
+    return Response(str(e), status=500, mimetype="application/json")
   
 @products_blueprint.route("/<product_id>/customers-bought", methods=["GET"])
 @limiter.limit("2 per second")
@@ -131,11 +131,11 @@ def recommend_customer_bought(product_id):
       DEFAULT_EXPIRATION, (int)(product_id), (int)(limit))
     return Response(json.dumps(recommended_products), status=200, content_type="application/json")
   except DBException as e:
-    return Response(e.message, status=e.status_code, mimetype="text/plain")
+    return Response(e.message, status=e.status_code, mimetype="application/json")
   except ValueError:
-    return Response("'limit' or 'product id' is not a number.", status=400, mimetype="text/plain")
+    return Response("'limit' or 'product id' is not a number.", status=400, mimetype="application/json")
   except Exception as e:
-    return Response(str(e), status=500, mimetype="text/plain")
+    return Response(str(e), status=500, mimetype="application/json")
   
 @products_blueprint.route("/<product_id>/freq-bought", methods=["GET"])
 @limiter.limit("2 per second")
@@ -143,15 +143,15 @@ def frequently_bought(product_id):
   limit = request.args.get("limit", "", str)
 
   if limit == "":
-    return Response("Limit is not specified.", status=400, mimetype="text/plain")
+    return Response("Limit is not specified.", status=400, mimetype="application/json")
 
   try:
     freq_bought_products = cache(f"/{product_id}/freq-bought", frequently_bought_handler,
       DEFAULT_EXPIRATION, (int)(product_id), (int)(limit))
     return Response(json.dumps(freq_bought_products), status=200, content_type="application/json")
   except DBException as e:
-    return Response(e.message, status=e.status_code, mimetype="text/plain")
+    return Response(e.message, status=e.status_code, mimetype="application/json")
   except ValueError:
-    return Response("'limit' or 'product id' is not a number.", status=400, mimetype="text/plain")
+    return Response("'limit' or 'product id' is not a number.", status=400, mimetype="application/json")
   except Exception as e:
-    return Response(str(e), status=500, mimetype="text/plain")
+    return Response(str(e), status=500, mimetype="application/json")
