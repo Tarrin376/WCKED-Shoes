@@ -18,15 +18,15 @@ interface Props {
 export const quantityLimit = 10;
 
 const CartItem: React.FC<Props> = ({ cartItem, setCart, disabled, setDisabled }) => {
-  const removeURL = `${process.env.REACT_APP_API_URL}/api/users/cart/${cartItem.product_id}/${cartItem.curSize.size}/${-cartItem.quantity}`;
-  const updateURL = `${process.env.REACT_APP_API_URL}/api/users/cart/${cartItem.product_id}/${cartItem.curSize.size}/`;
+  const removeURL = `/api/users/cart/${cartItem.product_id}/${cartItem.curSize.size}/${-cartItem.quantity}`;
+  const updateURL = `/api/users/cart/${cartItem.product_id}/${cartItem.curSize.size}/`;
   const [errorMessage, setErrorMessage] = useState<TErrorMessage | undefined>();
   const windowSize = useWindowSize();
 
   const removeFromCart = async () => {
     try {
       setDisabled(true);
-      const removeResponse = await axios.delete<{user_data: TUser, cart: TCartItem[]}>(removeURL, { withCredentials: true });
+      const removeResponse = await axios.delete<{user_data: TUser, cart: TCartItem[]}>(removeURL);
       setCart(removeResponse.data.cart);
     }
     catch (error: any) {
@@ -42,7 +42,7 @@ const CartItem: React.FC<Props> = ({ cartItem, setCart, disabled, setDisabled })
     try {
       setDisabled(true);
       const change = parseInt(e.target.value) - cartItem.quantity;
-      const updateResponse = await axios.put<{ user_data: TUser, cart: TCartItem[], valid: boolean }>(updateURL + change, { withCredentials: true });
+      const updateResponse = await axios.put<{ user_data: TUser, cart: TCartItem[], valid: boolean }>(updateURL + change);
       setCart(updateResponse.data.cart);
       setErrorMessage(undefined);
     }

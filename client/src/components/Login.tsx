@@ -28,11 +28,11 @@ const Login: React.FC<Props> = (props) => {
 
   const loginUser = async (): Promise<TErrorMessage | undefined> => {
     try {
-      const loginResponse = await axios.post<TUser>(`${process.env.REACT_APP_API_URL}/api/users/login`, {
+      const loginResponse = await axios.post<TUser>(`/api/users/login`, {
         email: props.emailAddress,
         password: props.password,
         remember_me: rememberMe
-      }, { withCredentials: true });
+      });
 
       setEmail(loginResponse.data.email);
     }

@@ -19,10 +19,9 @@ const Home: React.FC<{}> = () => {
   const getProducts = usePagination<TProductCard, TProductOptions>(
     orderProducts, 
     productsLimit, 
-    `${process.env.REACT_APP_API_URL}/api/products`, 
+    `/api/products`, 
     location.state || "", 
     "", 
-    false,
     searchRef
   );
 

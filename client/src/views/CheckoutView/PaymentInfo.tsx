@@ -70,7 +70,7 @@ const PaymentInfo: React.FC<Props> = ({ formRef, selectedMethod, cartItems, sele
       const fieldValues = Object.fromEntries(formData.entries());
       const cardNum = (fieldValues["Credit card number"] as string).trim();
 
-      const orderResponse = await axios.post<{ id: string }>(`${process.env.REACT_APP_API_URL}/api/users/cart/checkout`, {
+      const orderResponse = await axios.post<{ id: string }>(`/api/users/cart/checkout`, {
         mobile_number: (fieldValues["Mobile number"] as string).trim(),
         delivery_instructions: (fieldValues["Delivery instructions"] as string).trim(),
         address_line1: (fieldValues["Address line 1"] as string).trim(),
@@ -86,7 +86,7 @@ const PaymentInfo: React.FC<Props> = ({ formRef, selectedMethod, cartItems, sele
         country: selectedCountry,
         delivery_method: selectedMethod!.name,
         discount: discount.name
-      }, { withCredentials: true });
+      });
       
       navigate(`/orders/${orderResponse.data.id}`);
       window.scrollTo(0, 0);
@@ -120,7 +120,7 @@ const PaymentInfo: React.FC<Props> = ({ formRef, selectedMethod, cartItems, sele
     }
 
     try {
-      const response = await axios.get<TDiscount>(`${process.env.REACT_APP_API_URL}/api/users/apply-discount/${code}`, { withCredentials: true });
+      const response = await axios.get<TDiscount>(`/api/users/apply-discount/${code}`);
       setDiscount(response.data);
       setDiscountText(`You saved ${response.data.percent_off * 100}% off your order!`);
     }

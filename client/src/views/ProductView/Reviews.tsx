@@ -23,7 +23,7 @@ const reviewsLimit = 4;
 
 const Reviews: React.FC<Props> = ({ product }) => {
   const userContext = useContext(UserContext);
-  const getReviews = usePagination<TReview, TReviewOptions>(orderReviews, reviewsLimit, `${process.env.REACT_APP_API_URL}/api/reviews/${product.id}`, "", "", true);
+  const getReviews = usePagination<TReview, TReviewOptions>(orderReviews, reviewsLimit, `/api/reviews/${product.id}`, "", "");
   const windowSize = useWindowSize();
 
   return (

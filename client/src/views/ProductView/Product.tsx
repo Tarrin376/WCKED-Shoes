@@ -68,10 +68,10 @@ const Product: React.FC<{}> = () => {
     }
 
     try {
-      const response = await axios.post<TUser>(`${process.env.REACT_APP_API_URL}/api/users/cart/${productId}`, {
+      const response = await axios.post<TUser>(`/api/users/cart/${productId}`, {
         size: size,
         quantity: qty
-      }, { withCredentials: true });
+      });
       
       userContext?.setUserData((cur) => {
         return {
@@ -95,7 +95,7 @@ const Product: React.FC<{}> = () => {
     
     (async () => {
       try {
-        const productResponse = await axios.get<TProduct>(`${process.env.REACT_APP_API_URL}/api${location.pathname}`);
+        const productResponse = await axios.get<TProduct>(`/api${location.pathname}`);
         if (productResponse.status === 200) {
           const size = productResponse.data.sizes.find((cur: TSize) => cur.stock > 0);
           setProduct({ ...productResponse.data, images: [productResponse.data.thumbnail, ...productResponse.data.images] });
@@ -199,7 +199,7 @@ const Product: React.FC<{}> = () => {
       />
       <RecommendedProducts 
         title="Customers who bought this item also bought" 
-        URL={`${process.env.REACT_APP_API_URL}/api/products/${product?.id}/customers-bought?limit=${20}`}
+        URL={`/api/products/${product?.id}/customers-bought?limit=${20}`}
       />
       <Reviews product={product} />
     </>

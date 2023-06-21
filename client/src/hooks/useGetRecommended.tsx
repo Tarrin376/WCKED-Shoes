@@ -14,7 +14,7 @@ export const useGetRecommended = (URL: string): {
   useEffect(() => {
     (async () => {
       try {
-        const response = await axios.get<TProductCard[]>(URL, { withCredentials: true });
+        const response = await axios.get<TProductCard[]>(URL);
         setProducts(response.data);
       }
       catch (error: any) {

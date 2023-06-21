@@ -7,7 +7,7 @@ import { getAPIErrorMessage } from "../utils/getAPIErrorMessage";
 import { TErrorMessage } from "../@types/TErrorMessage";
 
 export const usePagination = <T1, T2>(orderBy: readonly TOrderByOption<T2>[], limit: number, URL: string, 
-  initialSearch: string, initialFilter: string, recieveCookies: boolean, searchRef?: React.RefObject<HTMLInputElement>)
+  initialSearch: string, initialFilter: string, searchRef?: React.RefObject<HTMLInputElement>)
   : TUsePagination<T1, TOrderByOption<T2>> => {
   
   const [searchQuery, setSearchQuery] = useState<string>(initialSearch);
@@ -66,7 +66,7 @@ export const usePagination = <T1, T2>(orderBy: readonly TOrderByOption<T2>[], li
     setLoading(true);
     (async () => {
       try {
-        const response = await axios.get<{ meta: TPaginationMetaData, next: T1[] }>(queryURL, { withCredentials: recieveCookies });
+        const response = await axios.get<{ meta: TPaginationMetaData, next: T1[] }>(queryURL);
         setNext((state) => [...state, ...response.data.next]);
         setTotalFound(response.data.meta.total_count);
         setErrorMessage(undefined);
@@ -83,7 +83,7 @@ export const usePagination = <T1, T2>(orderBy: readonly TOrderByOption<T2>[], li
         setLoading(false);
       }
     })()
-  }, [queryURL, setLoading, recieveCookies])
+  }, [queryURL, setLoading])
 
   const data = {
     next,

@@ -6,12 +6,12 @@ from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 from flask_migrate import Migrate
 import redis
-from flask_cors import CORS
+# from flask_cors import CORS
 
 load_dotenv()
 
 app = Flask(__name__, static_folder="../client/build", static_url_path='/')
-cors = CORS(app, resources={r"/api/*": {"origins": "https://e-commerce-app-k88h.onrender.com"}}, supports_credentials=True)
+# cors = CORS(app, resources={r"/api/*": {"origins": "https://e-commerce-app-k88h.onrender.com"}}, supports_credentials=True)
 
 prodURI = os.environ['DATABASE_URI']
 prodURI = prodURI.replace("postgres://", "postgresql://")
