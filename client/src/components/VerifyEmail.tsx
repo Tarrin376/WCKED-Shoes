@@ -22,6 +22,7 @@ const VerifyEmail: React.FC<Props> = ({ setVerifyEmailPopUp, setSignUpPopUp, ema
   const [errorMessage, setErrorMessage] = useState<TErrorMessage | undefined>();
   const [secretCode, setSecretCode] = useState<string>("");
   const [toggleSecretCode, setToggleSecretCode] = useState<boolean>(false);
+  const [disabled, setDisabled] = useState<boolean>(false);
 
   const sendVerificationCode = useCallback(async () => {
     try {
@@ -61,6 +62,7 @@ const VerifyEmail: React.FC<Props> = ({ setVerifyEmailPopUp, setSignUpPopUp, ema
 
   const checkVerificationCode = async (): Promise<TErrorMessage | undefined> => {
     const codeInput = inputRefs.current.map((input) => input.current!.value).join("");
+    setDisabled(true);
 
     try {
       await axios.post<string>(`${process.env.REACT_APP_API_URL}/api/users/verify-email`, { 
@@ -73,6 +75,9 @@ const VerifyEmail: React.FC<Props> = ({ setVerifyEmailPopUp, setSignUpPopUp, ema
     catch (error: any) {
       const errorMsg = getAPIErrorMessage(error as AxiosError);
       return errorMsg;
+    }
+    finally {
+      setDisabled(false);
     }
   }
 
@@ -141,8 +146,8 @@ const VerifyEmail: React.FC<Props> = ({ setVerifyEmailPopUp, setSignUpPopUp, ema
       </div>
       <p className="mt-3 text-center text-side-text-light dark:text-side-text-gray text-[15px]">
         Didn't get a code?
-        <span className="font-semibold text-main-text-black dark:text-main-text-white underline cursor-pointer ml-2 
-        hover:!text-bg-primary-btn-hover btn" onClick={sendVerificationCode}>
+        <span className={`font-semibold text-main-text-black dark:text-main-text-white underline cursor-pointer ml-2 
+        btn ${disabled ? "pointer-events-none" : "hover:!text-bg-primary-btn-hover"}`} onClick={sendVerificationCode}>
           Click to resend.
         </span>
       </p>
