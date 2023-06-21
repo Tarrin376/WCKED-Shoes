@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, render_template
 from flask_sqlalchemy import SQLAlchemy
 import os
 from dotenv import load_dotenv
@@ -6,13 +6,10 @@ from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 from flask_migrate import Migrate
 import redis
-# from flask_cors import CORS
 
 load_dotenv()
 
 app = Flask(__name__, static_folder="../client/build", static_url_path='/')
-# cors = CORS(app, resources={r"/api/*": {"origins": "https://e-commerce-app-k88h.onrender.com"}}, supports_credentials=True)
-
 prodURI = os.environ['DATABASE_URI']
 prodURI = prodURI.replace("postgres://", "postgresql://")
 
@@ -22,7 +19,7 @@ app.config['SECRET_KEY'] = os.environ['APP_SECRET_KEY']
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')
 def catch_all(path):
-    return app.send_static_file('index.html')
+    return render_template('index.html')
 
 db = SQLAlchemy()
 migrate = Migrate(app, db)
