@@ -1,4 +1,4 @@
-from flask import Flask, render_template
+from flask import Flask, send_from_directory
 from flask_sqlalchemy import SQLAlchemy
 import os
 from dotenv import load_dotenv
@@ -19,7 +19,7 @@ app.config['SECRET_KEY'] = os.environ['APP_SECRET_KEY']
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')
 def catch_all(path):
-    return render_template('index.html')
+  return send_from_directory('../client/build/index.html')
 
 db = SQLAlchemy()
 migrate = Migrate(app, db)
