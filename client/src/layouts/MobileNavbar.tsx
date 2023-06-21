@@ -41,7 +41,7 @@ const MobileNavbar: React.FC<NavbarProps> = (props) => {
       <nav className="max-w-screen-2xl w-screen flex items-center justify-between gap-5">
         <Link to="/">
           <button className="text-2xl text-main-text-black dark:text-main-text-white cursor-pointer hover:text-bg-primary-btn-hover btn">
-            Wicked Shoes
+            WCKED Shoes
           </button>
         </Link>
         <div className={`flex flex-col justify-between p-2 rounded-md ${navSidebar ? "outline-dashed outline-[1px] outline-bg-primary-btn" : ""}

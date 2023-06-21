@@ -36,7 +36,7 @@ const Footer = () => {
             </div>
           </div>
         </div>
-        <p className="pt-6 text-right text-side-text-light dark:text-side-text-gray">&copy; 2023 The Shoes. All rights reserved.</p>
+        <p className="pt-6 text-right text-side-text-light dark:text-side-text-gray">&copy; 2023 WCKED Shoes. All rights reserved.</p>
       </div>
     </div>
   )
