@@ -16,7 +16,7 @@ type TTechnologyItem = {
 }
 
 const technologies: TTechnologyItem[] = [
-  { techName: "React (Typescript)", image: ReactIcon },
+  { techName: "React (with Typescript)", image: ReactIcon },
   { techName: "Redis", image: RedisIcon },
   { techName: "PostgreSQL", image: PostgreSQLIcon },
   { techName: "Flask", image: PythonIcon },
@@ -51,12 +51,16 @@ const Welcome: React.FC<Props> = ({ setWelcomePopUp }) => {
   }
 
   return (
-    <PopUpWrapper setPopUp={setWelcomePopUp} popUpStyles="max-w-[600px] overflow-y-scroll" title="Welcome!">
-      <h3 className="text-side-text-red mb-2">*Important, please read!</h3>
+    <PopUpWrapper setPopUp={setWelcomePopUp} popUpStyles="max-w-[600px] overflow-y-scroll max-h-[700px] h-[90vh]" title="Welcome!">
+      <h3 className="text-side-text-red mb-2 text-[17px]">*Important, please read!</h3>
       <p className="text-side-text-light dark:text-side-text-gray mb-3">
-        This is a side project, not a legitimate e-commerce site. 
-        "Payments" made by you will not charge your bank account and is just there to simulate the payment process. 
-        However, I strongly recommend for security purposes to not use your bank details when using this site.
+        Apologies if the initial page load time is slow, it can take up to 30 seconds due to the hosting service plan that I am using. It
+        is not related to any serious performance issues with the Flask backend API.
+      </p>
+      <p className="text-side-text-light dark:text-side-text-gray mb-3">
+        This is a side project, not a legitimate e-commerce site. "Payments" made by you will not charge your bank account 
+        and is just there to simulate the payment process. However, I strongly recommend for security purposes to not use 
+        your bank details when using this site.
       </p>
       <p className="mb-2">Technologies I have used for this app:</p>
       <ul className="text-side-text-light dark:text-side-text-gray mb-3">

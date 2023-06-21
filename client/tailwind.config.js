@@ -19,7 +19,7 @@ module.exports = {
       'main-red': '#d2332f',
       'main-red-hover': '#d5413d',
       'orange': '#e39d0b',
-      'side-text-gray': '#DADADA',
+      'side-text-gray': '#c5c5c5',
       'loading-gray': '#202020',
       'loading-light': '#e2e3ea',
       'footer-dark': '#0d0d0d',

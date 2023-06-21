@@ -147,7 +147,7 @@ const VerifyEmail: React.FC<Props> = ({ setVerifyEmailPopUp, setSignUpPopUp, ema
       <p className="mt-3 text-center text-side-text-light dark:text-side-text-gray text-[15px]">
         Didn't get a code?
         <span className={`font-semibold text-main-text-black dark:text-main-text-white underline cursor-pointer ml-2 
-        btn ${disabled ? "pointer-events-none" : "hover:!text-bg-primary-btn-hover"}`} onClick={sendVerificationCode}>
+        btn hover:!text-bg-primary-btn-hover ${disabled ? "pointer-events-none" : ""}`} onClick={sendVerificationCode}>
           Click to resend.
         </span>
       </p>
