@@ -16,7 +16,7 @@ const Footer = () => {
         <div className="flex xl:gap-20 max-xl:gap-9 xl:py-20 max-xl:py-9 flex-grow border-b border-b-light-border dark:border-b-main-gray-border max-xl:flex-col">
           <div className="w-[330px] max-xl:w-full">
             <h1 className="text-2xl text-main-text-black dark:text-main-text-white mb-3 max-xl:text-center">
-              The shoes
+              WCKED Shoes
             </h1>
             <p className="text-side-text-light dark:text-side-text-gray max-xl:text-center max-xl:m-auto max-xl:max-w-[370px]">
               Find amazing deals on your favourite sneakers while having a 100% authenticity guarantee!
