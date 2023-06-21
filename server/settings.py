@@ -9,7 +9,7 @@ import redis
 
 load_dotenv()
 
-app = Flask(__name__, static_folder="../client/build/static", static_url_path='/')
+app = Flask(__name__, static_folder="../client/build", static_url_path='/')
 prodURI = os.environ['DATABASE_URI']
 prodURI = prodURI.replace("postgres://", "postgresql://")
 
