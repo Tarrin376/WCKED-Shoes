@@ -230,7 +230,6 @@ def create_order(order_details, user_id, percent_off, shipping):
 
   order: Order = Order(
     user_id=user_id, 
-    date_ordered=datetime.now(), 
     order_status="Order Created", 
     total_cost=total,
     address_line1=order_details["address_line1"],
