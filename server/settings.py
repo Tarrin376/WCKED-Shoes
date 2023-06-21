@@ -19,7 +19,7 @@ prodURI = prodURI.replace("postgres://", "postgresql://")
 app.config['SQLALCHEMY_DATABASE_URI'] = prodURI
 app.config['SECRET_KEY'] = os.environ['APP_SECRET_KEY']
 
-@app.route('/', defaults={'path': '../client/build/index.html'})
+@app.route('/', defaults={'path': '../client/build/public/index.html'})
 @app.route('/<path:path>')
 def catch_all(path):
   return render_template(path)
