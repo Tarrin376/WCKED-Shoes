@@ -11,7 +11,7 @@ def authenticate_user(func):
       auth_token = request.cookies.get("auth_token")
       if auth_token is None:
         resp = Response("You are not logged in.", status=401, mimetype="application/json")
-        resp.set_cookie("auth_token", "", expires=0, samesite="None")
+        resp.set_cookie("auth_token", "", expires=0, httponly=True, samesite="Strict", secure=True)
         return resp
       
       token = jwt.decode(auth_token, os.environ['USER_JWT_SECRET_KEY'], algorithms=["HS256"])
@@ -21,7 +21,7 @@ def authenticate_user(func):
       return Response("Session expired. Please log back in.", status=403, mimetype="application/json")
     except jwt.InvalidTokenError:
       resp = Response("Your session token is invalid. Please log back in.", status=401, mimetype="application/json")
-      resp.set_cookie("auth_token", "", expires=0, samesite="None") # Set samesite attribute to True when app is using https.
+      resp.set_cookie("auth_token", "", expires=0, httponly=True, samesite="Strict", secure=True)
       return resp
 
   get_auth_token.__name__ = func.__name__
@@ -34,7 +34,7 @@ def authenticate_admin(func):
       auth_token = request.cookies.get("auth_token")
       if auth_token is None:
         resp = Response("You are not logged in.", status=401, mimetype="application/json")
-        resp.set_cookie("auth_token", "", expires=0, samesite="None")
+        resp.set_cookie("auth_token", "", expires=0, httponly=True, samesite="Strict", secure=True)
         return resp
       
       token = jwt.decode(auth_token, os.environ['ADMIN_JWT_SECRET_KEY'], algorithms=["HS256"])
@@ -44,7 +44,7 @@ def authenticate_admin(func):
       return Response("Session expired. Please log back in.", status=403, mimetype="application/json")
     except jwt.InvalidTokenError:
       resp = Response("Your session token is invalid. Please log back in.", status=401, mimetype="application/json")
-      resp.set_cookie("auth_token", "", expires=0, samesite="None") # Set samesite attribute to True when app is using https.
+      resp.set_cookie("auth_token", "", expires=0, httponly=True, samesite="Strict", secure=True)
       return resp
   
   get_auth_token.__name__ = func.__name__
