@@ -1,4 +1,4 @@
-from flask import Flask, send_from_directory
+from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 import os
 from dotenv import load_dotenv
@@ -10,7 +10,7 @@ from flask_cors import CORS
 
 load_dotenv()
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder="/build", static_url_path='/')
 cors = CORS(app, resources={r"/api/*": {"origins": "https://e-commerce-app-k88h.onrender.com"}}, supports_credentials=True)
 
 prodURI = os.environ['DATABASE_URI']
@@ -22,9 +22,7 @@ app.config['SECRET_KEY'] = os.environ['APP_SECRET_KEY']
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')
 def catch_all(path):
-  if not path:
-    path = 'index.html'
-  return send_from_directory(os.path.abspath('../client/build'), path)
+    return app.send_static_file('index.html')
 
 db = SQLAlchemy()
 migrate = Migrate(app, db)
