@@ -1,4 +1,4 @@
-from flask import Flask, render_template
+from flask import Flask, send_from_directory
 from flask_sqlalchemy import SQLAlchemy
 import os
 from dotenv import load_dotenv
@@ -19,10 +19,12 @@ prodURI = prodURI.replace("postgres://", "postgresql://")
 app.config['SQLALCHEMY_DATABASE_URI'] = prodURI
 app.config['SECRET_KEY'] = os.environ['APP_SECRET_KEY']
 
-@app.route('/', defaults={'path': '../client/build/public/index.html'})
+@app.route('/', defaults={'path': '../client/build/index.html'})
 @app.route('/<path:path>')
 def catch_all(path):
-  return render_template(path)
+  if not path:
+    path = 'index.html'
+  return send_from_directory(os.path.abspath('../client/build'), path)
 
 db = SQLAlchemy()
 migrate = Migrate(app, db)
