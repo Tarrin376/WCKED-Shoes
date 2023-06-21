@@ -10,7 +10,7 @@ from flask_cors import CORS
 
 load_dotenv()
 
-app = Flask(__name__, static_folder="/build", static_url_path='/')
+app = Flask(__name__, static_folder="../client/build", static_url_path='/')
 cors = CORS(app, resources={r"/api/*": {"origins": "https://e-commerce-app-k88h.onrender.com"}}, supports_credentials=True)
 
 prodURI = os.environ['DATABASE_URI']
