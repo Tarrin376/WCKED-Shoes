@@ -117,7 +117,7 @@ const VerifyEmail: React.FC<Props> = ({ setVerifyEmailPopUp, setSignUpPopUp, ema
   return (
     <PopUpWrapper setPopUp={setVerifyEmailPopUp}>
       <h4 className="text-2xl mb-2">Please check your email</h4>
-      <p className="text-side-text-light dark:text-side-text-gray text-lg mb-4">
+      <p className="text-side-text-light dark:text-side-text-gray text-lg mb-3">
         We've just sent a code to
         <span className="font-semibold">
           {` ${emailAddress}`}
@@ -144,7 +144,7 @@ const VerifyEmail: React.FC<Props> = ({ setVerifyEmailPopUp, setSignUpPopUp, ema
               key={index}
               maxLength={1} 
               ref={ref}
-              className="sm:w-[85px] sm:h-[85px] max-sm:w-[50px] max-sm:h-[50px] text-[45px] text-center text-box-light dark:text-box"
+              className="sm:w-[85px] sm:h-[85px] max-sm:w-[48px] max-sm:h-[48px] text-[45px] text-center text-box-light dark:text-box"
               onClick={() => setInputIndex(index)}
             />
           )
