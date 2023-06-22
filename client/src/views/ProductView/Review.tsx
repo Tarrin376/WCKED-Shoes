@@ -66,6 +66,7 @@ const Review: React.FC<Props> = ({ review }) => {
       </div>
       <div className={`flex items-center gap-[13px] mt-[6px] mb-2 max-sm:flex-col-reverse max-sm:items-start`}>
         <RatingStars rating={review.rating} border={review.verified_purchase && windowSize >= 480} />
+        {(review.verified_purchase || review.is_own_review) &&
         <div className={`flex ${windowSize <= 385 ? "flex-col items-start gap-[8px]" : "items-center gap-[13px]"}`}>
           {review.verified_purchase && <p className="popular">Verified Purchase</p>}
           {review.is_own_review && 
@@ -73,7 +74,7 @@ const Review: React.FC<Props> = ({ review }) => {
             {windowSize > 385 && <div className="w-[1px] bg-light-border dark:bg-main-gray-border h-[17px]"></div>}
             <p className="popular bg-bg-primary-btn-hover">Your review</p>
           </div>}
-          </div>
+        </div>}
       </div>
       <p className="text-main-text-black dark:text-main-text-white">{review.review}</p>
       {helpfulCount > 0 && 
