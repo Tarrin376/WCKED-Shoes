@@ -24,7 +24,8 @@ To install this project locally on your machine is pretty quick and straightforw
 3. run the command 'npm start' in the 'client' folder and open the app in any browser.
 
 #### Example of configuring the proxy with WSGI server located at: http://0.0.0.0:8080
-[Alt text](image-1.png)
+
+[{"proxy": "http://0.0.0.0:8080"}](image-1.png)
 
 ## Find a bug?
 
