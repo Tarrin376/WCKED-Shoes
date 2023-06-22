@@ -10,7 +10,7 @@ import OrderPlaced from "./views/OrderPlacedView/OrderPlaced";
 import { ThemeProvider } from "./providers/ThemeProvider";
 import MyOrders from "./views/MyOrdersView/MyOrders";
 
-const App: React.FC<{}> = () => {
+const App = () => {
   return (
     <ThemeProvider>
         <div className="bg-bg-light dark:bg-bg-dark">

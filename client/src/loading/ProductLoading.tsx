@@ -1,5 +1,5 @@
 
-const ProductLoading: React.FC<{}> = () => {
+const ProductLoading = () => {
   return (
     <>
       <div className="mb-[40px] h-7 max-w-[350px] loading-light dark:loading-dark">

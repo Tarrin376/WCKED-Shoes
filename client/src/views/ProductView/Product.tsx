@@ -36,7 +36,7 @@ const defaultText = "Add to bag";
 const loadingText = "Adding to bag...";
 const completedText = "Added to bag";
 
-const Product: React.FC<{}> = () => {
+const Product = () => {
   const location = useLocation();
   const [product, setProduct] = useState<Readonly<TProduct | null>>(null);
   const userContext = useContext(UserContext);

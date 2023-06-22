@@ -1,6 +1,6 @@
 import { useLocation, useNavigate } from "react-router-dom";
 
-const Error: React.FC<{}> = () => {
+const Error = () => {
   const location = useLocation();
   const navigate = useNavigate();
 

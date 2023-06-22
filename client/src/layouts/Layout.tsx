@@ -33,7 +33,7 @@ export interface LoggedInProps {
   setErrorMessage: React.Dispatch<React.SetStateAction<TErrorMessage | undefined>>
 }
 
-const Layout: React.FC<{}> = () => {
+const Layout = () => {
   const [loginPopUp, setLoginPopUp] = useState<boolean>(false);
   const [signUpPopUp, setSignUpPopUp] = useState<boolean>(false);
   const [verifyEmailPopUp, setVerifyEmailPopUp] = useState<boolean>(false);

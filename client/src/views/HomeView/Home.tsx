@@ -11,7 +11,7 @@ import Welcome from "../../components/Welcome";
 
 const productsLimit = 10;
 
-const Home: React.FC<{}> = () => {
+const Home = () => {
   const location = useLocation();
   const searchRef = useRef<HTMLInputElement>(null);
   const [welcomePopUp, setWelcomePopUp] = useState<boolean>(false);

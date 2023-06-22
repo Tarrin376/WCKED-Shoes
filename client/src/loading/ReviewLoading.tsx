@@ -1,5 +1,5 @@
 
-const ReviewLoading: React.FC<{}> = () => {
+const ReviewLoading = () => {
   return (
     <div className="border-b border-light-border dark:border-main-gray-border pb-6">
       <div className="flex items-center gap-4">

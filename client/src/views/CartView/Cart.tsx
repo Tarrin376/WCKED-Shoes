@@ -6,7 +6,7 @@ import CartPriceSummary from "../../components/CartPriceSummary";
 import CartLoading from "../../loading/CartLoading";
 import { useState } from "react";
 
-const Cart: React.FC<{}> = () => {
+const Cart = () => {
   const navigate = useNavigate();
   const cartItems = useGetCart();
   const [disabled, setDisabled] = useState<boolean>(false);
