@@ -1,5 +1,5 @@
 import PopUpWrapper from "../wrappers/PopUpWrapper";
-import { useEffect, useState, useCallback, useRef } from "react";
+import { useEffect, useState, useCallback } from "react";
 import axios, { AxiosError } from "axios";
 import ErrorMessage from "./ErrorMessage";
 import { TErrorMessage } from "../@types/TErrorMessage";
