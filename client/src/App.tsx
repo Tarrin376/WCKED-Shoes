@@ -15,7 +15,7 @@ const App: React.FC<{}> = () => {
     <ThemeProvider>
         <div className="bg-bg-light dark:bg-bg-dark">
           <UserProvider>
-              <BrowserRouter basename="https://wcked-shoes.onrender.com">
+              <BrowserRouter>
                 <Routes>
                     <Route path="/" element={<Layout />}>
                     <Route index element={<Home />} />
