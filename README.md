@@ -1,4 +1,4 @@
-# WCKED Shoes E-Commerce app
+# WCKED Shoes
 
 ## A fully functional E-Commerce app written in React (with Typescript) and Flask that offers a variety of useful features to customers such as
 ## intelligent product recommendations, creating and reading helpful reviews, managing orders, and much more.
@@ -20,16 +20,14 @@ To install this project locally on your machine is pretty quick and straightforw
 
 ## Running the project locally
 
-### Development build:
-
 1. cd into the 'server' folder and run 'python wsgi.py'. This will spin up the Gunicorn WSGI server (you can configure the server in the wsgi.py file).
 2. go to the 'package.json' file in the 'client' folder and add a proxy that points to the URL of the WSGI server (http://{IP Address}:{PORT}).
 
-#### Example of configuring the proxy with WSGI server located at: http://0.0.0.0:8080
+3. #### Example of configuring the proxy with WSGI server located at: http://0.0.0.0:8080
 ![Alt text](image-1.png)
 
-3. run the command 'npm start' in the 'client' folder and open the app in a browser.
+4. run the command 'npm start' in the 'client' folder and open the app in any browser.
 
-### Production build:
+## Find a bug?
 
-...
+If you found an issue or would like to contribute to this project, please raise an issue first before making a pull request. When you submit a PR, reference the issue you created so I know what you fixed.

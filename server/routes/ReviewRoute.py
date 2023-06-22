@@ -22,11 +22,11 @@ def get_reviews(product_id):
     response = get_reviews_handler(product_id, sort, int(page), int(limit), asc, user_id, filter)
     return Response(json.dumps(response), status=200, content_type="application/json")
   except DBException as e:
-    return Response(e.message, status=e.status_code, mimetype="application/json")
+    return Response(e.message, status=e.status_code, mimetype="text/plain")
   except ValueError:
-    return Response("'page' and 'limit' query parameters must be numbers.", status=400, mimetype="application/json")
+    return Response("'page' and 'limit' query parameters must be numbers.", status=400, mimetype="text/plain")
   except Exception as e:
-    return Response(str(e), status=500, mimetype="application/json")
+    return Response(str(e), status=500, mimetype="text/plain")
   
 @reviews_blueprint.route("/<id>", methods=["DELETE"])
 @authenticate_user
@@ -34,11 +34,11 @@ def get_reviews(product_id):
 def delete_review(id):
   try:
     delete_review_handler(id)
-    return Response("Review deleted.", status=200, mimetype="application/json")
+    return Response("Review deleted.", status=200, mimetype="text/plain")
   except DBException as e:
-    return Response(e.message, status=e.status_code, mimetype="application/json")
+    return Response(e.message, status=e.status_code, mimetype="text/plain")
   except Exception as e:
-    return Response(str(e), status=500, mimetype="application/json")
+    return Response(str(e), status=500, mimetype="text/plain")
   
 @reviews_blueprint.route("/<id>/helpful", methods=["PUT"])
 @authenticate_user
@@ -47,13 +47,13 @@ def mark_helpful(id):
   try:
     user_id = g.token["sub"]["id"]
     helpful_count = mark_helpful_handler(id, user_id)
-    return Response(str(helpful_count), status=201, mimetype="application/json")
+    return Response(str(helpful_count), status=201, mimetype="text/plain")
   except DBException as e:
-    return Response(e.message, status=e.status_code, mimetype="application/json")
+    return Response(e.message, status=e.status_code, mimetype="text/plain")
   except KeyError:
-    return Response("Insufficient data supplied. Unable to perform requested action.", status=400, mimetype="application/json")
+    return Response("Insufficient data supplied. Unable to perform requested action.", status=400, mimetype="text/plain")
   except Exception as e:
-    return Response(str(e), status=500, mimetype="application/json")
+    return Response(str(e), status=500, mimetype="text/plain")
 
 @reviews_blueprint.route("/<product_id>", methods=["POST"])
 @authenticate_user
@@ -66,6 +66,6 @@ def add_review(product_id):
     new_review = add_review_handler(product_id, token["sub"]["id"], data)
     return Response(json.dumps(new_review), status=201, mimetype="application/json")
   except DBException as e:
-    return Response(e.message, status=e.status_code, mimetype="application/json")
+    return Response(e.message, status=e.status_code, mimetype="text/plain")
   except Exception as e:
-    return Response(str(e), status=500, mimetype="application/json")
+    return Response(str(e), status=500, mimetype="text/plain")
