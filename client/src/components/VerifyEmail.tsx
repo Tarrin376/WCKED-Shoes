@@ -150,7 +150,7 @@ const VerifyEmail: React.FC<Props> = ({ setVerifyEmailPopUp, setSignUpPopUp, ema
           )
         })}
       </div>
-      <p className="mt-3 text-center text-side-text-light dark:text-side-text-gray text-[15px]">
+      <p className="mt-[26px] text-center text-side-text-light dark:text-side-text-gray text-[15px]">
         Didn't get a code?
         <span className={`font-semibold text-main-text-black dark:text-main-text-white underline cursor-pointer ml-2 
         btn hover:!text-bg-primary-btn-hover ${disabled ? "pointer-events-none" : ""}`} onClick={sendVerificationCode}>
@@ -158,8 +158,8 @@ const VerifyEmail: React.FC<Props> = ({ setVerifyEmailPopUp, setSignUpPopUp, ema
         </span>
       </p>
       {errorMessage && <ErrorMessage error={errorMessage.message} />}
-      <div className="flex gap-4 mt-7">
-        <button className="login-btn w-1/2" onClick={backToSignUp}>
+      <div className="flex gap-4 mt-7 max-xs:flex-col-reverse">
+        <button className="login-btn text-base xs:w-1/2 max-xs:w-full" onClick={backToSignUp}>
           Back
         </button>
         <Button
@@ -167,7 +167,7 @@ const VerifyEmail: React.FC<Props> = ({ setVerifyEmailPopUp, setSignUpPopUp, ema
           completedText="Account created"
           defaultText="Verify"
           loadingText="Verifying email"
-          styles="btn-primary w-1/2 h-[47px] text-base"
+          styles="btn-primary xs:w-1/2 max-xs:w-full h-[47px] text-base"
           setErrorMessage={setErrorMessage}
           whenComplete={closeVerifyEmailPopUp}
         />
