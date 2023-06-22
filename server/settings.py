@@ -19,7 +19,10 @@ app.config['SECRET_KEY'] = os.environ['APP_SECRET_KEY']
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')
 def catch_all(path):
-  return send_from_directory('../client/build', 'index.html')
+  if path and os.path.exists(app.static_folder + '/' + path):
+    return send_from_directory(app.static_folder, path)
+  else:
+    return send_from_directory(app.static_folder, 'index.html')
 
 db = SQLAlchemy()
 migrate = Migrate(app, db)
