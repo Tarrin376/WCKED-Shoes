@@ -9,7 +9,7 @@ import redis
 
 load_dotenv()
 
-app = Flask(__name__, static_folder="../client/build/static", static_url_path='/')
+app = Flask(__name__, static_folder="../client/build", static_url_path='/')
 prodURI = os.environ['DATABASE_URI']
 prodURI = prodURI.replace("postgres://", "postgresql://")
 
@@ -20,7 +20,7 @@ app.config['SECRET_KEY'] = os.environ['APP_SECRET_KEY']
 @app.route('/<path:path>')
 def catch_all(path):
   if not path.startswith('/api'):
-    return send_from_directory("../client/build", 'index.html')
+    return send_from_directory(app.static_folder, 'index.html')
   
   return Response("API route not found", status=404, mimetype="application/json")
 
