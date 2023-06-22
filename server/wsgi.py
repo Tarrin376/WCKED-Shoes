@@ -11,6 +11,7 @@ def run_app():
 
 app.register_blueprint(server_blueprint, url_prefix="/api")
 
+# fix this bug with it not catching any routes
 @app.route('/', defaults={'u_path': ''})
 @app.route('/<path:u_path>')
 def catch_all(u_path):
