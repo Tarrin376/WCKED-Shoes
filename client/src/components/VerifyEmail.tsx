@@ -142,7 +142,7 @@ const VerifyEmail: React.FC<Props> = ({ setVerifyEmailPopUp, setSignUpPopUp, ema
               key={index}
               maxLength={1} 
               ref={ref}
-              className="xs:w-[85px] xs:h-[85px] max-xs:w-[50px] max-xs:h-[50px] text-[45px] text-center text-box-light dark:text-box"
+              className="sm:w-[85px] sm:h-[85px] max-sm:w-[50px] max-sm:h-[50px] text-[45px] text-center text-box-light dark:text-box"
               onClick={() => setInputIndex(index)}
             />
           )
