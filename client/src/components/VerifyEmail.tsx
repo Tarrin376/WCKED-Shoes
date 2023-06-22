@@ -36,7 +36,7 @@ const VerifyEmail: React.FC<Props> = ({ setVerifyEmailPopUp, setSignUpPopUp, ema
     }
   }, [emailAddress]);
 
-  const handleKeyDown = useCallback((e: KeyboardEvent) => {
+  const handleKeyUp = useCallback((e: KeyboardEvent) => {
     const key = e.key;
 
     if (/^\d$/.test(key) && inputIndex < inputRefs.current.length) {
@@ -56,12 +56,12 @@ const VerifyEmail: React.FC<Props> = ({ setVerifyEmailPopUp, setSignUpPopUp, ema
   }, [inputIndex, inputRefs])
 
   useEffect(() => {
-    document.addEventListener("keyup", handleKeyDown);
+    document.addEventListener("keyup", handleKeyUp);
 
     return () => {
-      document.removeEventListener("keyup", handleKeyDown);
+      document.removeEventListener("keyup", handleKeyUp);
     }
-  }, [handleKeyDown])
+  }, [handleKeyUp])
 
   const checkVerificationCode = async (): Promise<TErrorMessage | undefined> => {
     const codeInput = inputRefs.current.map((input) => input.current!.value).join("");
