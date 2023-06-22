@@ -42,9 +42,7 @@ const VerifyEmail: React.FC<Props> = ({ setVerifyEmailPopUp, setSignUpPopUp, ema
     if (/^\d$/.test(key) && inputIndex < inputRefs.current.length) {
       const tmp = Math.min(inputRefs.current.length - 1, inputIndex + 1);
       setInputIndex(tmp);
-      inputRefs.current[tmp].current!.value = key;
-    } else if (key === "Backspace" && inputIndex >= 0) {
-      inputRefs.current[inputIndex].current!.value = "";
+    } else if (key === "Backspace") {
       setInputIndex((cur) => Math.max(-1, cur - 1));
     }
   }, [inputRefs, setInputIndex, inputIndex]);
