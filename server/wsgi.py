@@ -14,10 +14,9 @@ def handle_request(environ, start_response):
 
 app.register_blueprint(server_blueprint, url_prefix="/api")
 
-@app.route('/', defaults={'path': ''})
-@app.route('/<path:path>')
+@app.route('/', defaults={'u_path': ''})
+@app.route('/<path:u_path>')
 def catch_all(path):
-  print(path)
   if not path.startswith('/api'):
     return send_file(f"{app.static_folder}/index.html")
   
