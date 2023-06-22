@@ -16,8 +16,8 @@ app.register_blueprint(server_blueprint, url_prefix="/api")
 
 @app.route('/', defaults={'u_path': ''})
 @app.route('/<path:u_path>')
-def catch_all(path):
-  if not path.startswith('/api'):
+def catch_all(u_path):
+  if not u_path.startswith('/api'):
     return send_file(f"{app.static_folder}/index.html")
   
   return Response("API route not found", status=404, mimetype="application/json")
