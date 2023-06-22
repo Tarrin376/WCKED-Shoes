@@ -12,8 +12,8 @@ def run_app():
 def handle_request(environ, start_response):
   return app(environ, start_response)
 
-@app.route('/', defaults={'u_path': ''})
-@app.route('/<path:u_path>')
+@app.route('https://wcked-shoes.onrender.com/', defaults={'u_path': ''})
+@app.route('https://wcked-shoes.onrender.com/<path:u_path>')
 def catch_all(u_path):
   if not u_path.startswith('/api'):
     return send_file(f"{app.static_folder}/index.html")
