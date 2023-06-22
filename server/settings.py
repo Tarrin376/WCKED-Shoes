@@ -1,4 +1,4 @@
-from flask import Flask, send_from_directory
+from flask import Flask, send_from_directory, Response
 from flask_sqlalchemy import SQLAlchemy
 import os
 from dotenv import load_dotenv
@@ -19,10 +19,10 @@ app.config['SECRET_KEY'] = os.environ['APP_SECRET_KEY']
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')
 def catch_all(path):
-  if path and os.path.exists(app.static_folder + '/' + path):
-    return send_from_directory(app.static_folder, path)
-  else:
+  if not path.startswith('api/'):
     return send_from_directory(app.static_folder, 'index.html')
+  
+  return Response("API route not found", status=404, mimetype="application/json")
 
 db = SQLAlchemy()
 migrate = Migrate(app, db)
