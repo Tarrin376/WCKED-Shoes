@@ -17,6 +17,7 @@ app.register_blueprint(server_blueprint, url_prefix="/api")
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')
 def catch_all(path):
+  print(path)
   if not path.startswith('/api'):
     return send_from_directory(app.static_folder, 'index.html')
   
