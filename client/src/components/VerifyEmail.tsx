@@ -17,7 +17,7 @@ interface Props {
 const VerifyEmail: React.FC<Props> = ({ setVerifyEmailPopUp, setSignUpPopUp, emailAddress, password }) => {
   const inputs = 4;
   const inputRefs = useSearchInputRefs(inputs);
-  const [inputIndex, setInputIndex] = useState(-1);
+  const [inputIndex, setInputIndex] = useState(0);
 
   const [errorMessage, setErrorMessage] = useState<TErrorMessage | undefined>();
   const [secretCode, setSecretCode] = useState<string>("");
@@ -52,9 +52,7 @@ const VerifyEmail: React.FC<Props> = ({ setVerifyEmailPopUp, setSignUpPopUp, ema
   }, [sendVerificationCode]);
 
   useEffect(() => {
-    if (inputIndex + 1 < inputRefs.current.length) {
-      inputRefs.current[inputIndex + 1].current?.focus();
-    }
+    inputRefs.current[inputIndex].current?.focus();
   }, [inputIndex, inputRefs])
 
   useEffect(() => {
@@ -145,8 +143,7 @@ const VerifyEmail: React.FC<Props> = ({ setVerifyEmailPopUp, setSignUpPopUp, ema
               maxLength={1} 
               ref={ref}
               className="xs:w-[85px] xs:h-[85px] max-xs:w-[50px] max-xs:h-[50px] text-[45px] text-center text-box-light dark:text-box"
-              onClick={() => setInputIndex(index - 1)}
-              autoFocus={index === inputIndex + 1}
+              onClick={() => setInputIndex(index)}
             />
           )
         })}
