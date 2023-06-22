@@ -24,8 +24,8 @@ To install this project locally on your machine is pretty quick and straightforw
 1. cd into the 'server' folder and run 'python wsgi.py'. This will spin up the Gunicorn WSGI server (you can configure the server in the wsgi.py file).
 2. go to the 'package.json' file in the 'client' folder and add a proxy that points to the URL of the WSGI server (http://{IP Address}:{PORT}).
 
-#### Example of configuring the proxy with WSGI server located at: http://0.0.0.0:8080
-![Alt text](image-1.png)
+####   Example of configuring the proxy with WSGI server located at: http://0.0.0.0:8080
+   ![Alt text](image-1.png)
 
 3. run the command 'npm start' in the 'client' folder and open the app in a browser.
 
