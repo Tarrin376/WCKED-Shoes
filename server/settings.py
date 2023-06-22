@@ -19,10 +19,7 @@ app.config['SECRET_KEY'] = os.environ['APP_SECRET_KEY']
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')
 def catch_all(path):
-  if not path.startswith('/api'):
-    return send_from_directory("../client/build", 'index.html')
-  
-  return Response("API route not found", status=404, mimetype="application/json")
+  return send_from_directory("../client/build", 'index.html')
 
 db = SQLAlchemy()
 migrate = Migrate(app, db)
