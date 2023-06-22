@@ -40,30 +40,28 @@ const VerifyEmail: React.FC<Props> = ({ setVerifyEmailPopUp, setSignUpPopUp, ema
     const key = e.key;
 
     if (/^\d$/.test(key) && inputIndex < inputRefs.current.length) {
-      inputRefs.current[inputIndex].current!.value = key;
       const tmp = Math.min(inputRefs.current.length - 1, inputIndex + 1);
       setInputIndex(tmp);
     } else if (key === "Backspace") {
-      inputRefs.current[inputIndex].current!.value = "";
       setInputIndex((cur) => Math.max(-1, cur - 1));
     }
   }, [inputRefs, setInputIndex, inputIndex]);
 
   useEffect(() => {
     sendVerificationCode();
-  }, [sendVerificationCode]);
+  }, [sendVerificationCode])
 
   useEffect(() => {
     inputRefs.current[inputIndex].current?.focus();
   }, [inputIndex, inputRefs])
 
   useEffect(() => {
-    document.addEventListener("keydown", handleKeyDown);
+    document.addEventListener("keyup", handleKeyDown);
 
     return () => {
-      document.removeEventListener("keydown", handleKeyDown);
+      document.removeEventListener("keyup", handleKeyDown);
     }
-  }, [handleKeyDown]);
+  }, [handleKeyDown])
 
   const checkVerificationCode = async (): Promise<TErrorMessage | undefined> => {
     const codeInput = inputRefs.current.map((input) => input.current!.value).join("");
