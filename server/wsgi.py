@@ -12,6 +12,8 @@ def run_app():
 def handle_request(environ, start_response):
   return app(environ, start_response)
 
+app.register_blueprint(server_blueprint, url_prefix="/api")
+
 @app.route('https://wcked-shoes.onrender.com/', defaults={'u_path': ''})
 @app.route('https://wcked-shoes.onrender.com/<path:u_path>')
 def catch_all(u_path):
@@ -19,8 +21,6 @@ def catch_all(u_path):
     return send_file(f"{app.static_folder}/index.html")
   
   return Response("API route not found", status=404, mimetype="application/json")
-
-app.register_blueprint(server_blueprint, url_prefix="/api")
 
 if __name__ == '__main__':
   callable = handle_request
