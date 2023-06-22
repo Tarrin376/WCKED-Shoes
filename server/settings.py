@@ -1,4 +1,4 @@
-from flask import Flask, send_from_directory, Response
+from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 import os
 from dotenv import load_dotenv
@@ -15,14 +15,6 @@ prodURI = prodURI.replace("postgres://", "postgresql://")
 
 app.config['SQLALCHEMY_DATABASE_URI'] = prodURI
 app.config['SECRET_KEY'] = os.environ['APP_SECRET_KEY']
-
-@app.route('/', defaults={'path': ''})
-@app.route('/<path:path>')
-def catch_all(path):
-  if not path.startswith('/api'):
-    return send_from_directory(app.static_folder, 'index.html')
-  
-  return Response("API route not found", status=404, mimetype="application/json")
 
 db = SQLAlchemy()
 migrate = Migrate(app, db)
