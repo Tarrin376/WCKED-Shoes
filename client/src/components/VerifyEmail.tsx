@@ -17,7 +17,7 @@ interface Props {
 const VerifyEmail: React.FC<Props> = ({ setVerifyEmailPopUp, setSignUpPopUp, emailAddress, password }) => {
   const inputs = 4;
   const inputRefs = useSearchInputRefs(inputs);
-  const inputIndex = useRef<number>(-1);
+  const [inputIndex, setInputIndex] = useState(-1);
 
   const [errorMessage, setErrorMessage] = useState<TErrorMessage | undefined>();
   const [secretCode, setSecretCode] = useState<string>("");
@@ -39,14 +39,15 @@ const VerifyEmail: React.FC<Props> = ({ setVerifyEmailPopUp, setSignUpPopUp, ema
   const handleKeyDown = useCallback((e: KeyboardEvent) => {
     const key = e.key;
 
-    if (/^\d$/.test(key) && inputIndex.current < inputRefs.current.length) {
-      inputIndex.current = Math.min(inputRefs.current.length - 1, inputIndex.current + 1);
-      inputRefs.current[inputIndex.current].current!.value = key;
-    } else if (key === "Backspace" && inputIndex.current >= 0) {
-      inputRefs.current[inputIndex.current].current!.value = "";
-      inputIndex.current = Math.max(-1, inputIndex.current - 1);
+    if (/^\d$/.test(key) && inputIndex < inputRefs.current.length) {
+      const tmp = Math.min(inputRefs.current.length - 1, inputIndex + 1);
+      setInputIndex(tmp);
+      inputRefs.current[tmp].current!.value = key;
+    } else if (key === "Backspace" && inputIndex >= 0) {
+      inputRefs.current[inputIndex].current!.value = "";
+      setInputIndex((cur) => Math.max(-1, cur - 1));
     }
-  }, [inputRefs]);
+  }, [inputRefs, setInputIndex, inputIndex]);
 
   useEffect(() => {
     sendVerificationCode();
@@ -139,9 +140,9 @@ const VerifyEmail: React.FC<Props> = ({ setVerifyEmailPopUp, setSignUpPopUp, ema
               key={index}
               maxLength={1} 
               ref={ref}
-              className="w-[85px] h-[85px] text-[45px] text-center text-box-light dark:text-box"
-              onClick={() => inputIndex.current = index - 1}
-              autoFocus={index === inputIndex.current + 1}
+              className="xs:w-[85px] xs:h-[85px] max-xs:w-[50px] max-xs:h-[50px] text-[45px] text-center text-box-light dark:text-box"
+              onClick={() => setInputIndex(index - 1)}
+              autoFocus={index === inputIndex + 1}
             />
           )
         })}
