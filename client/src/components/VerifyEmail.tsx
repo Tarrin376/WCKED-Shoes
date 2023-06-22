@@ -54,6 +54,12 @@ const VerifyEmail: React.FC<Props> = ({ setVerifyEmailPopUp, setSignUpPopUp, ema
   }, [sendVerificationCode]);
 
   useEffect(() => {
+    if (inputIndex + 1 < inputRefs.current.length) {
+      inputRefs.current[inputIndex + 1].current?.focus();
+    }
+  }, [inputIndex, inputRefs])
+
+  useEffect(() => {
     document.addEventListener("keydown", handleKeyDown);
 
     return () => {
