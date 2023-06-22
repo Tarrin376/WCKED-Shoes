@@ -1,7 +1,7 @@
 import os
 from settings import app
 from server import server_blueprint
-from flask import Response, send_from_directory
+from flask import Response, send_file
 
 def run_app():
   port = int(os.environ.get('PORT', 8080))
@@ -19,7 +19,7 @@ app.register_blueprint(server_blueprint, url_prefix="/api")
 def catch_all(path):
   print(path)
   if not path.startswith('/api'):
-    return send_from_directory(app.static_folder, 'index.html')
+    return send_file(f"{app.static_folder}/index.html")
   
   return Response("API route not found", status=404, mimetype="application/json")
 
