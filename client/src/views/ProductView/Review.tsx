@@ -47,7 +47,7 @@ const Review: React.FC<Props> = ({ review }) => {
 
   const getReviewHelpfulText = () => {
     if (review.is_marked) {
-      return helpfulCount === 1 ? "You found this review helpful" : `You and ${helpfulCount - 1} ${helpfulCount - 1 === 1 ? "other" : "others"} 
+      return helpfulCount === 1 ? "You found this review helpful" : `You and ${helpfulCount - 1} ${helpfulCount - 1 === 1 ? "other person" : "others"} 
       found this review helpful`;
     } else {
       return `${helpfulCount === 1 ? 'One person' : `${helpfulCount} people`} found this review helpful`;
