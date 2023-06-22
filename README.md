@@ -15,7 +15,7 @@ To install this project locally on your machine is pretty quick and straightforw
 1. clone this project
 2. cd into the 'client' folder and run 'npm install' to install necessary dependencies.
 3. cd into the 'server' folder and run 'pip install -r requirements.txt'. This will install all python modules in the 'requirements.txt' file.
-4. create a '.env' file in the 'server' folder and add all of the required variables. These can be found in the 'env_sample.txt' file.
+4. create a '.env' file in the 'server' folder and add all of the required environment variables. These can be found in the 'env_sample.txt' file.
 
 ## Running the project locally
 
