@@ -142,7 +142,7 @@ def add_to_cart_handler(user_id, product_id, size_chosen, quantity):
       settings.db.session.commit()
     else:
       if cart_item.quantity + quantity > MAX_ITEM_QUANTITY:
-        raise DBException(f"You cannot have more than {MAX_ITEM_QUANTITY} of {product.name} in your cart.", 400)
+        raise DBException(f"You cannot have more than {MAX_ITEM_QUANTITY} of {product.name} in your bag.", 400)
       elif cart_item.quantity + quantity > size.stock:
         raise DBException(f"Sorry, you have requested more of {product.name} than the {size.stock} available in this size.", 400)
       
@@ -152,7 +152,7 @@ def add_to_cart_handler(user_id, product_id, size_chosen, quantity):
     user_data = user.as_dict()
     return user_data
   except exc.SQLAlchemyError:
-    raise DBException("Unable to add product to cart. Try again.", 500)
+    raise DBException("Unable to add product to bag. Try again.", 500)
   except Exception as e:
     if type(e) is not DBException:
       raise DBException("Something went wrong. Please contact our team if this continues.", 500)
@@ -169,7 +169,7 @@ def update_item_quantity_handler(user_id, product_id, size_chosen, new_quantity)
     if size is None: raise DBException("Size does not exist.", 404)
     if user is None: raise DBException("User does not exist.", 404)
     if product is None: raise DBException("Product does not exist.", 404)
-    if cart_item is None: raise DBException("Cart item does not exist.", 404)
+    if cart_item is None: raise DBException("Bag item does not exist.", 404)
     
     cart_item.quantity += new_quantity
     settings.db.session.commit()
@@ -181,7 +181,7 @@ def update_item_quantity_handler(user_id, product_id, size_chosen, new_quantity)
 
     return {"user_data": user_data, "cart": get_cart_handler(user_id), "valid": cart_item.quantity <= size.stock}
   except exc.SQLAlchemyError:
-    raise DBException("Unable to remove product from cart. Try again.", 500)
+    raise DBException("Unable to remove product from bag. Try again.", 500)
   except Exception as e:
     if type(e) is not DBException:
       raise DBException("Something went wrong. Please contact our team if this continues.", 500)
@@ -218,7 +218,7 @@ def get_cart_handler(user_id):
     
     return response
   except exc.SQLAlchemyError:
-    raise DBException("Unable to get cart. Try again.", 500)
+    raise DBException("Unable to get bag. Try again.", 500)
   except Exception as e:
     if type(e) is not DBException:
       raise DBException("Something went wrong. Please contact our team if this continues.", 500)
