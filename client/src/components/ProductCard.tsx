@@ -71,7 +71,7 @@ const ProductCard: React.FC<Props> = ({ product, styles, setTotalPrice, smallSiz
       style={{backgroundImage: `url(${product.thumbnail})`}}>
         {outOfStockItems && outOfStockItems.includes(product.id) && 
         <ErrorMessage 
-          error="No more stock available."
+          error="Unable to add to cart."
           styles="absolute top-0 w-full !mt-0 !rounded-b-[0px] z-10"
         />}
         <Rating rating={product.rating} styles={"absolute right-2 top-2 !bg-no-reviews-bg"} />
