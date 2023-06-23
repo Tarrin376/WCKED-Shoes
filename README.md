@@ -2,7 +2,7 @@
 
 #### A fully functional E-Commerce app written in React (with Typescript) and Flask that offers a variety of useful features to customers such as intelligent product recommendations, creating and reading helpful reviews, managing orders, and much more.
 
-![Snippet showing order page](image.png)
+![Snippet showing order page](image-1.png)
 
 This project was partly inspired by Amazon's item-to-item collaborative filtering algorithm that recommends to users what 'customers who bought this item
 also bought'. You can read more about this algorithm and how it works <a href="https://www.cs.umd.edu/~samir/498/Amazon-Recommendations.pdf">here</a> if
