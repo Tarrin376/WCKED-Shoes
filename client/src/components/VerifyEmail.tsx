@@ -31,7 +31,7 @@ const VerifyEmail: React.FC<Props> = ({ setVerifyEmailPopUp, setSignUpPopUp, ema
       setErrorMessage(undefined);
     }
     catch (error: any) {
-      const errorMsg = getAPIErrorMessage(error as AxiosError);
+      const errorMsg = getAPIErrorMessage(error as AxiosError<{ error: string }>);
       setErrorMessage(errorMsg);
     }
   }, [emailAddress]);
@@ -78,7 +78,7 @@ const VerifyEmail: React.FC<Props> = ({ setVerifyEmailPopUp, setSignUpPopUp, ema
       return createAccount();
     }
     catch (error: any) {
-      const errorMsg = getAPIErrorMessage(error as AxiosError);
+      const errorMsg = getAPIErrorMessage(error as AxiosError<{ error: string }>);
       return errorMsg;
     }
     finally {
@@ -96,7 +96,7 @@ const VerifyEmail: React.FC<Props> = ({ setVerifyEmailPopUp, setSignUpPopUp, ema
       setErrorMessage(undefined);
     }
     catch (error: any) {
-      const errorMsg = getAPIErrorMessage(error as AxiosError);
+      const errorMsg = getAPIErrorMessage(error as AxiosError<{ error: string }>);
       return errorMsg;
     }
   }

@@ -38,7 +38,7 @@ const SignUp: React.FC<Props> = (props) => {
       return { message: "User with this email address already exists.", status: 400 };
     }
     catch (error: any) {
-      const errorMsg = getAPIErrorMessage(error as AxiosError);
+      const errorMsg = getAPIErrorMessage(error as AxiosError<{ error: string }>);
       if (errorMsg.status === 404) {
         props.setSignUpPopUp(false);
         props.openVerifyEmailPopUp();

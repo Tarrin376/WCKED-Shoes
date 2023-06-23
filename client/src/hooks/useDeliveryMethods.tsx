@@ -18,7 +18,7 @@ export const useDeliveryMethods = (): {
         setMethods(response.data);
       }
       catch (error: any) {
-        const err = error as AxiosError;
+        const err = error as AxiosError<{ error: string }>;
         if (err.response!.status === 429) {
           setErrorMessage(getAPIErrorMessage(err));
         } else {

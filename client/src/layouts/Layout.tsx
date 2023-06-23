@@ -78,7 +78,7 @@ const Layout = () => {
       await axios.get<string>(`/api/users/logout`);
     }
     catch (error: any) {
-      const errorMsg = getAPIErrorMessage(error as AxiosError);
+      const errorMsg = getAPIErrorMessage(error as AxiosError<{ error: string }>);
       return errorMsg;
     }
   }

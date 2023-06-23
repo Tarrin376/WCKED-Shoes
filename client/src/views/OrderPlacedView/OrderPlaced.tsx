@@ -34,7 +34,7 @@ const OrderPlaced = () => {
         setOrderData(orderResponse.data);
       }
       catch (error: any) {
-        const errorMsg = getAPIErrorMessage(error as AxiosError);
+        const errorMsg = getAPIErrorMessage(error as AxiosError<{ error: string }>);
         setErrorMessage(errorMsg);
       }
     })()

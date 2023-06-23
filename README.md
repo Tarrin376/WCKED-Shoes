@@ -5,7 +5,7 @@
 ![Snippet showing order page](image.png)
 
 This project was partly inspired by Amazon's item-to-item collaborative filtering algorithm that recommends to users what 'customers who bought this item
-also bought'. You can read more about this algorithm and how it works <a href="https://www.cs.umd.edu/~samir/498/Amazon-Recommendations.pdf">Here</a> if
+also bought'. You can read more about this algorithm and how it works <a href="https://www.cs.umd.edu/~samir/498/Amazon-Recommendations.pdf">here</a> if
 you are interested.
 
 ## Setting up the project locally
@@ -22,10 +22,6 @@ To install this project locally on your machine is pretty quick and straightforw
 1. cd into the 'server' folder and run 'python wsgi.py'. This will spin up the Gunicorn WSGI server (you can configure the server in the wsgi.py file).
 2. go to the 'package.json' file in the 'client' folder and add a proxy that points to the URL of the WSGI server (http://{IP Address}:{PORT}).
 3. run the command 'npm start' in the 'client' folder and open the app in any browser.
-
-#### Example of configuring the proxy with WSGI server located at http://0.0.0.0:8080:
-
-![{"proxy": "http://0.0.0.0:8080"}](image-1.png)
 
 ## Find a bug?
 

@@ -20,6 +20,6 @@ def login():
       httponly=True, samesite="Strict", secure=True)
     return resp
   except DBException as e:
-    return Response(e.message, status=e.status_code, mimetype="text/plain")
-  except Exception as e:
-    return Response(str(e), status=500, mimetype="text/plain")
+    return Response(json.dumps({"error": e.message}), status=e.status_code, mimetype="application/json")
+  except:
+    return Response(json.dumps({"error": "An unexpected error occurred. Please report this issue if this continues."}), status=500, mimetype="application/json")

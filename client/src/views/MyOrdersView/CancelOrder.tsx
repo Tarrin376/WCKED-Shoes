@@ -20,7 +20,7 @@ const CancelOrder: React.FC<Props> = ({ orderID, setDisabled, setHide }) => {
       await axios.delete<string>(`/api/users/cancel-order/${orderID}`);
     }
     catch (error: any) {
-      const errorMsg = getAPIErrorMessage(error as AxiosError);
+      const errorMsg = getAPIErrorMessage(error as AxiosError<{ error: string }>);
       return errorMsg;
     }
   }

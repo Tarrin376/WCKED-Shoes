@@ -126,7 +126,7 @@ const PaymentInfo: React.FC<Props> = ({ formRef, selectedMethod, cartItems, sele
     }
     catch (error: any) {
       setDiscountText("");
-      const errorMsg = getAPIErrorMessage(error as AxiosError);
+      const errorMsg = getAPIErrorMessage(error as AxiosError<{ error: string }>);
       return errorMsg;
     }
   }

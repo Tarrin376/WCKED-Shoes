@@ -57,7 +57,7 @@ const WriteReview: React.FC<Props> = ({ product }) => {
       setReview("");
     }
     catch (error: any) {
-      const errorMsg = getAPIErrorMessage(error as AxiosError);
+      const errorMsg = getAPIErrorMessage(error as AxiosError<{ error: string }>);
       return errorMsg;
     }
   }

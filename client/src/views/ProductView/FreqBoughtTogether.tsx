@@ -51,7 +51,7 @@ const FreqBoughtTogether: React.FC<Props> = ({ product, curSize, addToCart, styl
       }
     }
     catch (error: any) {
-      const errorMsg = getAPIErrorMessage(error as AxiosError);
+      const errorMsg = getAPIErrorMessage(error as AxiosError<{ error: string }>);
       return errorMsg;
     }
   }

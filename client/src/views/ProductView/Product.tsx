@@ -84,7 +84,7 @@ const Product = () => {
       setQuantity(1);
     }
     catch (error: any) {
-      const errorMsg = getAPIErrorMessage(error as AxiosError);
+      const errorMsg = getAPIErrorMessage(error as AxiosError<{ error: string }>);
       return errorMsg;
     }
   }
@@ -104,7 +104,7 @@ const Product = () => {
         }
       }
       catch (error: any) {
-        const errorMsg = getAPIErrorMessage(error as AxiosError);
+        const errorMsg = getAPIErrorMessage(error as AxiosError<{ error: string }>);
         navigate("/error", { state: { error: errorMsg.message } });
         window.scrollTo(0, 0);
       }

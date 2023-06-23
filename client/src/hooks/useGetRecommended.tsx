@@ -18,7 +18,7 @@ export const useGetRecommended = (URL: string): {
         setProducts(response.data);
       }
       catch (error: any) {
-        const errorMsg = getAPIErrorMessage(error as AxiosError);
+        const errorMsg = getAPIErrorMessage(error as AxiosError<{ error: string }>);
         setErrorMessage(errorMsg);
       }
     })()

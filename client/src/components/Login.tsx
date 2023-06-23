@@ -37,7 +37,7 @@ const Login: React.FC<Props> = (props) => {
       setEmail(loginResponse.data.email);
     }
     catch (error: any) {
-      const errorMsg = getAPIErrorMessage(error as AxiosError);
+      const errorMsg = getAPIErrorMessage(error as AxiosError<{ error: string }>);
       return errorMsg;
     }
   }
@@ -90,7 +90,7 @@ const Login: React.FC<Props> = (props) => {
       </div>
       <Button
         action={loginUser}
-        completedText="Logged in successfully"
+        completedText="Logged in"
         defaultText="Log in"
         loadingText="Logging in"
         styles={`btn-primary w-full h-[45px] text-base

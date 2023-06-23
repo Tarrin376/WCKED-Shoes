@@ -30,7 +30,7 @@ const CartItem: React.FC<Props> = ({ cartItem, setCart, disabled, setDisabled })
       setCart(removeResponse.data.cart);
     }
     catch (error: any) {
-      const errorMsg = getAPIErrorMessage(error as AxiosError);
+      const errorMsg = getAPIErrorMessage(error as AxiosError<{ error: string }>);
       setErrorMessage(errorMsg);
     }
     finally {
@@ -47,7 +47,7 @@ const CartItem: React.FC<Props> = ({ cartItem, setCart, disabled, setDisabled })
       setErrorMessage(undefined);
     }
     catch (error: any) {
-      const errorMsg = getAPIErrorMessage(error as AxiosError);
+      const errorMsg = getAPIErrorMessage(error as AxiosError<{ error: string }>);
       setErrorMessage(errorMsg);
     }
     finally {

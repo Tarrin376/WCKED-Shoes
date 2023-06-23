@@ -24,7 +24,7 @@ const useGetCart = (): TUseGetCart => {
         setCart(cartResponse.data);
       }
       catch (error: any) {
-        const errorMsg = getAPIErrorMessage(error as AxiosError);
+        const errorMsg = getAPIErrorMessage(error as AxiosError<{ error: string }>);
         setErrorMessage(errorMsg);
       }
     })()

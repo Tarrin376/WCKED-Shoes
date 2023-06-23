@@ -23,13 +23,13 @@ const Review: React.FC<Props> = ({ review }) => {
   
   const addHelpfulCount = async (): Promise<TErrorMessage | undefined> => {
     try {
-      const countResponse = await axios.put<string>(`/api/reviews/${review.id}/helpful`);
-      setHelpfulCount(parseInt(countResponse.data));
+      const countResponse = await axios.put<{ helpful_count: number }>(`/api/reviews/${review.id}/helpful`);
+      setHelpfulCount(countResponse.data.helpful_count);
       review.is_marked = true;
       setDisabled(true);
     }
     catch (error: any) {
-      const errorMsg = getAPIErrorMessage(error as AxiosError);
+      const errorMsg = getAPIErrorMessage(error as AxiosError<{ error: string }>);
       return errorMsg;
     }
   }
@@ -40,7 +40,7 @@ const Review: React.FC<Props> = ({ review }) => {
       setHide(true);
     }
     catch (error: any) {
-      const errorMsg = getAPIErrorMessage(error as AxiosError);
+      const errorMsg = getAPIErrorMessage(error as AxiosError<{ error: string }>);
       return errorMsg;
     }
   }

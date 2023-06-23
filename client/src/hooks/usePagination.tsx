@@ -76,7 +76,7 @@ export const usePagination = <T1, T2>(orderBy: readonly TOrderByOption<T2>[], li
         }
       }
       catch (error: any) {
-        const errorMsg = getAPIErrorMessage(error as AxiosError);
+        const errorMsg = getAPIErrorMessage(error as AxiosError<{ error: string }>);
         setErrorMessage(errorMsg);
       }
       finally {

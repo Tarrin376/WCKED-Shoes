@@ -41,9 +41,9 @@ def login():
       httponly=True, samesite="Strict", secure=True)
     return resp
   except DBException as e:
-    return Response(e.message, status=e.status_code, mimetype="text/plain")
-  except Exception as e:
-    return Response(str(e), status=500, mimetype="text/plain")
+    return Response(json.dumps({"error": e.message}), status=e.status_code, mimetype="application/json")
+  except:
+    return Response(json.dumps({"error": "An unexpected error occurred. Please report this issue if this continues."}), status=500, mimetype="application/json")
 
 @user_blueprint.route("/jwt-login", methods=["GET"])
 @authenticate_user
@@ -60,24 +60,24 @@ def register():
 
   try:
     register_handler(email, password)
-    return Response("Account created successfully.", status=201, mimetype="text/plain")
+    return Response(json.dumps({"success": "Account created"}), status=201, mimetype="application/json")
   except DBException as e:
-    return Response(e.message, status=e.status_code, mimetype="text/plain")
-  except Exception as e:
-    return Response(str(e), status=500, mimetype="text/plain")
+    return Response(json.dumps({"error": e.message}), status=e.status_code, mimetype="application/json")
+  except:
+    return Response(json.dumps({"error": "An unexpected error occurred. Please report this issue if this continues."}), status=500, mimetype="application/json")
 
 @user_blueprint.route("/logout", methods=["GET"])
 @authenticate_user
 @limiter.limit("2 per second")
 def logout():
   try:
-    resp = Response("Logged out successfully.", status=200, mimetype="text/plain")
+    resp = Response(json.dumps({"success": "Logged out"}), status=200, mimetype="application/json")
     resp.set_cookie("auth_token", "", expires=0, httponly=True, samesite="Strict", secure=True)
     return resp
   except DBException as e:
-    return Response(e.message, status=e.status_code, mimetype="text/plain")
-  except Exception as e:
-    return Response(str(e), status=500, mimetype="text/plain")
+    return Response(json.dumps({"error": e.message}), status=e.status_code, mimetype="application/json")
+  except:
+    return Response(json.dumps({"error": "An unexpected error occurred. Please report this issue if this continues."}), status=500, mimetype="application/json")
 
 @user_blueprint.route("/find", methods=["POST"])
 @limiter.limit("2 per second")
@@ -86,11 +86,11 @@ def find_user():
 
   try:
     user_found = find_user_handler(email)
-    return Response(user_found, status=200, mimetype="text/plain")
+    return Response(json.dumps({"success": user_found}), status=200, mimetype="application/json")
   except DBException as e:
-    return Response(e.message, status=e.status_code, mimetype="text/plain")
-  except Exception as e:
-    return Response(str(e), status=500, mimetype="text/plain")
+    return Response(json.dumps({"error": e.message}), status=e.status_code, mimetype="application/json")
+  except:
+    return Response(json.dumps({"error": "An unexpected error occurred. Please report this issue if this continues."}), status=500, mimetype="application/json")
 
 @user_blueprint.route("/send-code", methods=["POST"])
 @limiter.limit("3 per 60 seconds")
@@ -100,11 +100,11 @@ def send_code():
 
   try:
     send_code_handler(email, code)
-    return Response(code, status=201, mimetype="text/plain")
+    return Response(json.dumps({"success": code}), status=201, mimetype="application/json")
   except DBException as e:
-    return Response(e.message, status=e.status_code, mimetype="text/plain")
-  except Exception as e:
-    return Response(str(e), status=500, mimetype="text/plain")
+    return Response(json.dumps({"error": e.message}), status=e.status_code, mimetype="application/json")
+  except:
+    return Response(json.dumps({"error": "An unexpected error occurred. Please report this issue if this continues."}), status=500, mimetype="application/json")
 
 @user_blueprint.route("/verify-email", methods=["POST"])
 @limiter.limit("3 per 60 seconds")
@@ -114,11 +114,11 @@ def verify_email():
 
   try:
     verify_email_handler(email, code)
-    return Response("Email verified.", status=200, mimetype="text/plain")
+    return Response(json.dumps({"success": "Email verified."}), status=200, mimetype="application/json")
   except DBException as e:
-    return Response(e.message, status=e.status_code, mimetype="text/plain")
-  except Exception as e:
-    return Response(str(e), status=500, mimetype="text/plain")
+    return Response(json.dumps({"error": e.message}), status=e.status_code, mimetype="application/json")
+  except:
+    return Response(json.dumps({"error": "An unexpected error occurred. Please report this issue if this continues."}), status=500, mimetype="application/json")
   
 @user_blueprint.route("/cart", methods=["GET"])
 @authenticate_user
@@ -129,9 +129,9 @@ def get_cart():
     cart = get_cart_handler(token["sub"]["id"])
     return Response(json.dumps(cart), status=200, mimetype="application/json")
   except DBException as e:
-    return Response(e.message, status=e.status_code, mimetype="text/plain")
-  except Exception as e:
-    return Response(str(e), status=500, mimetype="text/plain")
+    return Response(json.dumps({"error": e.message}), status=e.status_code, mimetype="application/json")
+  except:
+    return Response(json.dumps({"error": "An unexpected error occurred. Please report this issue if this continues."}), status=500, mimetype="application/json")
 
 @user_blueprint.route("/cart/<product_id>", methods=["POST"])
 @authenticate_user
@@ -142,18 +142,18 @@ def add_to_cart(product_id):
     quantity = request.json.get("quantity")
 
     if not size or not quantity:
-      return Response("Size or quantity not specified.", status=400, mimetype="text/plain")
+      return Response(json.dumps({"error": "Size or quantity not specified."}), status=400, mimetype="application/json")
 
     token = g.token
     result = add_to_cart_handler(token["sub"]["id"], product_id, size, (int)(quantity))
     resp = Response(json.dumps(result), status=200, mimetype="application/json")
     return resp
   except DBException as e:
-    return Response(e.message, status=e.status_code, mimetype="text/plain")
+    return Response(json.dumps({"error": e.message}), status=e.status_code, mimetype="application/json")
   except ValueError:
-    return Response("Invalid quantity.", status=400, mimetype="text/plain")
-  except Exception as e:
-    return Response(str(e), status=500, mimetype="text/plain")
+    return Response(json.dumps({"error": "Invalid quantity."}), status=400, mimetype="application/json")
+  except:
+    return Response(json.dumps({"error": "An unexpected error occurred. Please report this issue if this continues."}), status=500, mimetype="application/json")
   
 @user_blueprint.route("/cart/<product_id>/<size>/<quantity>", methods=["PUT", "DELETE"])
 @authenticate_user
@@ -165,12 +165,12 @@ def update_item_quantity(product_id, size, quantity):
     resp = Response(json.dumps(updated_cart), status=200, mimetype="application/json")
     return resp
   except DBException as e:
-    return Response(e.message, status=e.status_code, mimetype="text/plain")
+    return Response(json.dumps({"error": e.message}), status=e.status_code, mimetype="application/json")
   except ValueError:
-    return Response("Invalid quantity.", status=400, mimetype="text/plain")
-  except Exception as e:
-    return Response(str(e), status=500, mimetype="text/plain")
-  
+    return Response(json.dumps({"error": "Invalid quantity."}), status=400, mimetype="application/json")
+  except:
+    return Response(json.dumps({"error": "An unexpected error occurred. Please report this issue if this continues."}), status=500, mimetype="application/json")
+
 @user_blueprint.route("/cart/checkout", methods=["POST"])
 @authenticate_user
 @limiter.limit("2 per second")
@@ -183,9 +183,9 @@ def checkout():
     return resp
   except DBException as e:
     if e.data is not None: return Response(json.dumps(e.data), status=e.status_code, mimetype="application/json")
-    else: return Response(e.message, status=e.status_code, mimetype="text/plain")
-  except Exception as e:
-    return Response(str(e), status=500, mimetype="text/plain")
+    else: return Response(json.dumps({"error": e.message}), status=e.status_code, mimetype="application/json")
+  except:
+    return Response(json.dumps({"error": "An unexpected error occurred. Please report this issue if this continues."}), status=500, mimetype="application/json")
 
 @user_blueprint.route("/cancel-order/<order_id>", methods=["DELETE"])
 @authenticate_user
@@ -194,11 +194,11 @@ def cancel_order(order_id):
   try:
     token = g.token
     cancel_order_handler(order_id, token["sub"]["id"])
-    return Response(f"Order was successfully cancelled.", status=200, mimetype="text/plain")
+    return Response(json.dumps({"success": "Order has been cancelled."}), status=200, mimetype="application/json")
   except DBException as e:
-    return Response(e.message, status=e.status_code, mimetype="text/plain")
-  except Exception as e:
-    return Response(str(e), status=500, mimetype="text/plain")
+    return Response(json.dumps({"error": e.message}), status=e.status_code, mimetype="application/json")
+  except:
+    return Response(json.dumps({"error": "An unexpected error occurred. Please report this issue if this continues."}), status=500, mimetype="application/json")
   
 @user_blueprint.route("/buy-it-again", methods=["GET"])
 @authenticate_user
@@ -207,18 +207,18 @@ def buy_it_again():
   limit = request.args.get("limit", "", str)
 
   if limit == "":
-    return Response("Limit is not specified.", status=400, mimetype="text/plain")
+    return Response(json.dumps({"error": "Limit is not specified."}), status=400, mimetype="application/json")
 
   try:
     token = g.token
     products = cache("/buy-it-again", buy_it_again_handler, DEFAULT_EXPIRATION, token["sub"]["id"], (int)(limit))
     return Response(json.dumps(products), status=200, mimetype="application/json")
   except DBException as e:
-    return Response(e.message, status=e.status_code, mimetype="text/plain")
+    return Response(json.dumps({"error": e.message}), status=e.status_code, mimetype="application/json")
   except ValueError:
-    return Response("'limit' is not a number.", status=400, mimetype="text/plain")
-  except Exception as e:
-    return Response(str(e), status=500, mimetype="text/plain")
+    return Response(json.dumps({"error": "'limit' is not a number."}), status=400, mimetype="application/json")
+  except:
+    return Response(json.dumps({"error": "An unexpected error occurred. Please report this issue if this continues."}), status=500, mimetype="application/json")
   
 @user_blueprint.route("/apply-discount/<code_name>", methods=["GET"])
 @authenticate_user
@@ -229,6 +229,6 @@ def apply_discount(code_name):
     discount = apply_discount_handler(code_name, token["sub"]["id"])
     return Response(json.dumps(discount), status=200, mimetype="application/json")
   except DBException as e:
-    return Response(e.message, e.status_code, mimetype="text/plain")
-  except Exception as e:
-    return Response(str(e), status=500, mimetype="text/plain")
+    return Response(json.dumps({"error": e.message}), status=e.status_code, mimetype="application/json")
+  except:
+    return Response(json.dumps({"error": "An unexpected error occurred. Please report this issue if this continues."}), status=500, mimetype="application/json")
