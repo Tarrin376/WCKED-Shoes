@@ -3,11 +3,11 @@
 #### A fully functional E-Commerce app written in React and Flask that offers a variety of useful features to customers such as intelligent product recommendations, creating and reading helpful reviews, managing orders, and much more.
 
 Technologies used:
-- React (with Typescript) ![image](https://github.com/Tarrin376/WCKED-Shoes/blob/master/client/src/assets/react.png)
-- Redis ![image](https://github.com/Tarrin376/WCKED-Shoes/blob/master/client/src/assets/redis.png)
-- PostgreSQL ![image](https://github.com/Tarrin376/WCKED-Shoes/blob/master/client/src/assets/postgresql.png)
-- Flask ![image](https://github.com/Tarrin376/WCKED-Shoes/blob/master/client/src/assets/python.png)
-- Tailwind CSS ![image](https://github.com/Tarrin376/WCKED-Shoes/blob/master/client/src/assets/tailwind.png)
+- React (with Typescript)
+- Redis
+- PostgreSQL
+- Flask
+- Tailwind CSS
 
 ![Snippet showing order page](image-1.png)
 
