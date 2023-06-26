@@ -16,6 +16,10 @@ To install this project locally on your machine is pretty quick and straightforw
 2. cd into the 'client' folder and run 'npm install' to install necessary dependencies.
 3. cd into the 'server' folder and run 'pip install -r requirements.txt'. This will install all python modules in the 'requirements.txt' file.
 4. create a '.env' file in the 'server' folder and add all of the required environment variables. These can be found in the 'env_sample.txt' file.
+5. This project uses Redis for rate limiting and caching API calls, meaning that you will need a redis instance storage URI in the .env file.
+   If you do not want to do this, you will need to remove the 'limiter' object in the 'settings.py' file and all of the decorators in the routes that use
+   this 'limiter object'. Navigate to the 'Redis.py' file and remove everything inside of the function and write instead 'return handler(*args)'. Finally,
+   remove the 'redis_client' variable in the 'settings.py' file and it will then work without redis.
 
 ## Running the project locally
 
