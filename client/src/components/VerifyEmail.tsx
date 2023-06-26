@@ -26,8 +26,8 @@ const VerifyEmail: React.FC<Props> = ({ setVerifyEmailPopUp, setSignUpPopUp, ema
 
   const sendVerificationCode = useCallback(async () => {
     try {
-      const verificationCode = await axios.post<string>(`/api/users/send-code`, { email: emailAddress });
-      setSecretCode(verificationCode.data);
+      const response = await axios.post<{ code: string }>(`/api/users/send-code`, { email: emailAddress });
+      setSecretCode(response.data.code);
       setErrorMessage(undefined);
     }
     catch (error: any) {

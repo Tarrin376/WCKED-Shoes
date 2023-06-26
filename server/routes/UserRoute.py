@@ -100,7 +100,7 @@ def send_code():
 
   try:
     send_code_handler(email, code)
-    return Response(json.dumps({"success": code}), status=201, mimetype="application/json")
+    return Response(json.dumps({"code": code}), status=201, mimetype="application/json")
   except DBException as e:
     return Response(json.dumps({"error": e.message}), status=e.status_code, mimetype="application/json")
   except:
