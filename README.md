@@ -1,6 +1,13 @@
 # WCKED Shoes
 
-#### A fully functional E-Commerce app written in React (with Typescript) and Flask that offers a variety of useful features to customers such as intelligent product recommendations, creating and reading helpful reviews, managing orders, and much more.
+#### A fully functional E-Commerce app written in React and Flask that offers a variety of useful features to customers such as intelligent product recommendations, creating and reading helpful reviews, managing orders, and much more.
+
+Technologies used:
+- React (with Typescript)
+- Redis
+- PostgreSQL
+- Flask
+- Tailwind CSS
 
 ![Snippet showing order page](image-1.png)
 
