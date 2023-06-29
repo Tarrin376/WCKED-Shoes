@@ -58,7 +58,7 @@ const Order: React.FC<Props> = ({ orderData, disabled, setDisabled }) => {
   return (
     <OutsideClickHandler onOutsideClick={() => togglePopUps(false, false, false)}>
       <div className="light-component dark:gray-component overflow-hidden">
-        <div className="bg-[#f5f5f7] dark:bg-[#1b1b1b] p-4 pt-3 flex justify-between items-center">
+        <div className="bg-[#f5f5f7] dark:bg-[#242424] p-4 pt-3 flex justify-between items-center">
           <div className={`flex flex-grow ${windowSize >= 400 ? "gap-10" : "justify-between"}`}>
             <div>
               <p className="font-semibold">Order placed</p>
@@ -133,7 +133,7 @@ const Order: React.FC<Props> = ({ orderData, disabled, setDisabled }) => {
               {orderData.order_details.delivery_instructions}
             </p>}
           </div>
-          <div className="flex-grow overflow-y-scroll bg-[#f9f9fa] dark:bg-[#181818] p-3 pr-0 max-lg:py-0 rounded-[8px] max-h-[400px]">
+          <div className="flex-grow overflow-y-scroll bg-[#f9f9fa] dark:bg-[#1d1d1d] p-3 pr-0 max-lg:py-0 rounded-[8px] max-h-[400px]">
             {orderData.items.map((item, index) => {
               return (
                 <OrderedItem 

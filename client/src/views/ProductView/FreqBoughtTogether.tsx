@@ -104,7 +104,7 @@ const FreqBoughtTogether: React.FC<Props> = ({ product, curSize, addToCart, styl
             completedText="Items added to bag"
             defaultText={getDefaultBtnText()}
             loadingText="Adding items to bag"
-            styles={`btn-primary text-base w-[250px] h-[35px] ${!curSize || userContext?.email === "" ? 
+            styles={`btn-primary text-base w-[250px] h-[35px] ${!curSize || userContext?.email === "" || !recommended.products ? 
             'disabled-btn-light dark:disabled-btn' : ''}`}
             setErrorMessage={setErrorMessage}
           />

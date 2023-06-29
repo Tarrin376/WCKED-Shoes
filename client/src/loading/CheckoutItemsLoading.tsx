@@ -3,7 +3,7 @@ export const CheckoutItemsLoading = () => {
   const cartSize = 4;
 
   return (
-    <div className="h-[891px] overflow-y-scroll pr-5">
+    <div className="max-h-[670px] overflow-y-scroll pr-5">
       {new Array(cartSize).fill(0).map((_, index) => {
         return (
           <div className={`md:pb-5 max-md:pb-[8px] ${index === 0 ? "" : "pt-5"} border-b border-b-light-border 

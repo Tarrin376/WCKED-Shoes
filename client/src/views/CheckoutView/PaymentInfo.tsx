@@ -20,21 +20,23 @@ interface Props {
   selectedCountry: string,
   discount: TDiscount,
   setDiscount: React.Dispatch<React.SetStateAction<TDiscount>>,
-  setNotEnoughStockItems: React.Dispatch<React.SetStateAction<number[]>>
+  setNotEnoughStockItems: React.Dispatch<React.SetStateAction<number[]>>,
+  setInvalidForm: React.Dispatch<React.SetStateAction<boolean>>,
+  invalidForm: boolean
 }
 
-const PaymentInfo: React.FC<Props> = ({ formRef, selectedMethod, cartItems, selectedCountry, discount, setDiscount, setNotEnoughStockItems }) => {
+const PaymentInfo: React.FC<Props> = (props) => {
   const navigate = useNavigate();
   const [errorMessage, setErrorMessage] = useState<TErrorMessage>();
   const [discountText, setDiscountText] = useState<string>("");
   const [discountError, setDiscountError] = useState<TErrorMessage>();
 
   const isValidForm = () => {
-    if (!formRef || !formRef.current) {
+    if (!props.formRef || !props.formRef.current) {
       return false;
     }
 
-    const formData = new FormData(formRef.current);
+    const formData = new FormData(props.formRef.current);
     const fieldValues = Object.fromEntries(formData.entries());
 
     return Object.entries(fieldValues).every((pair) => {
@@ -53,20 +55,21 @@ const PaymentInfo: React.FC<Props> = ({ formRef, selectedMethod, cartItems, sele
   const handlePayment = async (): Promise<TErrorMessage | undefined> => {
     const validForm = isValidForm();
 
-    if (!formRef || !formRef.current) {
+    if (!props.formRef || !props.formRef.current) {
       return { message: "Form has not been initialized yet.", status: 400 };
     }
 
     if (!validForm) {
+      props.setInvalidForm(true);
       return { message: "One or more required fields are empty or invalid.", status: 400 };
     }
 
-    if (!selectedMethod) {
+    if (!props.selectedMethod) {
       return { message: "Please select a delivery method.", status: 400 };
     }
 
     try {
-      const formData = new FormData(formRef.current);
+      const formData = new FormData(props.formRef.current);
       const fieldValues = Object.fromEntries(formData.entries());
       const cardNum = (fieldValues["Credit card number"] as string).trim();
 
@@ -81,11 +84,11 @@ const PaymentInfo: React.FC<Props> = ({ formRef, selectedMethod, cartItems, sele
         last_name: (fieldValues["Last name"] as string).trim(),
         email_address: (fieldValues["Email address"] as string).trim(),
         date_ordered: new Date().toDateString(),
-        subtotal: cartItems.subtotal,
+        subtotal: props.cartItems.subtotal,
         card_end: cardNum.substring(cardNum.length - 4),
-        country: selectedCountry,
-        delivery_method: selectedMethod!.name,
-        discount: discount.name
+        country: props.selectedCountry,
+        delivery_method: props.selectedMethod!.name,
+        discount: props.discount.name
       });
       
       navigate(`/orders/${orderResponse.data.id}`);
@@ -98,7 +101,7 @@ const PaymentInfo: React.FC<Props> = ({ formRef, selectedMethod, cartItems, sele
       if (typeof data === "string") {
         return { message: data, status: err.response!.status };
       } else {
-        setNotEnoughStockItems(data as number[]);
+        props.setNotEnoughStockItems(data as number[]);
         return { message: `Sorry, but some of your items do not have enough stock to satisfy your order. 
         Please reduce their quantities or remove them from your cart.`, status: err.response!.status };
       }
@@ -106,11 +109,11 @@ const PaymentInfo: React.FC<Props> = ({ formRef, selectedMethod, cartItems, sele
   }
 
   const applyDiscountCode = async (): Promise<TErrorMessage | undefined> => {
-    if (!formRef || !formRef.current) {
+    if (!props.formRef || !props.formRef.current) {
       return;
     }
 
-    const formData = new FormData(formRef.current);
+    const formData = new FormData(props.formRef.current);
     const fieldValues = Object.fromEntries(formData.entries());
     const code = (fieldValues["Apply discount code"] as string).trim();
 
@@ -121,7 +124,7 @@ const PaymentInfo: React.FC<Props> = ({ formRef, selectedMethod, cartItems, sele
 
     try {
       const response = await axios.get<TDiscount>(`/api/users/apply-discount/${code}`);
-      setDiscount(response.data);
+      props.setDiscount(response.data);
       setDiscountText(`You saved ${response.data.percent_off * 100}% off your order!`);
     }
     catch (error: any) {
@@ -137,18 +140,51 @@ const PaymentInfo: React.FC<Props> = ({ formRef, selectedMethod, cartItems, sele
       <div className="light-component dark:gray-component p-5 pt-3 flex justify-between flex-col flex-grow">
         <div className="flex flex-col gap-3">
           <div className="flex gap-5 items-center max-md:flex-col max-md:gap-3">
-            <FormInput label="First name" type="text" styles="md:w-1/2 max-md:w-full" maxLength={30} />
-            <FormInput label="Last name" type="text" styles="md:w-1/2 max-md:w-full" maxLength={30} />
+            <FormInput 
+              label="First name" 
+              type="text" 
+              styles="md:w-1/2 max-md:w-full" 
+              maxLength={30}
+              invalidForm={props.invalidForm}
+            />
+            <FormInput 
+              label="Last name" 
+              type="text" 
+              styles="md:w-1/2 max-md:w-full" 
+              maxLength={30}
+              invalidForm={props.invalidForm}
+            />
           </div>
-          <FormInput label="Email address" type="text" styles="md:w-full max-md:w-full" maxLength={320} />
+          <FormInput 
+            label="Email address" 
+            type="text" 
+            styles="md:w-full max-md:w-full" 
+            maxLength={320}
+            invalidForm={props.invalidForm}
+          />
           <FormInput 
             label="Credit card number" type="text" 
-            styles="w-full" showCardIcons={true}
+            styles="w-full" 
+            showCardIcons={true}
             maxLength={19}
+            invalidForm={props.invalidForm}
           />
           <div className="flex gap-5 items-center max-md:flex-col max-md:gap-3">
-            <FormInput label="Expiry date" type="text" styles="md:w-1/2 max-md:w-full" optionalText={"yyyy-mm-dd"} maxLength={10} />
-            <FormInput label="CVV" type="text" styles="md:w-1/2 max-md:w-full" maxLength={3} />
+            <FormInput 
+              label="Expiry date" 
+              type="text" 
+              styles="md:w-1/2 max-md:w-full" 
+              optionalText={"yyyy-mm-dd"} 
+              maxLength={10} 
+              invalidForm={props.invalidForm}
+            />
+            <FormInput 
+              label="CVV" 
+              type="text" 
+              styles="md:w-1/2 max-md:w-full" 
+              maxLength={3} 
+              invalidForm={props.invalidForm}
+            />
           </div>
           <FormInput 
             label="Apply discount code" 
@@ -159,6 +195,7 @@ const PaymentInfo: React.FC<Props> = ({ formRef, selectedMethod, cartItems, sele
             discountError={discountError ? discountError.message : ""}
             maxLength={50}
             setUppercase={true}
+            invalidForm={props.invalidForm}
           />
           <Button
             action={applyDiscountCode}
@@ -170,11 +207,11 @@ const PaymentInfo: React.FC<Props> = ({ formRef, selectedMethod, cartItems, sele
           />
         </div>
         <div>
-          {cartItems.cart ? 
+          {props.cartItems.cart ? 
           <CartPriceSummary 
-            subtotal={cartItems.subtotal} 
-            shipping={selectedMethod ? selectedMethod.price : 0}
-            discount={cartItems.subtotal * discount.percent_off}
+            subtotal={props.cartItems.subtotal} 
+            shipping={props.selectedMethod ? props.selectedMethod.price : 0}
+            discount={props.cartItems.subtotal * props.discount.percent_off}
             styles="pt-6"
           /> : 
           <CartPriceSummaryLoading />}
@@ -184,7 +221,7 @@ const PaymentInfo: React.FC<Props> = ({ formRef, selectedMethod, cartItems, sele
             completedText="Payment Confirmed"
             defaultText="Make Payment"
             loadingText="Processing Payment"
-            styles={`btn-primary w-full mt-6 h-[45px] text-base ${!cartItems.cart ? "disabled-btn-light dark:disabled-btn" : ""}`}
+            styles={`btn-primary w-full mt-6 h-[45px] text-base ${!props.cartItems.cart ? "disabled-btn-light dark:disabled-btn" : ""}`}
             setErrorMessage={setErrorMessage}
           />
         </div>

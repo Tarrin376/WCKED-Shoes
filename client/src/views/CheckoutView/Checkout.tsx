@@ -16,6 +16,7 @@ const Checkout = () => {
   const [selectedCountry, setSelectedCountry] = useState<string>("United Kingdom 🇬🇧");
   const [discount, setDiscount] = useState<TDiscount>({ name: "", percent_off: 0 });
   const [selectedMethod, setSelectedMethod] = useState<TDeliveryMethod>();
+  const [invalidForm, setInvalidForm] = useState<boolean>(false);
   const navigate = useNavigate();
 
   const backToBag = () => {
@@ -30,7 +31,8 @@ const Checkout = () => {
         <div className="xl:w-1/2 flex flex-col gap-7">
           <DeliveryInfo 
             selectedCountry={selectedCountry} 
-            setSelectedCountry={setSelectedCountry} 
+            setSelectedCountry={setSelectedCountry}
+            invalidForm={invalidForm}
           />
           <PaymentInfo 
             formRef={formRef}
@@ -40,6 +42,8 @@ const Checkout = () => {
             discount={discount}
             setDiscount={setDiscount}
             setNotEnoughStockItems={setNotEnoughStockItems}
+            setInvalidForm={setInvalidForm}
+            invalidForm={invalidForm}
           />
         </div>
         <div className="xl:w-1/2 flex flex-col max-xl:flex-col-reverse gap-7">

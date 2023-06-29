@@ -12,7 +12,7 @@ const OrderCardLoading: React.FC<Props> = ({ styles }) => {
 
   return (
     <div className={`light-component dark:gray-component overflow-hidden ${styles}`}>
-      <div className="bg-[#f5f5f7] dark:bg-[#1b1b1b] p-4 flex justify-between items-center">
+      <div className="bg-[#f5f5f7] dark:bg-[#242424] p-4 flex justify-between items-center">
         <div className={`flex flex-grow ${windowSize >= 400 ? "gap-10" : "justify-between"}`}>
           <div>
             <div className="font-semibold loading-light dark:loading-dark w-[100px] h-[18px]"></div>
@@ -39,7 +39,7 @@ const OrderCardLoading: React.FC<Props> = ({ styles }) => {
           <div className="mt-4 max-w-[400px] h-[18px] loading-light dark:loading-dark"></div>
           <div className="max-w-[220px] h-[18px] loading-light dark:loading-dark mt-[9px]"></div>
         </div>
-        <div className="flex-grow overflow-y-scroll bg-[#f9f9fa] dark:bg-[#181818] p-3 max-lg:py-0 rounded-[8px] max-h-[400px]">
+        <div className="flex-grow overflow-y-scroll bg-[#f9f9fa] dark:bg-[#1d1d1d] p-3 max-lg:py-0 rounded-[8px] max-h-[400px]">
           {new Array(orderItemsLimit).fill(0).map((_, index) => {
             return (
               <OrderedItemLoading 

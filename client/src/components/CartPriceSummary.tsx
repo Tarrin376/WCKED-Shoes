@@ -13,10 +13,11 @@ const CartPriceSummary: React.FC<Props> = ({ subtotal, shipping, styles, discoun
         <h3 className="text-side-text-light dark:text-side-text-gray">Subtotal</h3>
         <p className="text-main-text-black dark:text-main-text-white">{`£${subtotal.toFixed(2)}`}</p>
       </div>
+      {discount > 0 &&
       <div className="mt-2 flex justify-between">
         <h3 className="text-side-text-light dark:text-side-text-gray">Discount</h3>
         <p className="text-main-text-black dark:text-main-text-white">{`-£${discount.toFixed(2)}`}</p>
-      </div>
+      </div>}
       <div className="mt-2 flex justify-between border-b border-b-light-border dark:border-b-main-gray-border pb-6">
         <h3 className="text-side-text-light dark:text-side-text-gray">Shipping</h3>
         <p className="text-main-text-black dark:text-main-text-white">{!shipping ? "TBC at checkout" : `£${shipping.toFixed(2)}`}</p>
