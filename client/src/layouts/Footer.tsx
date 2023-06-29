@@ -28,6 +28,10 @@ const Footer = () => {
               <a href="https://restcountries.com/" className="footer-link">REST Countries</a>
             </div>
             <div>
+              <h2 className="text-main-text-black dark:text-main-text-white mb-2 font-semibold max-md:text-center">Icons</h2>
+              <a href="https://icons8.com/license" className="footer-link">Icons8</a>
+            </div>
+            <div>
               <h2 className="text-main-text-black dark:text-main-text-white mb-2 font-semibold max-md:text-center">Node Packages</h2>
               <a href="https://www.npmjs.com/package/react-outside-click-handler" className="footer-link">react-outside-click-handler</a>
               <a href="https://www.npmjs.com/package/card-validator" className="footer-link">card-validator</a>
