@@ -63,7 +63,7 @@ const Button: React.FC<Props> = ({ action, completedText, defaultText, loadingTe
     ${disabled ? "pointer-events-none disabled-btn-light dark:disabled-btn" : ""}`} 
     ref={btnRef} onClick={handleAction} type="button">
       <div className="flex items-center justify-center gap-3">
-        {btnText === loadingText ? <img src={gear} className="w-[20px] h-[20px] mt-[1px]" alt="gear" />
+        {btnText === loadingText ? <img src={gear} className="w-[20px] h-[20px] mt-[1px]" alt="..." />
         : children && btnText === defaultText && children}
         <p className="mb-[1px]">{btnText}</p>
       </div>
