@@ -9,7 +9,7 @@ Technologies used:
 - Flask
 - Tailwind CSS
 
-![Snippet showing home page](image-1.png)
+![Snippet showing home page](https://github.com/Tarrin376/WCKED-Shoes/assets/73310079/97b700ea-70c7-4974-8b24-8ea56022a455)
 
 This project was partly inspired by Amazon's item-to-item collaborative filtering algorithm that recommends to users what 'customers who bought this item
 also bought'. You can read more about this algorithm and how it works <a href="https://www.cs.umd.edu/~samir/498/Amazon-Recommendations.pdf">here</a> if
